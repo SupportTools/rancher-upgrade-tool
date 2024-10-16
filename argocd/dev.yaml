@@ -26,7 +26,7 @@ spec:
     server: https://kubernetes.default.svc
   project: supporttools
   source:
-    chart: website
+    chart: rancher-upgrade-tool
     helm:
       parameters:
         - name: ingress.host

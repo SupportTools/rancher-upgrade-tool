@@ -8,10 +8,14 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
+	"time"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/hashicorp/go-version"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // Platform defines the compatibility of Kubernetes versions with a Rancher version
@@ -38,6 +42,53 @@ type UpgradeStep struct {
 	Platform string `json:"platform"` // RKE1, RKE2, etc.
 	From     string `json:"from"`     // Previous version
 	To       string `json:"to"`       // New version
+}
+
+// Custom metrics
+var (
+	totalRequestsLast60Seconds prometheus.Gauge
+	versionsSubmitted          *prometheus.CounterVec
+	requestDuration            prometheus.Histogram
+	activeRequests             prometheus.Gauge
+
+	// For tracking request timestamps
+	requestTimestamps []time.Time
+	mu                sync.Mutex
+)
+
+// Initialize custom metrics
+func initMetrics() {
+	totalRequestsLast60Seconds = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "requests_in_last_60_seconds",
+		Help: "Number of requests in the last 60 seconds",
+	})
+
+	versionsSubmitted = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "versions_submitted_total",
+			Help: "Total number of versions submitted",
+		},
+		[]string{"platform", "rancher_version", "k8s_version"},
+	)
+
+	requestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
+		Name:    "request_duration_seconds",
+		Help:    "Histogram of response latency (seconds) of requests.",
+		Buckets: prometheus.DefBuckets,
+	})
+
+	activeRequests = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "active_requests",
+		Help: "Current number of active requests.",
+	})
+
+	// Register custom metrics with Prometheus
+	prometheus.MustRegister(
+		totalRequestsLast60Seconds,
+		versionsSubmitted,
+		requestDuration,
+		activeRequests,
+	)
 }
 
 // LoadUpgradePaths loads the upgrade path data from JSON
@@ -303,6 +354,10 @@ func GetKeyVersions(versions []string) []string {
 }
 
 func main() {
+	// Initialize custom metrics
+	initMetrics()
+
+	// Main application Fiber instance
 	app := fiber.New()
 
 	// Add the logger middleware
@@ -322,9 +377,23 @@ func main() {
 
 	// API route to generate the upgrade plan
 	app.Get("/api/plan-upgrade/:platform/:rancher/:k8s", func(c *fiber.Ctx) error {
+		// Start timer
+		timer := prometheus.NewTimer(requestDuration)
+		defer timer.ObserveDuration()
+
+		// Increment active requests gauge
+		activeRequests.Inc()
+		defer activeRequests.Dec()
+
+		// Handle request timestamps for sliding window
+		updateRequestTimestamps()
+
 		platform := c.Params("platform")
 		currentRancher := c.Params("rancher")
 		currentK8s := c.Params("k8s")
+
+		// Increment versions submitted counter
+		versionsSubmitted.WithLabelValues(platform, currentRancher, currentK8s).Inc()
 
 		var versions []string
 		for v := range upgradePaths.RancherManager {
@@ -343,12 +412,12 @@ func main() {
 		sort.Sort(version.Collection(parsedVersions))
 
 		// Convert back to string slices
-		sortedVersions := make([]string, len(parsedVersions))
+		sortedKeyVersions := make([]string, len(parsedVersions))
 		for i, v := range parsedVersions {
-			sortedVersions[i] = v.String()
+			sortedKeyVersions[i] = v.String()
 		}
 
-		upgradePath, err := PlanUpgrade(currentRancher, currentK8s, platform, sortedVersions, upgradePaths)
+		upgradePath, err := PlanUpgrade(currentRancher, currentK8s, platform, sortedKeyVersions, upgradePaths)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": err.Error(),
@@ -360,5 +429,53 @@ func main() {
 		})
 	})
 
+	// Start the metrics server on port 9000
+	go startMetricsServer()
+
+	// Start the main application on port 3000
 	log.Fatal(app.Listen(":3000"))
+}
+
+// updateRequestTimestamps handles the sliding window of request timestamps
+func updateRequestTimestamps() {
+	mu.Lock()
+	defer mu.Unlock()
+
+	now := time.Now()
+	requestTimestamps = append(requestTimestamps, now)
+
+	// Remove timestamps older than 60 seconds
+	cutoff := now.Add(-60 * time.Second)
+	idx := 0
+	for i, t := range requestTimestamps {
+		if t.After(cutoff) {
+			idx = i
+			break
+		}
+	}
+	requestTimestamps = requestTimestamps[idx:]
+
+	// Update the gauge
+	totalRequestsLast60Seconds.Set(float64(len(requestTimestamps)))
+}
+
+// startMetricsServer starts a separate Fiber app to serve metrics on port 9000
+func startMetricsServer() {
+	metricsApp := fiber.New()
+
+	// Set up Prometheus middleware
+	prometheusMiddleware := fiberprometheus.New("fiber_app")
+	prometheusMiddleware.RegisterAt(metricsApp, "/metrics")
+	metricsApp.Use(prometheusMiddleware.Middleware)
+
+	// Expose /metrics endpoint
+	metricsApp.Get("/metrics", func(c *fiber.Ctx) error {
+		// The Prometheus middleware handles this
+		return nil
+	})
+
+	// Start the metrics server
+	if err := metricsApp.Listen(":9000"); err != nil {
+		log.Fatalf("Failed to start metrics server: %v", err)
+	}
 }

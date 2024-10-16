@@ -91,18 +91,24 @@ func initMetrics() {
 	)
 }
 
-// LoadUpgradePaths loads the upgrade path data from JSON
-func LoadUpgradePaths() UpgradePaths {
+func LoadUpgradePaths() (UpgradePaths, error) {
 	file, err := os.Open("./data/upgrade-paths.json")
 	if err != nil {
-		log.Fatalf("Failed to load upgrade paths: %v", err)
+		return UpgradePaths{}, fmt.Errorf("failed to load upgrade paths: %v", err)
 	}
 	defer file.Close()
 
-	bytes, _ := io.ReadAll(file)
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		return UpgradePaths{}, fmt.Errorf("failed to read upgrade paths file: %v", err)
+	}
+
 	var paths UpgradePaths
-	json.Unmarshal(bytes, &paths)
-	return paths
+	err = json.Unmarshal(bytes, &paths)
+	if err != nil {
+		return UpgradePaths{}, fmt.Errorf("failed to parse upgrade paths JSON: %v", err)
+	}
+	return paths, nil
 }
 
 // PlanUpgrade generates the Rancher + Kubernetes upgrade plan
@@ -367,7 +373,11 @@ func main() {
 		TimeZone:   "Local",
 	}))
 
-	upgradePaths := LoadUpgradePaths()
+	// Load upgrade paths
+	upgradePaths, err := LoadUpgradePaths()
+	if err != nil {
+		log.Fatalf("Error loading upgrade paths: %v", err)
+	}
 
 	app.Static("/", "./static")
 

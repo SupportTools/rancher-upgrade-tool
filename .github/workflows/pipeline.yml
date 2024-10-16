@@ -43,11 +43,6 @@ jobs:
         run: |
           gosec ./...
 
-      - name: Generate Swagger documentation
-        run: |
-          go install github.com/swaggo/swag/cmd/swag@latest
-          swag init -g main.go
-
   Build:
     needs: Test
     runs-on: ubuntu-latest

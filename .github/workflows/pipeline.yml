@@ -103,7 +103,7 @@ jobs:
       - name: Checkout helm-chart repository
         uses: actions/checkout@v4
         with:
-          repository: fruition/helm-chart
+          repository: supporttools/helm-chart
           path: helm-chart
           token: ${{ secrets.BOT_TOKEN }}
 

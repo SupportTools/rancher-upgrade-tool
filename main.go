@@ -59,15 +59,18 @@ func PlanUpgrade(currentRancher, currentK8s, platform string, versions []string,
 	var upgradeSteps []UpgradeStep
 	keyVersions := GetKeyVersions(versions)
 
+	// Normalize platform name to lowercase for consistent comparison
+	platformLower := strings.ToLower(platform)
+
 	currentRancherVersion, err := version.NewVersion(currentRancher)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid current Rancher version: %v", err)
+		return nil, fmt.Errorf("invalid current Rancher version: %v", err)
 	}
 
 	for _, v := range keyVersions {
 		nextVersion, err := version.NewVersion(v)
 		if err != nil {
-			return nil, fmt.Errorf("Invalid version in key versions: %v", err)
+			return nil, fmt.Errorf("invalid version in key versions: %v", err)
 		}
 
 		if nextVersion.GreaterThan(currentRancherVersion) {
@@ -79,7 +82,7 @@ func PlanUpgrade(currentRancher, currentK8s, platform string, versions []string,
 			// Get Kubernetes upgrades for this Rancher version
 			r1 := paths.RancherManager[currentRancher]
 			r2 := paths.RancherManager[v]
-			k8sUpgrades := GetAllowedK8sUpgradesWithSingleSkip(currentK8s, platform, r1, r2)
+			k8sUpgrades := GetAllowedK8sUpgrades(currentK8s, platformLower, r1, r2)
 
 			// Add Kubernetes upgrade steps
 			for _, upgrade := range k8sUpgrades {
@@ -95,8 +98,8 @@ func PlanUpgrade(currentRancher, currentK8s, platform string, versions []string,
 	return upgradeSteps, nil
 }
 
-// GetAllowedK8sUpgradesWithSingleSkip ensures only one minor version skip at a time
-func GetAllowedK8sUpgradesWithSingleSkip(currentK8s, platform string, r1, r2 RancherManagerVersion) []UpgradeStep {
+// GetAllowedK8sUpgrades determines the Kubernetes upgrade path based on platform rules
+func GetAllowedK8sUpgrades(currentK8s, platform string, r1, r2 RancherManagerVersion) []UpgradeStep {
 	var upgrades []UpgradeStep
 	k8sVersions := getSortedK8sVersions(platform, r1, r2)
 
@@ -111,8 +114,11 @@ func GetAllowedK8sUpgradesWithSingleSkip(currentK8s, platform string, r1, r2 Ran
 		sort.Sort(version.Collection(k8sVersions))
 	}
 
+	// Decide whether to allow skipping minor versions based on platform
+	allowSkip := platform == "rke1" || platform == "rke2" || platform == "k3s"
+
 	for {
-		nextVer := findNextAcceptableK8sVersion(currentVer, k8sVersions)
+		nextVer := findNextAcceptableK8sVersion(currentVer, k8sVersions, allowSkip)
 		if nextVer == nil {
 			break
 		}
@@ -129,21 +135,24 @@ func GetAllowedK8sUpgradesWithSingleSkip(currentK8s, platform string, r1, r2 Ran
 	return upgrades
 }
 
-// findNextAcceptableK8sVersion finds the furthest acceptable Kubernetes version
-func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*version.Version) *version.Version {
-	currentSegments := currentVer.Segments64()
+// findNextAcceptableK8sVersion finds the next acceptable Kubernetes version
+func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*version.Version, allowSkip bool) *version.Version {
+	currentSegments := currentVer.Segments()
 	if len(currentSegments) < 2 {
 		return nil
 	}
 	currentMinor := currentSegments[1]
-	maxAllowedMinor := currentMinor + 2
+	maxAllowedMinor := currentMinor + 1
+	if allowSkip {
+		maxAllowedMinor = currentMinor + 2
+	}
 
 	var candidate *version.Version
 	for _, v := range k8sVersions {
 		if v.LessThanOrEqual(currentVer) {
 			continue
 		}
-		nextSegments := v.Segments64()
+		nextSegments := v.Segments()
 		if len(nextSegments) < 2 {
 			continue
 		}
@@ -151,7 +160,12 @@ func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*ve
 		if nextMinor > maxAllowedMinor {
 			break // No further versions are acceptable
 		}
-		candidate = v // Keep updating candidate to get the furthest acceptable version
+		candidate = v // Update candidate to the current acceptable version
+
+		if !allowSkip {
+			// For platforms that do not allow skipping, return the first acceptable version immediately
+			break
+		}
 	}
 	return candidate
 }
@@ -166,12 +180,15 @@ func versionInList(ver *version.Version, list []*version.Version) bool {
 	return false
 }
 
-// getSortedK8sVersions retrieves and sorts the K8s versions for the given platform
+// getSortedK8sVersions retrieves and sorts the Kubernetes versions for the given platform
 func getSortedK8sVersions(platform string, r1, r2 RancherManagerVersion) []*version.Version {
 	versionSet := make(map[string]*version.Version)
 	platforms := append(r1.SupportedPlatforms, r2.SupportedPlatforms...)
+	platformLower := strings.ToLower(platform)
+
 	for _, p := range platforms {
-		if p.Platform == platform {
+		pPlatformLower := strings.ToLower(p.Platform)
+		if pPlatformLower == platformLower {
 			minVerStr := cleanVersion(p.MinVersion)
 			maxVerStr := cleanVersion(p.MaxVersion)
 			minVer, err := version.NewVersion(minVerStr)
@@ -182,8 +199,11 @@ func getSortedK8sVersions(platform string, r1, r2 RancherManagerVersion) []*vers
 			if err != nil {
 				continue
 			}
-			versionSet[minVer.Original()] = minVer
-			versionSet[maxVer.Original()] = maxVer
+			// Generate all minor versions between minVer and maxVer
+			versionsBetween := getMinorVersionsBetween(minVer, maxVer, p)
+			for _, v := range versionsBetween {
+				versionSet[v.Original()] = v
+			}
 		}
 	}
 
@@ -199,16 +219,24 @@ func getSortedK8sVersions(platform string, r1, r2 RancherManagerVersion) []*vers
 	return versionList
 }
 
-// getMinorVersionsBetween returns all minor versions between min and max versions
-func getMinorVersionsBetween(minVer, maxVer *version.Version) []*version.Version {
+// getMinorVersionsBetween returns all minor versions between min and max versions, including exact versions from data
+func getMinorVersionsBetween(minVer, maxVer *version.Version, platformData Platform) []*version.Version {
 	var versions []*version.Version
+
+	// Include exact min and max versions with their metadata
+	minVerWithMeta, err := version.NewVersion(cleanVersion(platformData.MinVersion))
+	if err == nil {
+		versions = append(versions, minVerWithMeta)
+	}
+
+	maxVerWithMeta, err := version.NewVersion(cleanVersion(platformData.MaxVersion))
+	if err == nil && !maxVerWithMeta.Equal(minVerWithMeta) {
+		versions = append(versions, maxVerWithMeta)
+	}
+
+	// Generate intermediate minor versions
 	currentVer := minVer
 	for {
-		if currentVer.GreaterThan(maxVer) {
-			break
-		}
-		versions = append(versions, currentVer)
-
 		// Increment minor version
 		segments := currentVer.Segments()
 		if len(segments) < 2 {
@@ -222,8 +250,13 @@ func getMinorVersionsBetween(minVer, maxVer *version.Version) []*version.Version
 		if err != nil {
 			break
 		}
+		if newVer.GreaterThan(maxVer) {
+			break
+		}
+		versions = append(versions, newVer)
 		currentVer = newVer
 	}
+
 	return versions
 }
 
@@ -236,7 +269,12 @@ func cleanVersion(v string) string {
 // parseK8sVersion parses a Kubernetes version string
 func parseK8sVersion(v string) (*version.Version, error) {
 	cleaned := cleanVersion(v)
-	return version.NewVersion(cleaned)
+	ver, err := version.NewVersion(cleaned)
+	if err != nil {
+		log.Printf("Error parsing Kubernetes version '%s': %v", v, err)
+		return nil, err
+	}
+	return ver, nil
 }
 
 // GetKeyVersions returns the key Rancher versions for the upgrade plan

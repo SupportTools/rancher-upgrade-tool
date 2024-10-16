@@ -26,16 +26,16 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
-                    "max_version": "v1.20.x"
+                    "min_version": "v1.18",
+                    "max_version": "v1.20"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.20.8-gke.900"
                 }
             ]
-        }, 
+        },
         "2.6.1": {
             "supported_platforms": [
                 {
@@ -62,16 +62,16 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
-                    "max_version": "v1.20.x"
+                    "min_version": "v1.18",
+                    "max_version": "v1.20"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.21.5-gke.1302"
                 }
             ]
-        }, 
+        },
         "2.6.2": {
             "supported_platforms": [
                 {
@@ -98,16 +98,16 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
-                    "max_version": "v1.20.x"
+                    "min_version": "v1.18",
+                    "max_version": "v1.20"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.21.5-gke.1302"
                 }
             ]
-        },        
+        },
         "2.6.3": {
             "supported_platforms": [
                 {
@@ -134,12 +134,12 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
-                    "max_version": "v1.20.x"
+                    "min_version": "v1.18",
+                    "max_version": "v1.20"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.21.5-gke.1302"
                 }
             ]
@@ -170,12 +170,12 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.21.5-eks-bc4871b"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.22.6-gke.300"
                 }
             ]
@@ -206,12 +206,12 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.22.6-eks-14c7a48"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.22.8-gke.200"
                 }
             ]
@@ -242,12 +242,12 @@
                 },
                 {
                     "platform": "EKS",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.22.6-eks-14c7a48"
                 },
                 {
                     "platform": "GKE",
-                    "min_version": "v1.20",
+                    "min_version": "v1.18",
                     "max_version": "v1.22.8-gke.200"
                 }
             ]

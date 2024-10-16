@@ -91,6 +91,7 @@ func initMetrics() {
 	)
 }
 
+// LoadUpgradePaths loads the upgrade paths from the JSON file
 func LoadUpgradePaths() (UpgradePaths, error) {
 	file, err := os.Open("./data/upgrade-paths.json")
 	if err != nil {
@@ -359,6 +360,7 @@ func GetKeyVersions(versions []string) []string {
 	return sortedKeyVersions
 }
 
+// Main application entry point
 func main() {
 	// Initialize custom metrics
 	initMetrics()

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: rancher-upgrade-tool
+version: 0.1.0
+appVersion: 0.1.0
+description: A Helm chart for rancher.tips website
+keywords:
+  - kubernetes
+  - website
+home: https://rancher.tips
+sources:
+  - https://github.com/supporttools/rancher-upgrade-tool
+maintainers:
+  - name: mattmattox
+    email: mmattox@support.tools
+icon: https://raw.githubusercontent.com/rancher/ui/master/public/assets/images/logos/welcome-cow.svg

@@ -1,0 +1,11 @@
+# .dockerignore
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+node_modules
+tmp
+vendor
+**/*.swp
+**/*~
+main

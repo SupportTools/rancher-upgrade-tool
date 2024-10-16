@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"sort"
 	"strings"
 
-	"io/ioutil"
-	"os"
-
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/hashicorp/go-version"
 )
 
@@ -48,7 +48,7 @@ func LoadUpgradePaths() UpgradePaths {
 	}
 	defer file.Close()
 
-	bytes, _ := ioutil.ReadAll(file)
+	bytes, _ := io.ReadAll(file)
 	var paths UpgradePaths
 	json.Unmarshal(bytes, &paths)
 	return paths
@@ -304,9 +304,21 @@ func GetKeyVersions(versions []string) []string {
 
 func main() {
 	app := fiber.New()
+
+	// Add the logger middleware
+	app.Use(logger.New(logger.Config{
+		Format:     "[${time}] ${ip} ${status} - ${latency} ${method} ${path}\n",
+		TimeFormat: "2006-01-02 15:04:05",
+		TimeZone:   "Local",
+	}))
+
 	upgradePaths := LoadUpgradePaths()
 
 	app.Static("/", "./static")
+
+	app.Get("/healthz", func(c *fiber.Ctx) error {
+		return c.SendString("OK")
+	})
 
 	// API route to generate the upgrade plan
 	app.Get("/api/plan-upgrade/:platform/:rancher/:k8s", func(c *fiber.Ctx) error {

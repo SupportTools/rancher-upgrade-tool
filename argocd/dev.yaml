@@ -1,0 +1,47 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: rancherupgrade
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  description: Rancher-Upgrade-Tool
+  destinations:
+    - namespace: "*"
+      server: "*"
+  sourceRepos:
+    - "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rancherupgrade-dev
+  namespace: argocd
+spec:
+  destination:
+    namespace: rancherupgrade-dev
+    server: https://kubernetes.default.svc
+  project: supporttools
+  source:
+    chart: website
+    helm:
+      parameters:
+        - name: ingress.host
+          value: dev.rancher.tips
+    repoURL: https://charts.support.tools
+    targetRevision: CHARTVERSION
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: "30m"
+        factor: 2
+        maxDuration: "5m"

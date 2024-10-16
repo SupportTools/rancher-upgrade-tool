@@ -1,0 +1,283 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Install static analysis tools
+        run: |
+          go install golang.org/x/lint/golint@latest
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Install dependency management tools
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          go install github.com/psampaz/go-mod-outdated@latest
+
+      - name: Go static analysis
+        run: |
+          golint ./...
+          staticcheck ./...
+          go vet ./...
+
+      - name: Dependency management
+        run: |
+          go mod vendor
+          go mod verify
+          go mod tidy
+
+      - name: Security scanning
+        run: |
+          gosec ./...
+
+      - name: Generate Swagger documentation
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init -g main.go
+
+  Build:
+    needs: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker build backend
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --pull \
+            --build-arg VERSION="v${{ github.run_number }}" \
+            --build-arg GIT_COMMIT="${{ github.sha }}" \
+            --build-arg BUILD_DATE="$(date -u '+%Y-%m-%dT%H:%M:%SZ')" \
+            --cache-from supporttools/rancher-upgrade-tool:latest \
+            -t supporttools/rancher-upgrade-tool:v${{ github.run_number }} \
+            -t supporttools/rancher-upgrade-tool:latest \
+            --push \
+            -f Dockerfile .
+
+  Publish:
+    runs-on: ubuntu-latest
+    needs:
+      - Build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+
+      - name: Helm Lint
+        run: helm lint charts/rancher-upgrade-tool/
+
+      - name: Package Helm chart
+        run: |
+          export CHART_VERSION="v${{ github.run_number }}"
+          export APP_VERSION="v${{ github.run_number }}"
+          export IMAGE_TAG="v${{ github.run_number }}"
+          echo "CHART_VERSION=${CHART_VERSION}"
+          echo "APP_VERSION=${APP_VERSION}"
+          echo "IMAGE_TAG=${IMAGE_TAG}"
+          envsubst < charts/rancher-upgrade-tool/Chart.yaml.template > charts/rancher-upgrade-tool/Chart.yaml
+          envsubst < charts/rancher-upgrade-tool/values.yaml.template > charts/rancher-upgrade-tool/values.yaml
+          helm package charts/rancher-upgrade-tool --destination helm/repo
+
+      - name: Checkout helm-chart repository
+        uses: actions/checkout@v4
+        with:
+          repository: fruition/helm-chart
+          path: helm-chart
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-action@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Update Helm repository
+        run: |
+          cp helm/repo/fru-ops-*.tgz helm-chart/
+          cd helm-chart
+          helm repo index . --url https://charts.support.tools/
+          git add .
+          git commit -m "Update Helm chart for support.tools"
+          git push
+
+  Deploy-to-LOM:
+    runs-on: self-hosted-runner
+    needs: Publish
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - name: Install and Configure rancher-projects
+        run: |
+          curl -fsSL -o rancher-projects.tar.gz https://github.com/SupportTools/rancher-projects/releases/download/v0.2.2/rancher-projects_0.2.2_linux_amd64.tar.gz
+          tar -xvf rancher-projects.tar.gz
+          chmod +x rancher-projects
+          sudo mv rancher-projects /usr/local/bin/
+          rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name a1-ops-prd --project-name "SupportTools" --namespace supporttools --create-kubeconfig --kubeconfig "kubeconfig"
+ 
+      - name: Deploy Dev
+        run: |
+          cat ./argocd/dev.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-dev -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+          fi
+          
+      - name: Deploy Test
+        run: |
+          cat ./argocd/tst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-tst -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+          fi
+
+      - name: Deploy Staging
+        run: |
+          cat ./argocd/stg.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-stg -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+          fi          
+          
+      - name: Deploy Prod
+        run: |
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-prd -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+          fi
+        
+  Deploy-to-NYC3:
+    runs-on: self-hosted-runner
+    needs: Deploy-to-LOM
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - name: Install and Configure rancher-projects
+        run: |
+          curl -fsSL -o rancher-projects.tar.gz https://github.com/SupportTools/rancher-projects/releases/download/v0.2.2/rancher-projects_0.2.2_linux_amd64.tar.gz
+          tar -xvf rancher-projects.tar.gz
+          chmod +x rancher-projects
+          sudo mv rancher-projects /usr/local/bin/
+          rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name d1-doks-nyc3 --project-name "Rancher-Upgrade-Tool" --namespace argocd --create-kubeconfig --kubeconfig "kubeconfig"
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+
+  Deploy-to-SFO3:
+    runs-on: self-hosted-runner
+    needs: Deploy-to-LOM
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - name: Install and Configure rancher-projects
+        run: |
+          curl -fsSL -o rancher-projects.tar.gz https://github.com/SupportTools/rancher-projects/releases/download/v0.2.2/rancher-projects_0.2.2_linux_amd64.tar.gz
+          tar -xvf rancher-projects.tar.gz
+          chmod +x rancher-projects
+          sudo mv rancher-projects /usr/local/bin/
+          rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name d2-doks-sfo3 --project-name "SupportTools" --namespace argocd --create-kubeconfig --kubeconfig "kubeconfig"
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+        

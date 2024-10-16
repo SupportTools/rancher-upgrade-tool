@@ -114,7 +114,7 @@ jobs:
 
       - name: Update Helm repository
         run: |
-          cp helm/repo/fru-ops-*.tgz helm-chart/
+          cp helm/repo/rancher-upgrade-tool-*.tgz helm-chart/
           cd helm-chart
           helm repo index . --url https://charts.support.tools/
           git add .

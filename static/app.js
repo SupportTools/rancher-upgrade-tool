@@ -4,7 +4,8 @@ document.getElementById('planButton').addEventListener('click', async () => {
     const k8sVersion = document.getElementById('currentK8s').value;
 
     if (!rancherVersion || !k8sVersion) {
-        document.getElementById('planOutput').innerText = 'Please enter both Rancher and Kubernetes versions.';
+        document.getElementById('planOutput').innerText =
+            'Please enter both Rancher and Kubernetes versions.';
         return;
     }
 
@@ -27,14 +28,18 @@ document.getElementById('planButton').addEventListener('click', async () => {
 
 // Helper function to format the upgrade plan
 function formatUpgradePlan(upgradePath) {
-    let formatted = '<strong>Upgrade Plan</strong>';
+    let formatted = '';
+    let firstRancherUpgrade = true; // Track the first Rancher upgrade step
 
     upgradePath.forEach((step) => {
         if (step.type === 'Rancher') {
-            formatted += `<br><hr><br>`;
-            formatted += `Rancher from ${step.from} -> ${step.to}<br>`;
+            if (!firstRancherUpgrade) {
+                formatted += `<br><hr><br>`; // Add separator between Rancher upgrades
+            }
+            formatted += `Rancher ${step.from} -> ${step.to}<br>`;
+            firstRancherUpgrade = false; // Set the flag to false after the first step
         } else if (step.type === 'Kubernetes') {
-            formatted += `${step.platform} from ${step.from} -> ${step.to}<br>`;
+            formatted += `${step.platform} ${step.from} -> ${step.to}<br>`;
         }
     });
 

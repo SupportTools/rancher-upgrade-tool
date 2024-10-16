@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rancher & Kubernetes Upgrade Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Rancher Logo -->
+        <img src="https://www.rancher.com/assets/img/brand-guidelines/assets/logos/png/color/rancher-suse-logo-horizontal-color.png"
+            alt="Rancher Logo" class="logo">
+
+        <h1>Rancher & Kubernetes Upgrade Planner</h1>
+
+        <div class="input-group">
+            <label for="platform">Platform</label>
+            <select id="platform">
+                <option value="RKE1">RKE1</option>
+                <option value="RKE2">RKE2</option>
+                <option value="K3s">K3s</option>
+                <option value="AKS">AKS</option>
+                <option value="EKS">EKS</option>
+                <option value="GKE">GKE</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="currentRancher">Current Rancher Version</label>
+            <input type="text" id="currentRancher" placeholder="e.g., 2.6.8">
+        </div>
+
+        <div class="input-group">
+            <label for="currentK8s">Current Kubernetes Version</label>
+            <input type="text" id="currentK8s" placeholder="e.g., v1.23">
+        </div>
+
+        <button id="planButton">Plan Upgrade</button>
+
+        <pre id="planOutput"></pre>
+    </div>
+</body>
+
+</html>

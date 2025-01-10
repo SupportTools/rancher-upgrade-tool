@@ -6,7 +6,7 @@ on:
 
 jobs:
   Test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
 
     steps:
       - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
 
   Build:
     needs: Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
 
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
             -f Dockerfile .
 
   Publish:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs:
       - Build
 
@@ -122,7 +122,7 @@ jobs:
           git push
 
   Deploy-to-NPD:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Publish
 
     steps:
@@ -213,7 +213,7 @@ jobs:
           fi
 
   Deploy-to-CHI1:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:
@@ -233,7 +233,7 @@ jobs:
           cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
         
   Deploy-to-NYC3:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:
@@ -253,7 +253,7 @@ jobs:
           cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
 
   Deploy-to-SFO3:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:

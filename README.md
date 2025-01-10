@@ -1,19 +1,6 @@
 # Rancher Upgrade Tool  
 
-[![CI/CD](https://github.com/SupportTools/rancher-upgrade-tool/actions/workflows/pipeline.yml/badge.svg)](https://github.com/SupportTools/rancher-upgrade-tool/actions/workflows/pipeline.yml)  
-[![Go Report Card](https://goreportcard.com/badge/github.com/SupportTools/rancher-upgrade-tool)](https://goreportcard.com/report/github.com/SupportTools/rancher-upgrade-tool)  
-[![Codecov](https://codecov.io/gh/SupportTools/rancher-upgrade-tool/graph/badge.svg?token=ztpyFvZtOa)](https://codecov.io/gh/SupportTools/rancher-upgrade-tool) 
-[![Coverage Status](https://coveralls.io/repos/github/SupportTools/rancher-upgrade-tool/badge.svg?branch=main)](https://coveralls.io/github/SupportTools/rancher-upgrade-tool?branch=main)  
-[![GoDoc](https://pkg.go.dev/badge/github.com/SupportTools/rancher-upgrade-tool)](https://pkg.go.dev/github.com/SupportTools/rancher-upgrade-tool)  
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/SupportTools/rancher-upgrade-tool)](https://pkg.go.dev/github.com/SupportTools/rancher-upgrade-tool)  
-[![GitHub stars](https://img.shields.io/github/stars/SupportTools/rancher-upgrade-tool?style=social)](https://github.com/SupportTools/rancher-upgrade-tool/stargazers)  
-[![GitHub forks](https://img.shields.io/github/forks/SupportTools/rancher-upgrade-tool?style=social)](https://github.com/SupportTools/rancher-upgrade-tool/network/members)  
-[![DepShield Badge](https://depshield.sonatype.org/badges/SupportTools/rancher-upgrade-tool/depshield.svg)](https://depshield.github.io)  
-[![CodeFactor](https://www.codefactor.io/repository/github/supporttools/rancher-upgrade-tool/badge)](https://www.codefactor.io/repository/github/supporttools/rancher-upgrade-tool)  
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1e3b3b3b1b7b4b5b8b3b4b5b3b4b5b3)](https://www.codacy.com/gh/SupportTools/rancher-upgrade-tool/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SupportTools/rancher-upgrade-tool&amp;utm_campaign=Badge_Grade)  
-[![License](https://img.shields.io/github/license/SupportTools/rancher-upgrade-tool)](LICENSE)  
-[![Docker Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-upgrade-tool)](https://hub.docker.com/r/supporttools/rancher-upgrade-tool)  
-[![Docker Image Size](https://img.shields.io/docker/image-size/supporttools/rancher-upgrade-tool/latest)](https://hub.docker.com/r/supporttools/rancher-upgrade-tool)  
+[![CI/CD](https://github.com/SupportTools/rancher-upgrade-tool/actions/workflows/pipeline.yml/badge.svg)](https://github.com/SupportTools/rancher-upgrade-tool/actions/workflows/pipeline.yml)  [![Go Report Card](https://goreportcard.com/badge/github.com/SupportTools/rancher-upgrade-tool)](https://goreportcard.com/report/github.com/SupportTools/rancher-upgrade-tool)  [![Codecov](https://codecov.io/gh/SupportTools/rancher-upgrade-tool/graph/badge.svg?token=ztpyFvZtOa)](https://codecov.io/gh/SupportTools/rancher-upgrade-tool)  [![GoDoc](https://pkg.go.dev/badge/github.com/SupportTools/rancher-upgrade-tool)](https://pkg.go.dev/github.com/SupportTools/rancher-upgrade-tool)  [![GitHub stars](https://img.shields.io/github/stars/SupportTools/rancher-upgrade-tool?style=social)](https://github.com/SupportTools/rancher-upgrade-tool/stargazers)  [![GitHub forks](https://img.shields.io/github/forks/SupportTools/rancher-upgrade-tool?style=social)](https://github.com/SupportTools/rancher-upgrade-tool/network/members)  [![License](https://img.shields.io/github/license/SupportTools/rancher-upgrade-tool)](LICENSE)  [![Docker Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-upgrade-tool)](https://hub.docker.com/r/supporttools/rancher-upgrade-tool)  [![Docker Image Size](https://img.shields.io/docker/image-size/supporttools/rancher-upgrade-tool/latest)](https://hub.docker.com/r/supporttools/rancher-upgrade-tool)  
 
 The Rancher Upgrade Tool simplifies generating an upgrade plan for Rancher and Kubernetes versions. It uses compatibility rules stored in a JSON file to ensure smooth and efficient upgrades. Visit [Rancher Tips](https://rancher.tips/) for more insights.
 

@@ -8,7 +8,7 @@ spec:
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
-  description: Rancher-Upgrade-Tool
+  description: rancher.tips
   destinations:
     - namespace: "*"
       server: "*"
@@ -24,7 +24,7 @@ spec:
   destination:
     namespace: rancherupgrade-prd
     server: https://kubernetes.default.svc
-  project: supporttools
+  project: rancherupgrade
   source:
     chart: rancher-upgrade-tool
     helm:

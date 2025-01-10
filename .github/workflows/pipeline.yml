@@ -124,7 +124,7 @@ jobs:
           git push
 
   Deploy-to-NPD:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Publish
 
     steps:
@@ -141,7 +141,31 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name a1-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
- 
+
+      - name: Deploy Master
+        run: |
+          cat ./argocd/mst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-mst -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+            fi
+  
       - name: Deploy Dev
         run: |
           cat ./argocd/dev.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
@@ -152,6 +176,30 @@ jobs:
           COUNTER=0
           while [ $COUNTER -lt $MAX_TRIES ]; do
             HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-dev -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
+            echo "Current health status: $HEALTH_STATUS"
+            if [ "$HEALTH_STATUS" = "Healthy" ]; then
+              echo "Application is healthy."
+              break
+            fi
+            echo "Waiting for application to become healthy..."
+            sleep $SLEEP_TIME
+            let COUNTER=COUNTER+1
+          done
+          if [ $COUNTER -eq $MAX_TRIES ]; then
+            echo "Application did not become healthy in time."
+            exit 1
+          fi
+  
+      - name: Deploy QAS
+        run: |
+          cat ./argocd/qas.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          sleep 30
+          # Wait for the application to become healthy
+          MAX_TRIES=30
+          SLEEP_TIME=10
+          COUNTER=0
+          while [ $COUNTER -lt $MAX_TRIES ]; do
+            HEALTH_STATUS=$(kubectl get applications.argoproj.io rancherupgrade-qas -n argocd -o jsonpath='{.status.health.status}' --kubeconfig kubeconfig)
             echo "Current health status: $HEALTH_STATUS"
             if [ "$HEALTH_STATUS" = "Healthy" ]; then
               echo "Application is healthy."
@@ -212,10 +260,10 @@ jobs:
           if [ $COUNTER -eq $MAX_TRIES ]; then
             echo "Application did not become healthy in time."
             exit 1
-          fi
+          fi          
 
   Deploy-to-CHI1:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:
@@ -232,10 +280,10 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name a1-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
         
   Deploy-to-NYC3:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:
@@ -243,7 +291,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v3
   
       - name: Install and Configure rancher-projects
         run: |
@@ -252,10 +300,10 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name n3-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
 
   Deploy-to-SFO3:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs: Deploy-to-NPD
 
     steps:
@@ -263,7 +311,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v3
   
       - name: Install and Configure rancher-projects
         run: |
@@ -272,4 +320,4 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name s3-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -          
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -

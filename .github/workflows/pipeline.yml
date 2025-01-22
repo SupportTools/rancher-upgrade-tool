@@ -120,7 +120,7 @@ jobs:
           cd helm-chart
           helm repo index . --url https://charts.support.tools/
           git add .
-          git commit -m "Update Helm chart for support.tools"
+          git commit -m "Update Helm chart for rancher-upgrade-tool"
           git push
 
   Deploy-to-NPD:

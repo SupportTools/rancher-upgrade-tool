@@ -18,11 +18,11 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rancherupgrade-mst
+  name: rancherupgrade-tst
   namespace: argocd
 spec:
   destination:
-    namespace: rancherupgrade-mst
+    namespace: rancherupgrade-tst
     server: https://kubernetes.default.svc
   project: rancherupgrade
   source:
@@ -30,7 +30,7 @@ spec:
     helm:
       parameters:
         - name: ingress.host
-          value: mst.rancher.tips
+          value: tst.rancher.tips
     repoURL: https://charts.support.tools
     targetRevision: CHARTVERSION
   syncPolicy:

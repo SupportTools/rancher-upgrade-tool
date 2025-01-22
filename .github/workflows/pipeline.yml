@@ -144,7 +144,7 @@ jobs:
 
       - name: Deploy Master
         run: |
-          cat ./argocd/mst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/mst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
           sleep 30
           # Wait for the application to become healthy
           MAX_TRIES=30
@@ -168,7 +168,7 @@ jobs:
   
       - name: Deploy Dev
         run: |
-          cat ./argocd/dev.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/dev.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
           sleep 30
           # Wait for the application to become healthy
           MAX_TRIES=30
@@ -192,7 +192,7 @@ jobs:
   
       - name: Deploy QAS
         run: |
-          cat ./argocd/qas.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/qas.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
           sleep 30
           # Wait for the application to become healthy
           MAX_TRIES=30
@@ -216,7 +216,7 @@ jobs:
           
       - name: Deploy Test
         run: |
-          cat ./argocd/tst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/tst.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
           sleep 30
           # Wait for the application to become healthy
           MAX_TRIES=30
@@ -240,7 +240,7 @@ jobs:
 
       - name: Deploy Staging
         run: |
-          cat ./argocd/stg.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/stg.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
           sleep 30
           # Wait for the application to become healthy
           MAX_TRIES=30
@@ -280,7 +280,7 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name a1-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
         
   Deploy-to-NYC3:
     runs-on: ubuntu-latest
@@ -300,7 +300,7 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name n3-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -
 
   Deploy-to-SFO3:
     runs-on: ubuntu-latest
@@ -320,4 +320,4 @@ jobs:
           chmod +x rancher-projects
           sudo mv rancher-projects /usr/local/bin/
           rancher-projects --rancher-server ${{ secrets.CATTLE_SERVER }} --rancher-access-key ${{ secrets.CATTLE_ACCESS_KEY }} --rancher-secret-key ${{ secrets.CATTLE_SECRET_KEY }} --cluster-name s3-ops-prd --project-name "RancherUpgrade" --namespace rancherupgrade --create-kubeconfig --kubeconfig "kubeconfig"
-          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig apply -f -
+          cat ./argocd/prd.yaml | sed "s/CHARTVERSION/v${{ github.run_number }}/g" | kubectl --kubeconfig kubeconfig replace -f -

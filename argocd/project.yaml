@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: rancherupgrade
+spec:
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  description: rancher.tips
+  destinations:
+    - namespace: "*"
+      server: "*"
+  sourceRepos:
+    - "*"

@@ -1,25 +1,7 @@
----
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: rancherupgrade
-  namespace: argocd
-spec:
-  clusterResourceWhitelist:
-    - group: "*"
-      kind: "*"
-  description: rancher.tips
-  destinations:
-    - namespace: "*"
-      server: "*"
-  sourceRepos:
-    - "*"
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: rancherupgrade-qas
-  namespace: argocd
 spec:
   destination:
     namespace: rancherupgrade-qas

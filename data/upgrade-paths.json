@@ -1,5 +1,545 @@
 {
     "rancher_manager": {
+        "2.5.0": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.16.15",
+                    "max_version": "v1.19.2",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.12+k3s1",
+                    "max_version": "v1.19.2+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.1": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.16.15",
+                    "max_version": "v1.19.2",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.12+k3s1",
+                    "max_version": "v1.19.2+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.2": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.16.15",
+                    "max_version": "v1.19.3",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.12+k3s1",
+                    "max_version": "v1.19.3+k3s3"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.8"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.3": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.16.15",
+                    "max_version": "v1.19.3",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.12+k3s1",
+                    "max_version": "v1.19.3+k3s3"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.8"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.4": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.16.15",
+                    "max_version": "v1.19.6",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.12+k3s1",
+                    "max_version": "v1.19.5+k3s2"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.8"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.5": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.16",
+                    "max_version": "v1.19.6",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.15+k3s1",
+                    "max_version": "v1.19.5+k3s2"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.10"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.8"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.6": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.4",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.4+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.19.6"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.9"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.7": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.4",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.4+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.19.6"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.9"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.9"
+                }
+            ]
+        },
+        "2.5.8": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.4",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.6+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.5"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.16"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.15"
+                }
+            ]
+        },
+        "2.5.9": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.8",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.6+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.5"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.18.16"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.17.15"
+                }
+            ]
+        },
+        "2.5.10": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.11",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.6+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.5"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.11": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.12",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.11+k3s2"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.5"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.12": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.14-rancher2-1",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.18.20",
+                    "max_version": "v1.20.14+rke2r2",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.14+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.13": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.15-rancher1-2",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.18.20",
+                    "max_version": "v1.20.15+rke2r2",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.15+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.14": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.15-rancher1-3",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.18.20+rke2r1",
+                    "max_version": "v1.20.15+rke2r2",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.15+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.15": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17",
+                    "max_version": "v1.20.15-rancher1-3",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.18.20+rke2r1",
+                    "max_version": "v1.20.15+rke2r2",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.15+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
+        "2.5.16": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.17.17-rancher2-4",
+                    "max_version": "v1.20.15-rancher2-1",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.18.20+rke2r1",
+                    "max_version": "v1.20.15+rke2r2",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.17.17+k3s1",
+                    "max_version": "v1.20.15+k3s1"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.9"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.x"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.16",
+                    "max_version": "v1.20.10-gke.301"
+                }
+            ]
+        },
         "2.6.0": {
             "supported_platforms": [
                 {
@@ -770,6 +1310,108 @@
                 }
             ]
         },
+        "2.7.16": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                }
+            ]
+        },
+        "2.7.17": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                }
+            ]
+        },
+        "2.7.18": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.23",
+                    "max_version": "v1.27"
+                }
+            ]
+        },
         "2.8.1": {
             "supported_platforms": [
                 {
@@ -1066,6 +1708,154 @@
                 }
             ]
         },
+        "2.8.9": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                }
+            ]
+        },
+        "2.8.10": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                }
+            ]
+        },
+        "2.8.11": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                }
+            ]
+        },
+        "2.8.12": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.25",
+                    "max_version": "v1.28"
+                }
+            ]
+        },
         "2.9.1": {
             "supported_platforms": [
                 {
@@ -1137,6 +1927,228 @@
                     "platform": "GKE",
                     "min_version": "v1.27",
                     "max_version": "v1.30"
+                }
+            ]
+        },
+        "2.9.3": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                }
+            ]
+        },
+        "2.9.4": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                }
+            ]
+        },
+        "2.9.5": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                }
+            ]
+        },
+        "2.9.6": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.27",
+                    "max_version": "v1.30"
+                }
+            ]
+        },
+        "2.10.1": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.10.2": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See k3s Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
                 }
             ]
         }

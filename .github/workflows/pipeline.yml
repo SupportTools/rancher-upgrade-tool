@@ -143,8 +143,18 @@ jobs:
       - name: Setup Kubeconfig
         run: |
           if [[ "${{ matrix.environment }}" == "prd" ]]; then
+            if [[ -z "${{ secrets.KUBECONFIG_PRD }}" ]]; then
+              echo "Error: KUBECONFIG_PRD secret is not set or is empty"
+              echo "Please configure the KUBECONFIG_PRD secret in GitHub repository settings"
+              exit 1
+            fi
             echo "${{ secrets.KUBECONFIG_PRD }}" | base64 -d > kubeconfig
           else
+            if [[ -z "${{ secrets.KUBECONFIG_DEV }}" ]]; then
+              echo "Error: KUBECONFIG_DEV secret is not set or is empty"
+              echo "Please configure the KUBECONFIG_DEV secret in GitHub repository settings"
+              exit 1
+            fi
             echo "${{ secrets.KUBECONFIG_DEV }}" | base64 -d > kubeconfig
           fi
           chmod 600 kubeconfig
@@ -152,6 +162,7 @@ jobs:
           # Verify kubeconfig is valid
           if ! kubectl --kubeconfig=kubeconfig config view --minify > /dev/null 2>&1; then
             echo "Error: Invalid kubeconfig file"
+            echo "The kubeconfig file exists but appears to be malformed"
             exit 1
           fi
           

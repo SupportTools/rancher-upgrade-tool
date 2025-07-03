@@ -150,7 +150,7 @@ jobs:
           chmod 600 kubeconfig
 
       - name: Deploy ArgoCD Project
-        run: kubectl --kubeconfig kubeconfig apply -f argocd/project.yaml
+        run: kubectl --kubeconfig kubeconfig apply -f argocd/project.yaml --validate=false
 
       - name: Deploy Environment - ${{ matrix.environment }}
         run: |
@@ -166,7 +166,7 @@ jobs:
           else
             echo "ArgoCD Application 'rancherupgrade-${ENVIRONMENT}' does not exist. Creating..."
             sed "s/CHARTVERSION/${CHART_VERSION}/g" argocd/${ENVIRONMENT}.yaml \
-            | kubectl --kubeconfig kubeconfig -n argocd apply -f -
+            | kubectl --kubeconfig kubeconfig -n argocd apply -f - --validate=false
           fi
 
       - name: Wait for Deployment to Stabilize

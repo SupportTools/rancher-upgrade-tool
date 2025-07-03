@@ -148,9 +148,18 @@ jobs:
             echo "${{ secrets.KUBECONFIG_DEV }}" | base64 -d > kubeconfig
           fi
           chmod 600 kubeconfig
+          
+          # Verify kubeconfig is valid
+          if ! kubectl --kubeconfig=kubeconfig config view --minify > /dev/null 2>&1; then
+            echo "Error: Invalid kubeconfig file"
+            exit 1
+          fi
+          
+          # Set KUBECONFIG environment variable
+          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
       - name: Deploy ArgoCD Project
-        run: kubectl --kubeconfig kubeconfig apply -f argocd/project.yaml --validate=false
+        run: kubectl apply -f argocd/project.yaml --validate=false
 
       - name: Deploy Environment - ${{ matrix.environment }}
         run: |
@@ -158,15 +167,15 @@ jobs:
           CHART_VERSION="v${{ github.run_number }}"
 
           # Check if application exists
-          if kubectl --kubeconfig kubeconfig -n argocd get application rancherupgrade-${ENVIRONMENT} &>/dev/null; then
+          if kubectl -n argocd get application rancherupgrade-${ENVIRONMENT} &>/dev/null; then
             echo "ArgoCD Application 'rancherupgrade-${ENVIRONMENT}' exists. Patching targetRevision to ${CHART_VERSION}."
-            kubectl --kubeconfig kubeconfig -n argocd patch application "rancherupgrade-${ENVIRONMENT}" \
+            kubectl -n argocd patch application "rancherupgrade-${ENVIRONMENT}" \
               --type merge \
               -p "{\"spec\":{\"source\":{\"targetRevision\":\"${CHART_VERSION}\"}}}"
           else
             echo "ArgoCD Application 'rancherupgrade-${ENVIRONMENT}' does not exist. Creating..."
             sed "s/CHARTVERSION/${CHART_VERSION}/g" argocd/${ENVIRONMENT}.yaml \
-            | kubectl --kubeconfig kubeconfig -n argocd apply -f - --validate=false
+            | kubectl -n argocd apply -f - --validate=false
           fi
 
       - name: Wait for Deployment to Stabilize
@@ -175,7 +184,7 @@ jobs:
           SLEEP_TIME=10
           COUNTER=0
           while [ $COUNTER -lt $MAX_TRIES ]; do
-            HEALTH_STATUS=$(kubectl --kubeconfig kubeconfig -n argocd get applications rancherupgrade-${{ matrix.environment }} -o jsonpath='{.status.health.status}')
+            HEALTH_STATUS=$(kubectl -n argocd get applications rancherupgrade-${{ matrix.environment }} -o jsonpath='{.status.health.status}')
             echo "Current health status: $HEALTH_STATUS"
             if [ "$HEALTH_STATUS" = "Healthy" ]; then
               echo "Application is healthy."

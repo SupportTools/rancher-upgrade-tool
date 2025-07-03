@@ -2151,6 +2151,302 @@
                     "max_version": "v1.31"
                 }
             ]
+        },
+        "2.10.3": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "v1.31 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.10.4": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "v1.31 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.10.5": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "v1.31 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.10.6": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "v1.31 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.10.7": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31",
+                    "notes": "v1.31 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.28",
+                    "max_version": "v1.31"
+                }
+            ]
+        },
+        "2.11.1": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "v1.32 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                }
+            ]
+        },
+        "2.11.2": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "v1.32 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                }
+            ]
+        },
+        "2.11.3": {
+            "supported_platforms": [
+                {
+                    "platform": "RKE2",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE2 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "RKE1",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "See RKE1 Support Matrix for specific system requirements"
+                },
+                {
+                    "platform": "K3s",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32",
+                    "notes": "v1.32 is supported on x86 architecture only"
+                },
+                {
+                    "platform": "AKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "EKS",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                },
+                {
+                    "platform": "GKE",
+                    "min_version": "v1.30",
+                    "max_version": "v1.32"
+                }
+            ]
         }
     }
 }

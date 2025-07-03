@@ -142,7 +142,7 @@ jobs:
 
       - name: Setup Kubeconfig
         run: |
-          if [[ "${{ matrix.environment }}" == "prd" ]]; then
+          if [[ "${{ matrix.environment }}" == "prd" ]] || [[ "${{ matrix.environment }}" == "stg" ]]; then
             if [[ -z "${{ secrets.KUBECONFIG_PROD }}" ]]; then
               echo "Error: KUBECONFIG_PROD secret is not set or is empty"
               echo "Please configure the KUBECONFIG_PROD secret in GitHub repository settings"

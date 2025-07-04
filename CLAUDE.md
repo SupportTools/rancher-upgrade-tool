@@ -61,8 +61,8 @@ The application is structured as a single-file Go service (`main.go`) with the f
    - Returns JSON response with upgrade steps
 
 2. **Platform-Specific Rules**:
-   - RKE1/RKE2/K3s: Can skip minor Kubernetes versions
-   - AKS/EKS/GKE: Must upgrade incrementally (cannot skip versions)
+   - All platforms (RKE1/RKE2/K3s/AKS/EKS/GKE): Must upgrade Kubernetes incrementally (cannot skip minor versions)
+   - Example: v1.24 → v1.25 → v1.26 (cannot skip from v1.24 to v1.26)
 
 ### Key Data Structure
 

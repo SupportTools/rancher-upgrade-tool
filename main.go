@@ -156,7 +156,9 @@ func PlanUpgrade(currentRancher, currentK8s, platform string, versions []string,
 	return upgradeSteps, nil
 }
 
-// GetAllowedK8sUpgrades determines the Kubernetes upgrade path based on platform rules
+// GetAllowedK8sUpgrades determines the Kubernetes upgrade path
+// All platforms now require sequential minor version upgrades (e.g., v1.24 -> v1.25 -> v1.26)
+// Skipping minor versions is no longer allowed for any platform
 func GetAllowedK8sUpgrades(currentK8s, platform string, r1, r2 RancherManagerVersion) []UpgradeStep {
 	var upgrades []UpgradeStep
 	k8sVersions := getSortedK8sVersions(platform, r1, r2)
@@ -172,8 +174,9 @@ func GetAllowedK8sUpgrades(currentK8s, platform string, r1, r2 RancherManagerVer
 		sort.Sort(version.Collection(k8sVersions))
 	}
 
-	// Decide whether to allow skipping minor versions based on platform
-	allowSkip := platform == "rke1" || platform == "rke2" || platform == "k3s"
+	// No longer allow skipping minor versions for any platform
+	// All platforms must upgrade sequentially (e.g., v1.24 -> v1.25 -> v1.26)
+	allowSkip := false
 
 	for {
 		nextVer := findNextAcceptableK8sVersion(currentVer, k8sVersions, allowSkip)
@@ -194,17 +197,17 @@ func GetAllowedK8sUpgrades(currentK8s, platform string, r1, r2 RancherManagerVer
 }
 
 // findNextAcceptableK8sVersion finds the next acceptable Kubernetes version
-func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*version.Version, allowSkip bool) *version.Version {
+// Since we no longer allow skipping, this will always return the next minor version
+func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*version.Version, _ bool) *version.Version {
 	currentSegments := currentVer.Segments()
 	if len(currentSegments) < 2 {
 		return nil
 	}
+	currentMajor := currentSegments[0]
 	currentMinor := currentSegments[1]
-	maxAllowedMinor := currentMinor + 1
-	if allowSkip {
-		maxAllowedMinor = currentMinor + 2
-	}
+	targetMinor := currentMinor + 1
 
+	// Find the next minor version (no skipping allowed)
 	var candidate *version.Version
 	for _, v := range k8sVersions {
 		if v.LessThanOrEqual(currentVer) {
@@ -214,14 +217,22 @@ func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*ve
 		if len(nextSegments) < 2 {
 			continue
 		}
+		nextMajor := nextSegments[0]
 		nextMinor := nextSegments[1]
-		if nextMinor > maxAllowedMinor {
-			break // No further versions are acceptable
+		
+		// Must be same major version
+		if nextMajor != currentMajor {
+			continue
 		}
-		candidate = v // Update candidate to the current acceptable version
-
-		if !allowSkip {
-			// For platforms that do not allow skipping, return the first acceptable version immediately
+		
+		// Must be exactly the next minor version
+		if nextMinor == targetMinor {
+			// Return the highest patch version of this minor
+			if candidate == nil || v.GreaterThan(candidate) {
+				candidate = v
+			}
+		} else if nextMinor > targetMinor && candidate != nil {
+			// We've found a higher minor version, so return the best candidate
 			break
 		}
 	}

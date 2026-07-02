@@ -126,8 +126,13 @@ jobs:
           git push
 
   Deploy:
-    runs-on: ubuntu-latest
+    # In-cluster ARC runner on a1-ops-prd (namespace arc-runners-supporttools); required so the
+    # runtime-minted, namespace-scoped token can reach the cluster's own apiserver + in-cluster CA.
+    runs-on: self-hosted-linux
     needs: Publish
+    permissions:
+      contents: read
+      id-token: write # required for GitHub OIDC -> Vault
     strategy:
       max-parallel: 1
       matrix:
@@ -140,37 +145,41 @@ jobs:
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
-      - name: Setup Kubeconfig
-        run: |
-          if [[ "${{ matrix.environment }}" == "prd" ]] || [[ "${{ matrix.environment }}" == "stg" ]]; then
-            if [[ -z "${{ secrets.KUBECONFIG_PROD }}" ]]; then
-              echo "Error: KUBECONFIG_PROD secret is not set or is empty"
-              echo "Please configure the KUBECONFIG_PROD secret in GitHub repository settings"
-              exit 1
-            fi
-            echo "${{ secrets.KUBECONFIG_PROD }}" | base64 -d > kubeconfig
-          else
-            if [[ -z "${{ secrets.KUBECONFIG_DEV }}" ]]; then
-              echo "Error: KUBECONFIG_DEV secret is not set or is empty"
-              echo "Please configure the KUBECONFIG_DEV secret in GitHub repository settings"
-              exit 1
-            fi
-            echo "${{ secrets.KUBECONFIG_DEV }}" | base64 -d > kubeconfig
-          fi
-          chmod 600 kubeconfig
-          
-          # Verify kubeconfig is valid
-          if ! kubectl --kubeconfig=kubeconfig config view --minify > /dev/null 2>&1; then
-            echo "Error: Invalid kubeconfig file"
-            echo "The kubeconfig file exists but appears to be malformed"
-            exit 1
-          fi
-          
-          # Set KUBECONFIG environment variable
-          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
+      # Keyless: GitHub OIDC -> Vault jwt auth. exportToken makes VAULT_TOKEN available to the mint step.
+      - name: Vault login (GitHub OIDC)
+        uses: hashicorp/vault-action@v3
+        with:
+          url: https://vault.support.tools
+          method: jwt
+          path: github-actions # the jwt auth mount
+          role: gha-rancher-upgrade-tool
+          jwtGithubAudience: https://github.com/SupportTools # matches bound_audiences
+          exportToken: true # -> VAULT_TOKEN env for the next step
 
-      - name: Deploy ArgoCD Project
-        run: kubectl apply -f argocd/project.yaml --validate=false
+      # Mint the short-lived (1h), namespace-scoped Kubernetes token and build a kubeconfig from it.
+      # The kubernetes secrets engine generates on WRITE (PUT + kubernetes_namespace), so it must be
+      # requested explicitly here. In-cluster runner => talk to a1-ops-prd's own apiserver + in-cluster CA.
+      - name: Mint short-lived Kubernetes token and build kubeconfig
+        env:
+          VAULT_ADDR: https://vault.support.tools
+        run: |
+          KUBE_TOKEN=$(curl -sf -H "X-Vault-Token: ${VAULT_TOKEN}" \
+            -X PUT -d '{"kubernetes_namespace":"arc-runners-supporttools"}' \
+            "${VAULT_ADDR}/v1/kubernetes-onprem/creds/rancher-upgrade-tool" \
+            | jq -r '.data.service_account_token')
+          test -n "$KUBE_TOKEN" && test "$KUBE_TOKEN" != null || { echo "::error::failed to mint K8s token"; exit 1; }
+          echo "::add-mask::$KUBE_TOKEN"
+          kubectl config set-cluster onprem \
+            --server=https://kubernetes.default.svc:443 \
+            --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+            --embed-certs=true --kubeconfig=kubeconfig
+          kubectl config set-credentials ci --token="${KUBE_TOKEN}" --kubeconfig=kubeconfig
+          kubectl config set-context ci --cluster=onprem --user=ci --namespace=argocd --kubeconfig=kubeconfig
+          kubectl config use-context ci --kubeconfig=kubeconfig
+          chmod 600 kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> "$GITHUB_ENV"
+
+      # ArgoCD AppProject is managed by cluster-services; the scoped CI token cannot apply AppProjects.
 
       - name: Deploy Environment - ${{ matrix.environment }}
         run: |

@@ -3,7 +3,7 @@
 # pipeline.yml chains Test -> Build -> Publish -> Deploy through `needs:` with no
 # `if:` branch guard on any job. The only thing keeping publication and deployment
 # off pull requests is that pipeline.yml has no `pull_request` trigger. Adding one
-# there would build an image, publish a chart to charts.support.tools, patch six
+# there would build an image, publish a chart to harbor.support.tools, patch six
 # ArgoCD applications and roll unmerged code to rancher.tips.
 #
 # So validation lives here instead, where publishing and deploying are structurally

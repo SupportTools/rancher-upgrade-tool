@@ -144,9 +144,30 @@ carry no releases; synthesizing them is the defect `getMinorVersionsBetween` emb
 ## Deployment
 
 The application is deployed using:
-- **Docker**: Multi-stage build with Alpine Linux
-- **Helm**: Charts in `/charts/rancher-upgrade-tool/`
-- **ArgoCD**: GitOps configurations in `/argocd/` for multiple environments
+- **Docker**: Multi-stage build on a pinned Alpine base. Image
+  `docker.io/supporttools/rancher-upgrade-tool:v<run_number>`.
+- **Helm**: Chart source in `/charts/rancher-upgrade-tool/`, published as an **OCI
+  artifact to Harbor**: `oci://harbor.support.tools/rancher-upgrade-tool/charts`.
+  Moved off the git-backed museum at charts.support.tools, which needed a `BOT_TOKEN`
+  that expired and blocked deploys entirely.
+- **ArgoCD**: `/argocd/` holds one Application per environment (mst, dev, qas, tst,
+  stg, prd), all pulling the chart from Harbor.
+
+Two things about the chart worth knowing before you touch the pipeline:
+
+1. **Chart versions must be SemVer2.** OCI registries reject anything else. The old
+   scheme produced `v219`, which has no minor or patch; it is now
+   `v0.<run_number>.0`. A leading `v` is fine, Helm strips it.
+2. **Authenticate with `docker/login-action`, never `helm registry login`.** Harbor's
+   token service satisfies Docker's auth handshake but rejects Helm's basic-auth
+   probe against `/v2/`, so `helm registry login` fails on correct credentials.
+   `helm push` reads `~/.docker/config.json` transparently.
+
+**ArgoCD sync status will read `Unknown` forever**, and that is expected: ArgoCD
+cannot compute a diff for an OCI Helm source. `scripts/verify-deploy.sh` therefore
+gates on **sync revision equality plus health plus a live known-answer probe**, not
+on `Synced`. Revision equality is the check that matters; it is what stops a healthy
+*old* revision from reporting a successful deploy.
 
 ## Important Considerations
 

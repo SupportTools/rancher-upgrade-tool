@@ -89,13 +89,57 @@ func TestDeployVerify_RejectsHealthyOldRevision(t *testing.T) {
 	}
 }
 
-// Right revision but still syncing. Must not pass just because health is stale.
+// Right revision but explicitly OutOfSync. Must still fail: that is a real
+// disagreement between desired and live state, not the OCI diff limitation.
 func TestDeployVerify_RejectsRightRevisionStillSyncing(t *testing.T) {
 	out, err := runVerify(t, deployScenario{
 		revision: "v42", syncState: "OutOfSync", health: "Healthy",
 	}, "")
 	if err == nil {
 		t.Fatalf("gate passed while sync status was OutOfSync:\n%s", out)
+	}
+}
+
+// OCI Helm sources make sync status PERMANENTLY Unknown, because ArgoCD cannot
+// diff a chart it cannot re-fetch at the deployed digest. The chart now comes from
+// Harbor over OCI, so requiring Synced would time out on every deploy.
+//
+// Accepting Unknown does not reopen the false-green: revision equality is the
+// check that closes it, and it still applies.
+func TestDeployVerify_AcceptsUnknownSyncForOCISources(t *testing.T) {
+	out, err := runVerify(t, deployScenario{
+		revision: "v42", syncState: "Unknown", health: "Healthy", phase: "Succeeded",
+	}, "")
+	if err != nil {
+		t.Fatalf("gate rejected the normal OCI state (correct revision, Healthy, "+
+			"Unknown sync). It would time out on every deploy: %v\n%s", err, out)
+	}
+	if !strings.Contains(out, "OCI") {
+		t.Errorf("output does not explain why Unknown was accepted:\n%s", out)
+	}
+}
+
+// Unknown sync is only acceptable BECAUSE the revision proves which chart is live.
+// A stale revision must still fail even when sync is Unknown.
+func TestDeployVerify_RejectsStaleRevisionEvenWhenSyncIsUnknown(t *testing.T) {
+	out, err := runVerify(t, deployScenario{
+		revision: "v41", syncState: "Unknown", health: "Healthy", phase: "Succeeded",
+	}, "")
+	if err == nil {
+		t.Fatalf("gate passed on a STALE revision just because sync was Unknown. "+
+			"That is the false-green with extra steps:\n%s", out)
+	}
+}
+
+// If ArgoCD reports no revision at all, the load-bearing check is gone and only
+// health remains, which is exactly the signal this gate exists to distrust.
+func TestDeployVerify_RejectsMissingRevisionRatherThanTrustingHealth(t *testing.T) {
+	out, err := runVerify(t, deployScenario{
+		revision: "", syncState: "Unknown", health: "Healthy", phase: "Succeeded",
+	}, "")
+	if err == nil {
+		t.Fatalf("gate passed with no sync.revision reported; nothing established "+
+			"WHICH chart was live:\n%s", out)
 	}
 }
 

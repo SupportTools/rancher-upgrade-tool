@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/supporttools/rancher-upgrade-tool/internal/catalog"
 	"github.com/supporttools/rancher-upgrade-tool/internal/planner"
@@ -188,4 +189,58 @@ func TestPlan_KubernetesVersionsRenderConsistently(t *testing.T) {
 			}
 		}
 	}
+}
+
+// Staleness must be visible on every response, not on a separate endpoint nobody
+// calls. A user acting on an upgrade plan should be able to see that the data
+// behind it stopped being refreshed.
+func TestCatalogInfo_ReportsFreshnessAndGoesStale(t *testing.T) {
+	c := &catalog.Catalog{GeneratedAt: "2026-09-01"}
+
+	fresh := catalogInfo(c, mustTime(t, "2026-09-10"))
+	if fresh.Stale {
+		t.Error("a 9-day-old catalog reported stale")
+	}
+	if fresh.AgeDays != 9 {
+		t.Errorf("AgeDays = %d, want 9", fresh.AgeDays)
+	}
+	if fresh.StaleNote != "" {
+		t.Error("fresh catalog carries a stale note")
+	}
+
+	old := catalogInfo(c, mustTime(t, "2026-11-01"))
+	if !old.Stale {
+		t.Error("a 61-day-old catalog did not report stale; silence is exactly how this " +
+			"dataset drifted four Rancher releases behind")
+	}
+	if old.StaleNote == "" {
+		t.Error("stale catalog carries no explanation for the user")
+	}
+	if old.StaleAfterDays != 30 {
+		t.Errorf("StaleAfterDays = %d, want 30", old.StaleAfterDays)
+	}
+}
+
+func TestPlan_EveryResponseCarriesCatalogFreshness(t *testing.T) {
+	c := shipped(t)
+	out, err := Plan(c, planner.Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2,
+		LocalK8s: "v1.28", DownPlatform: catalog.RKE2, DownK8s: "v1.28"})
+	if err != nil {
+		t.Fatalf("Plan: %v", err)
+	}
+	if out.Catalog.GeneratedAt == "" {
+		t.Error("response does not say when its data was generated")
+	}
+	if out.Catalog.StaleAfterDays == 0 {
+		t.Error("response does not say what counts as stale")
+	}
+}
+
+func mustTime(t *testing.T, s string) time.Time {
+	t.Helper()
+	v, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		t.Fatalf("parse %s: %v", s, err)
+	}
+	return v
 }

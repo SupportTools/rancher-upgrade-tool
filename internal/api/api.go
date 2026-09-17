@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-version"
@@ -98,6 +99,18 @@ type Blocker struct {
 	SourceURL  string `json:"source_url,omitempty"`
 }
 
+// CatalogInfo tells the caller how fresh the advice is. It rides on every response
+// rather than sitting on a separate endpoint nobody calls: a user acting on an
+// upgrade plan should be able to see, right there, that the data behind it stopped
+// being refreshed two months ago.
+type CatalogInfo struct {
+	GeneratedAt    string `json:"generated_at"`
+	AgeDays        int    `json:"age_days"`
+	Stale          bool   `json:"stale"`
+	StaleAfterDays int    `json:"stale_after_days"`
+	StaleNote      string `json:"stale_note,omitempty"`
+}
+
 type Response struct {
 	Scope            string        `json:"scope"`
 	Claim            string        `json:"claim"`
@@ -106,6 +119,7 @@ type Response struct {
 	Start            StartState    `json:"start"`
 	Destinations     []Destination `json:"destinations"`
 	Blockers         []Blocker     `json:"blockers"`
+	Catalog          CatalogInfo   `json:"catalog"`
 }
 
 // normalizeVersion accepts a version with or without a leading "v" and returns the
@@ -213,6 +227,7 @@ func Plan(c *catalog.Catalog, n planner.Node) (*Response, error) {
 	if rv, ok := c.Find(n.Rancher); ok {
 		out.Start.Lifecycle = string(rv.Lifecycle)
 	}
+	out.Catalog = catalogInfo(c, time.Now().UTC())
 
 	for _, r := range res.Routes {
 		d := Destination{
@@ -264,6 +279,24 @@ func Plan(c *catalog.Catalog, n planner.Node) (*Response, error) {
 		}
 	}
 	return out, nil
+}
+
+func catalogInfo(c *catalog.Catalog, now time.Time) CatalogInfo {
+	info := CatalogInfo{
+		GeneratedAt:    c.GeneratedAt,
+		StaleAfterDays: int(catalog.StaleAfter.Hours() / 24),
+	}
+	if age, ok := c.Age(now); ok {
+		info.AgeDays = int(age.Hours() / 24)
+	}
+	if c.IsStale(now) {
+		info.Stale = true
+		info.StaleNote = fmt.Sprintf("This compatibility data was generated %s, %d days ago. "+
+			"The automatic refresh has not succeeded since then, so newer Rancher or "+
+			"Kubernetes releases may be missing from these routes.",
+			c.GeneratedAt, info.AgeDays)
+	}
+	return info
 }
 
 // Handler serves GET /api/plan-upgrade.

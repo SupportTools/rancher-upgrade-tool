@@ -94,3 +94,7 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 .claim { font-size: 0.78rem; color: #777; line-height: 1.45; margin-top: 1rem;
          border-top: 1px solid #eee; padding-top: 0.6rem; }
 .err { border-left: 3px solid #c0392b; background: #fdf6f6; padding: 0.6rem 0.9rem; border-radius: 0 4px 4px 0; }
+
+.stale { border-left: 3px solid #b8860b; background: #fffbea; padding: 0.7rem 0.95rem;
+         margin-bottom: 0.8rem; border-radius: 0 4px 4px 0; }
+.stale .blocker-kind { color: #8a6d00; }

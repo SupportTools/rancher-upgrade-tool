@@ -104,6 +104,16 @@ function render(out, payload) {
     return;
   }
 
+  // Staleness banner first, above everything. If the refresh stopped working, a
+  // user acting on these routes should see that before they read them, not after.
+  const cat = payload.catalog;
+  if (cat && cat.stale) {
+    const banner = el("div", "stale");
+    banner.appendChild(el("div", "blocker-kind", "data may be out of date"));
+    banner.appendChild(el("p", "blocker-detail", cat.stale_note));
+    out.appendChild(banner);
+  }
+
   (payload.blockers || []).forEach((b) => out.appendChild(renderBlocker(b)));
 
   const dests = payload.destinations || [];
@@ -115,6 +125,10 @@ function render(out, payload) {
   }
   dests.forEach((d) => out.appendChild(renderDestination(d)));
 
+  if (cat && cat.generated_at) {
+    out.appendChild(el("p", "claim",
+      `Compatibility data generated ${cat.generated_at}${cat.age_days ? ` (${cat.age_days} days ago)` : ""}.`));
+  }
   if (payload.claim_note) out.appendChild(el("p", "claim", payload.claim_note));
   if (payload.scope) out.appendChild(el("p", "claim", payload.scope));
   if (payload.prerequisites_url) {

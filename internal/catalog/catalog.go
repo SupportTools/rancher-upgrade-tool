@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-version"
 )
@@ -277,6 +278,33 @@ func (r *RancherVersion) SupportFor(p Platform) (*Support, bool) {
 		}
 	}
 	return nil, false
+}
+
+// StaleAfter is how old a catalog may get before the service says so out loud.
+//
+// Rancher patch releases land roughly monthly and the sync runs weekly, so a
+// catalog older than this means the refresh stopped working and nobody noticed.
+// That silence is what let this dataset drift four Rancher releases behind.
+const StaleAfter = 30 * 24 * time.Hour
+
+// Age reports how old the dataset is. The second return is false when
+// generated_at cannot be parsed, which the validator prevents but callers should
+// not assume away.
+func (c *Catalog) Age(now time.Time) (time.Duration, bool) {
+	if c == nil {
+		return 0, false
+	}
+	t, err := time.Parse("2006-01-02", strings.TrimSpace(c.GeneratedAt))
+	if err != nil {
+		return 0, false
+	}
+	return now.Sub(t), true
+}
+
+// IsStale reports whether the dataset is old enough that users should be told.
+func (c *Catalog) IsStale(now time.Time) bool {
+	age, ok := c.Age(now)
+	return ok && age > StaleAfter
 }
 
 // Covers reports whether a Kubernetes version falls inside this platform's range.

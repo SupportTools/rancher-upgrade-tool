@@ -218,8 +218,12 @@ jobs:
           if [ "$ENVIRONMENT" = "prd" ]; then
             PROBE_HOST="https://rancher.tips"
           else
+            # Service name and port come from the chart, which renders
+            # `name: website` on port 3000 (a leftover generic name; the HPA
+            # targets Deployment/website too). Guarded by
+            # TestDeployGateTargetsTheServiceTheChartRenders so this cannot drift.
             kubectl -n "rancherupgrade-${ENVIRONMENT}" port-forward \
-              "svc/rancher-upgrade-tool" 18080:80 >/tmp/pf.log 2>&1 &
+              "svc/website" 18080:3000 >/tmp/pf.log 2>&1 &
             PF_PID=$!
             trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
             for _ in $(seq 1 30); do

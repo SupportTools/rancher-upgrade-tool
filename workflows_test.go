@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -153,5 +154,63 @@ func TestSupersededDatasetIsRetained(t *testing.T) {
 	if _, err := os.Stat("data/README.md"); err != nil {
 		t.Error("data/README.md is missing; without it the retained file looks like " +
 			"clutter and someone will delete it")
+	}
+}
+
+// The deploy gate port-forwards to the service for the five environments that are
+// not publicly routable. If the name or port drifts from what the chart renders,
+// the gate fails on the FIRST environment in the matrix and blocks the entire
+// deploy, turning a routine release into an incident.
+//
+// Caught exactly that before a merge: the gate referenced
+// svc/rancher-upgrade-tool on port 80 while the chart renders `name: website` on
+// port 3000.
+func TestDeployGateTargetsTheServiceTheChartRenders(t *testing.T) {
+	svc, err := os.ReadFile("charts/rancher-upgrade-tool/templates/service.yaml")
+	if err != nil {
+		t.Fatalf("read service template: %v", err)
+	}
+	var rendered struct {
+		Metadata struct{ Name string } `yaml:"metadata"`
+		Spec     struct {
+			Ports []struct {
+				Port int    `yaml:"port"`
+				Name string `yaml:"name"`
+			} `yaml:"ports"`
+		} `yaml:"spec"`
+	}
+	if err := yaml.Unmarshal(svc, &rendered); err != nil {
+		t.Fatalf("parse service template: %v", err)
+	}
+	if rendered.Metadata.Name == "" {
+		t.Fatal("service template has no metadata.name")
+	}
+
+	var httpPort int
+	for _, p := range rendered.Spec.Ports {
+		if p.Name == "http" {
+			httpPort = p.Port
+		}
+	}
+	if httpPort == 0 {
+		t.Fatal("service template declares no port named http")
+	}
+
+	pipeline, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	body := string(pipeline)
+
+	wantRef := "svc/" + rendered.Metadata.Name
+	if !strings.Contains(body, wantRef) {
+		t.Errorf("deploy gate does not port-forward to %q, which is what the chart "+
+			"renders. A wrong service name fails the gate on the first environment and "+
+			"blocks the whole matrix.", wantRef)
+	}
+	wantPort := fmt.Sprintf("18080:%d", httpPort)
+	if !strings.Contains(body, wantPort) {
+		t.Errorf("deploy gate does not forward to %q; the chart's http port is %d",
+			wantPort, httpPort)
 	}
 }

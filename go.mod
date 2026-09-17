@@ -3,7 +3,6 @@ module github.com/supporttools/rancher-upgrade-tool
 go 1.22.4
 
 require (
-	github.com/ansrivas/fiberprometheus/v2 v2.7.0
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/hashicorp/go-version v1.7.0
 	github.com/prometheus/client_golang v1.20.5

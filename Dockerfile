@@ -36,7 +36,15 @@ COPY --from=builder /app/main .
 
 # Copy the static files and data directory
 COPY --from=builder /app/static ./static
-COPY --from=builder /app/data ./data
+# Copy ONLY the live catalog, not the whole data directory.
+#
+# data/upgrade-paths.json is the superseded pre-rewrite dataset. It stays in the
+# repo because 63 of its 70 entries are NOT re-derivable from upstream (endoflife
+# publishes only the latest patch per cycle, and SUSE retires old per-version
+# matrix pages), but it has no business in the image: dead weight, and a second
+# compatibility dataset sitting next to the live one invites someone to load the
+# wrong file.
+COPY --from=builder /app/data/catalog.json ./data/catalog.json
 
 # Expose port 3000 to the outside world
 EXPOSE 3000

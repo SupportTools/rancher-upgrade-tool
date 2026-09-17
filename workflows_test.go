@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -114,5 +115,43 @@ func TestDataSyncDoesNotTriggerOnPush(t *testing.T) {
 	if _, bad := w.On["push"]; bad {
 		t.Error("data-sync.yml triggers on push. It regenerates upgrade advice and " +
 			"must put a human between the generator and production.")
+	}
+}
+
+// The image must ship only the live catalog. data/upgrade-paths.json is the
+// superseded dataset, kept in the repo because 63 of its 70 entries cannot be
+// re-derived from upstream, but a second compatibility dataset sitting beside the
+// live one in the container invites loading the wrong file.
+func TestDockerfileShipsOnlyTheLiveCatalog(t *testing.T) {
+	raw, err := os.ReadFile("Dockerfile")
+	if err != nil {
+		t.Fatalf("read Dockerfile: %v", err)
+	}
+	body := string(raw)
+
+	if strings.Contains(body, "COPY --from=builder /app/data ./data") {
+		t.Error("Dockerfile copies the whole data/ directory, which ships the " +
+			"superseded upgrade-paths.json alongside the live catalog. Copy " +
+			"data/catalog.json specifically.")
+	}
+	if !strings.Contains(body, "/app/data/catalog.json") {
+		t.Error("Dockerfile does not copy data/catalog.json; the service reads it at " +
+			"startup and fails closed without it")
+	}
+}
+
+// The superseded dataset must stay in the repo. Most of it cannot be recovered.
+func TestSupersededDatasetIsRetained(t *testing.T) {
+	if _, err := os.Stat("data/upgrade-paths.json"); err != nil {
+		t.Fatalf("data/upgrade-paths.json is gone: %v\n"+
+			"63 of its 70 entries are NOT re-derivable from upstream: endoflife.date "+
+			"publishes only the latest patch per cycle, and SUSE retires old "+
+			"per-version matrix pages. Supported ranges vary between patches within a "+
+			"minor (the 2.5 line has 13 signatures across 17 patches), and this file is "+
+			"the only record of that. See data/README.md.", err)
+	}
+	if _, err := os.Stat("data/README.md"); err != nil {
+		t.Error("data/README.md is missing; without it the retained file looks like " +
+			"clutter and someone will delete it")
 	}
 }

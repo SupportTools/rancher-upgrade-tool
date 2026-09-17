@@ -356,3 +356,43 @@ func applyStep(n Node, s Step) Node {
 	}
 	return n
 }
+
+// REGRESSION: route selection must be deterministic.
+//
+// Reachable used to build its result by ranging over a map. Go randomises map
+// iteration, so two routes of equal length to the same destination were chosen by
+// whichever the runtime visited first: the same query returned different step
+// sequences between requests, and the generator's journey diff compares route sets,
+// so it reported phantom changes on every run.
+//
+// The property tests did not catch this, because they assert things that hold for
+// any valid route. Only comparing whole results across runs exposes it.
+func TestRegression_ReachableIsDeterministic(t *testing.T) {
+	c := load(t, "basic.json")
+	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
+		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+
+	signature := func() string {
+		res, err := Reachable(c, start)
+		if err != nil {
+			t.Fatalf("Reachable: %v", err)
+		}
+		var b strings.Builder
+		for _, r := range res.Routes {
+			b.WriteString(r.Destination + ":")
+			for _, s := range r.Steps {
+				b.WriteString(string(s.Kind) + s.From + ">" + s.To + ",")
+			}
+			b.WriteString("|")
+		}
+		return b.String()
+	}
+
+	first := signature()
+	for i := 0; i < 25; i++ {
+		if got := signature(); got != first {
+			t.Fatalf("run %d produced a different result.\n  first: %s\n  got:   %s",
+				i+2, first, got)
+		}
+	}
+}

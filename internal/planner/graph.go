@@ -515,14 +515,32 @@ func Reachable(c *catalog.Catalog, start Node) (*Result, error) {
 		}
 	}
 
-	// One route per reachable Rancher version, the shortest found (BFS order).
+	// One route per reachable Rancher version, the shortest found.
+	//
+	// Iteration order is fixed deliberately. Ranging over `seen` directly made this
+	// NON-DETERMINISTIC: Go randomises map iteration, so two routes of equal length
+	// to the same destination were chosen by whichever the runtime happened to visit
+	// first. The same query returned different step sequences between requests, and
+	// the generator's journey diff compares route sets, so it would have reported
+	// phantom changes on every run.
+	//
+	// Sorting the keys fixes the visit order, and the tie-break below fixes the
+	// choice when two routes are the same length.
+	keys := make([]string, 0, len(seen))
+	for k := range seen {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	bestFor := map[string][]Step{}
-	for k, v := range seen {
+	for _, k := range keys {
+		v := seen[k]
 		if v.node.Rancher == start.Rancher {
 			continue
 		}
 		steps := path(seen, k)
-		if prev, ok := bestFor[v.node.Rancher]; !ok || len(steps) < len(prev) {
+		prev, ok := bestFor[v.node.Rancher]
+		if !ok || betterRoute(steps, prev) {
 			bestFor[v.node.Rancher] = steps
 		}
 	}
@@ -552,6 +570,26 @@ type visit struct {
 	node   Node
 	parent string
 	step   *Step
+}
+
+// betterRoute gives routes a total order so the choice never depends on map
+// iteration. Shorter wins; equal lengths are broken by comparing steps in order,
+// which is arbitrary but STABLE, and stable is the property that matters.
+func betterRoute(candidate, incumbent []Step) bool {
+	if len(candidate) != len(incumbent) {
+		return len(candidate) < len(incumbent)
+	}
+	for i := range candidate {
+		a, b := routeKey(candidate[i]), routeKey(incumbent[i])
+		if a != b {
+			return a < b
+		}
+	}
+	return false
+}
+
+func routeKey(s Step) string {
+	return string(s.Kind) + "|" + string(s.Platform) + "|" + s.From + "|" + s.To
 }
 
 // path walks parent pointers back to the start and returns the steps in order.

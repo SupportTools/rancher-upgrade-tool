@@ -1,0 +1,3759 @@
+{
+  "generated_at": "2026-09-17",
+  "rancher": [
+    {
+      "version": "2.5.0",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.16.15",
+          "max_version": "v1.19.2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.12+k3s1",
+          "max_version": "v1.19.2+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-0/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.16.15",
+          "max_version": "v1.19.2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.12+k3s1",
+          "max_version": "v1.19.2+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.16.15",
+          "max_version": "v1.19.3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.12+k3s1",
+          "max_version": "v1.19.3+k3s3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.16.15",
+          "max_version": "v1.19.3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.12+k3s1",
+          "max_version": "v1.19.3+k3s3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.16.15",
+          "max_version": "v1.19.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.12+k3s1",
+          "max_version": "v1.19.5+k3s2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.16",
+          "max_version": "v1.19.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.15+k3s1",
+          "max_version": "v1.19.5+k3s2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.10",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.6",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.4",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.4+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.19.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-6/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.7",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.4",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.4+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.19.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-7/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.8",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.4",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.6+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.16",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.15",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-8/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.9",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.6+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.18.16",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.17.15",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-9/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.10",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.11",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.6+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-10/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.11",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.12",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.11+k3s2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-11/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.12",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.14-rancher2-1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.20.14+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.14+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-12/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.13",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.15-rancher1-2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.20.15+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.15+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-13/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.14",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.15-rancher1-3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20+rke2r1",
+          "max_version": "v1.20.15+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.15+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-14/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.15",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17",
+          "max_version": "v1.20.15-rancher1-3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20+rke2r1",
+          "max_version": "v1.20.15+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.15+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-15/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.5.16",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.17.17-rancher2-4",
+          "max_version": "v1.20.15-rancher2-1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20+rke2r1",
+          "max_version": "v1.20.15+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.17.17+k3s1",
+          "max_version": "v1.20.15+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.16",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.16",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.16",
+          "max_version": "v1.20.10-gke.301",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-5-16/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.0",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.4+rke2r1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.21.4+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.20.7",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.20.8-gke.900",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-0/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.5+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.21.5+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.21.5-gke.1302",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.7+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.21.7+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.21.5-gke.1302",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.7",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.21.7+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.21.7+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.20.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.21.5-gke.1302",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.5+rke2r2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.23.5+k3s2",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.21.5-eks-bc4871b",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6-gke.300",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.6+rke2r1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.23.6+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6-eks-14c7a48",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.22.8-gke.200",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.6",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.18.20",
+          "max_version": "v1.23.6+rke2r1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.18.20+k3s1",
+          "max_version": "v1.23.6+k3s1",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.22.6-eks-14c7a48",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.18",
+          "max_version": "v1.22.8-gke.200",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-6/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.7",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.23.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.22.10-eks-84b4fe6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.23.5-gke.1503",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-7/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.8",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.23.8",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.22.10-eks-84b4fe6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.23.5-gke.1503",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-8/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.9",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.23.7-eks-4721010",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.23.8-gke.1900",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-9/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.10",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.23.7-eks-4721010",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.23.8-gke.1900",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-10/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.11",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.9",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.10-eks-48e63af",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.24.10-gke.1200",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-11/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.12",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.10",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-eks-ec5523e",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-12/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.13",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.10",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-eks-ec5523e",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-13/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.6.14",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.20",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.10",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-eks-ec5523e",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.20",
+          "max_version": "v1.24.12-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-14/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.0",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.24.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.23.10-eks-15b7512",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.24.5-gke.600",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-0/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.24",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.24.6",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.23.10-eks-15b7512",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.24.5-gke.600",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.25.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.24.10-eks-48e63af",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.25.6-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.25.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.24.10-eks-48e63af",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.25.6-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.25",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.25.5",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.24.10-eks-48e63af",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.25.6-gke.1000",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.26",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.26",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.26",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.26.3",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.26.4-eks-0a21954",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.26.4-gke.500",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.15",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-15/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.16",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-16/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.17",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-17/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.7.18",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke1",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke2",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.23",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-18/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.27",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.6",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-6/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.7",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-7/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.8",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-8/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.9",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-9/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.10",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-10/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.11",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-11/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.8.12",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.25",
+          "max_version": "v1.28",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-8-12/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.9.6",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.27",
+          "max_version": "v1.30",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.1",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.2",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.3",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.4",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-4/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.5",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-5/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.6",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-6/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.10.7",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.28",
+          "max_version": "v1.31",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-10-7/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.11.1",
+      "lifecycle": "limited",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-1/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.11.2",
+      "lifecycle": "limited",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-2/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    },
+    {
+      "version": "2.11.3",
+      "lifecycle": "limited",
+      "lifecycle_as_of": "2026-09-17",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "rke1",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "k3s",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "aks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        },
+        {
+          "platform": "gke",
+          "min_version": "v1.30",
+          "max_version": "v1.32",
+          "granularity": "minor",
+          "source_url": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+          "as_of": "2026-09-17"
+        }
+      ]
+    }
+  ]
+}

@@ -55,3 +55,42 @@ pre {
     border-radius: 5px;
     overflow: auto;
 }
+/* --- itinerary output ------------------------------------------------------ */
+.lede { color: #555; font-size: 0.9rem; line-height: 1.45; margin: 0 0 1rem; }
+
+fieldset { border: 1px solid #ddd; border-radius: 6px; padding: 0.75rem 1rem 0.25rem; margin: 0 0 1rem; }
+legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
+
+#planOutput { margin-top: 1.25rem; text-align: left; }
+
+.dest { border: 1px solid #ddd; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 0.75rem; }
+.dest-head { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.dest-title { font-weight: 600; }
+
+.badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+         border-radius: 999px; padding: 0.1rem 0.5rem; border: 1px solid transparent; }
+.badge-full    { background: #e6f4ea; color: #1e6b33; }
+.badge-limited { background: #fdf0d5; color: #8a5a00; }
+.badge-ended   { background: #fdeaea; color: #98252b; }
+.badge-minor   { background: #eef1f5; color: #445; }
+
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li { padding: 0.3rem 0; border-top: 1px solid #f0f0f0; font-size: 0.9rem; }
+.steps li:first-child { border-top: none; }
+.step-kind { display: inline-block; min-width: 9.5rem; color: #666; font-size: 0.78rem;
+             text-transform: uppercase; letter-spacing: 0.03em; }
+.step-move { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.note, .caveat { font-size: 0.8rem; color: #666; line-height: 1.4; margin: 0.4rem 0 0; }
+.caveat { color: #8a5a00; }
+
+.blocker { border-left: 3px solid #c0392b; background: #fdf6f6; padding: 0.6rem 0.9rem;
+           margin-bottom: 0.6rem; border-radius: 0 4px 4px 0; }
+.blocker-eol { border-left-color: #8a5a00; background: #fdf9f0; }
+.blocker-kind { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: #888; }
+.blocker-constraint { font-weight: 600; margin: 0.15rem 0; }
+.blocker-detail { font-size: 0.85rem; color: #555; line-height: 1.45; }
+
+.claim { font-size: 0.78rem; color: #777; line-height: 1.45; margin-top: 1rem;
+         border-top: 1px solid #eee; padding-top: 0.6rem; }
+.err { border-left: 3px solid #c0392b; background: #fdf6f6; padding: 0.6rem 0.9rem; border-radius: 0 4px 4px 0; }

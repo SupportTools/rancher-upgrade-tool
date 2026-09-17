@@ -17,31 +17,58 @@
 
         <h1>Rancher Upgrade Planner</h1>
 
-        <div class="input-group">
-            <label for="platform">Platform</label>
-            <select id="platform">
-                <option value="RKE1">RKE1</option>
-                <option value="RKE2">RKE2</option>
-                <option value="K3s">K3s</option>
-                <option value="AKS">AKS</option>
-                <option value="EKS">EKS</option>
-                <option value="GKE">GKE</option>
-            </select>
-        </div>
+        <p class="lede">
+            Rancher runs on one cluster and manages others. Both have version
+            requirements, and the one Rancher itself runs on is usually what blocks
+            the upgrade, so this asks for both.
+        </p>
+
+        <fieldset>
+            <legend>Local cluster &mdash; where Rancher itself runs</legend>
+            <div class="input-group">
+                <label for="localPlatform">Platform</label>
+                <select id="localPlatform">
+                    <option value="rke2">RKE2</option>
+                    <option value="k3s">K3s</option>
+                    <option value="rke1">RKE1 (end of life)</option>
+                    <option value="aks">AKS</option>
+                    <option value="eks">EKS</option>
+                    <option value="gke">GKE</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="localK8s">Kubernetes version</label>
+                <input type="text" id="localK8s" placeholder="v1.28 (or 1.28)">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Downstream cluster &mdash; the one you are planning</legend>
+            <div class="input-group">
+                <label for="downstreamPlatform">Platform</label>
+                <select id="downstreamPlatform">
+                    <option value="rke2">RKE2</option>
+                    <option value="k3s">K3s</option>
+                    <option value="rke1">RKE1 (end of life)</option>
+                    <option value="aks">AKS</option>
+                    <option value="eks">EKS</option>
+                    <option value="gke">GKE</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="downstreamK8s">Kubernetes version</label>
+                <input type="text" id="downstreamK8s" placeholder="v1.28 (or 1.28)">
+            </div>
+        </fieldset>
 
         <div class="input-group">
-            <label for="currentRancher">Current Rancher Version</label>
-            <input type="text" id="currentRancher" placeholder="e.g., 2.6.8">
+            <label for="currentRancher">Current Rancher version</label>
+            <input type="text" id="currentRancher" placeholder="v2.9.4 (or 2.9.4)">
         </div>
 
-        <div class="input-group">
-            <label for="currentK8s">Current Kubernetes Version</label>
-            <input type="text" id="currentK8s" placeholder="e.g., v1.23">
-        </div>
+        <button id="planButton">Plan upgrade</button>
 
-        <button id="planButton">Plan Upgrade</button>
-
-        <pre id="planOutput"></pre>
+        <div id="planOutput" role="status" aria-live="polite"></div>
     </div>
 </body>
 

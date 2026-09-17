@@ -209,10 +209,76 @@ func TestDeployGateTargetsTheServiceTheChartRenders(t *testing.T) {
 			"renders. A wrong service name fails the gate on the first environment and "+
 			"blocks the whole matrix.", wantRef)
 	}
-	wantPort := fmt.Sprintf("18080:%d", httpPort)
-	if !strings.Contains(body, wantPort) {
-		t.Errorf("deploy gate does not forward to %q; the chart's http port is %d",
-			wantPort, httpPort)
+	// The port pair is no longer spelled in the workflow. The workflow names the
+	// remote port and verify-deploy.sh does the forwarding, because only the script
+	// knows when the rollout it is waiting for has finished. Assert both halves.
+	wantRemote := fmt.Sprintf("PROBE_REMOTE_PORT=%d", httpPort)
+	if !strings.Contains(body, wantRemote) {
+		t.Errorf("deploy gate does not set %q; the chart's http port is %d",
+			wantRemote, httpPort)
+	}
+
+	script, err := os.ReadFile("scripts/verify-deploy.sh")
+	if err != nil {
+		t.Fatalf("read verify-deploy.sh: %v", err)
+	}
+	if !strings.Contains(string(script), "${PROBE_LOCAL_PORT}:${PROBE_REMOTE_PORT}") {
+		t.Error("verify-deploy.sh does not forward PROBE_LOCAL_PORT:PROBE_REMOTE_PORT, " +
+			"so the ports the workflow supplies are not actually used")
+	}
+}
+
+// THE REGRESSION. The workflow used to open the port-forward itself, in the step
+// that then called verify-deploy.sh. That races by construction: the script waits
+// for the new revision to roll out, and the rollout deletes the pod the forward is
+// bound to. On mst at v216 -> v220 the forward came up against the old pod, the
+// revision flipped 62s later, and the probe hit a dead tunnel:
+// "Failed to connect to 127.0.0.1 port 18080". Publish and the deploy were both
+// fine; only the gate was broken, and it cancelled the other five environments.
+//
+// Inspects parsed `run:` shell, not the raw file, so a comment describing the bug
+// cannot trip it.
+func TestDeployGateDoesNotPortForwardBeforeVerifying(t *testing.T) {
+	type stepped struct {
+		Jobs map[string]struct {
+			Steps []struct {
+				Name string `yaml:"name"`
+				Run  string `yaml:"run"`
+			} `yaml:"steps"`
+		} `yaml:"jobs"`
+	}
+	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	var wf stepped
+	if err := yaml.Unmarshal(raw, &wf); err != nil {
+		t.Fatalf("parse pipeline: %v", err)
+	}
+	// Strip full-line comments before matching. The comment in this very step
+	// explains the bug and names port-forward; matching raw `run:` text reported a
+	// violation that did not exist. Same trap as TestBothWorkflowsRunTheSameGate
+	// and TestChartPublishesToHarborOverOCI hit earlier.
+	executable := func(run string) string {
+		var keep []string
+		for _, line := range strings.Split(run, "\n") {
+			if strings.HasPrefix(strings.TrimSpace(line), "#") {
+				continue
+			}
+			keep = append(keep, line)
+		}
+		return strings.Join(keep, "\n")
+	}
+
+	for jobName, job := range wf.Jobs {
+		for _, st := range job.Steps {
+			if strings.Contains(executable(st.Run), "port-forward") {
+				t.Errorf("job %q step %q opens a port-forward in workflow shell. "+
+					"The forward must be opened by verify-deploy.sh AFTER it confirms "+
+					"the new revision is live, or the rollout kills the tunnel the "+
+					"probe depends on.", jobName, st.Name)
+			}
+		}
 	}
 }
 

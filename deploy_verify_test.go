@@ -218,3 +218,109 @@ func TestDeployVerify_PassesWhenRevisionLiveAndAnswering(t *testing.T) {
 		t.Errorf("success output does not confirm verification:\n%s", out)
 	}
 }
+
+// THE ORDERING REGRESSION, proven behaviourally rather than structurally.
+//
+// The gate must not open its port-forward until the revision it is waiting for is
+// actually live. When the workflow opened the tunnel first, the rollout deleted the
+// pod underneath it and the probe failed on a deploy that had fully succeeded
+// (mst, v216 -> v220). A stub kubectl records the order of operations, and the
+// port-forward must not appear before the revision flips.
+func TestDeployVerify_OpensPortForwardOnlyAfterRevisionFlips(t *testing.T) {
+	dir := t.TempDir()
+	order := filepath.Join(dir, "order.log")
+	counter := filepath.Join(dir, "polls")
+
+	// Reports the stale revision for the first two polls, then the expected one.
+	// Logs every revision answer and any port-forward invocation.
+	kubectl := fmt.Sprintf(`#!/usr/bin/env bash
+for arg in "$@"; do
+  if [ "$arg" = "port-forward" ]; then
+    echo "port-forward" >> %[1]q
+    exit 0
+  fi
+done
+for arg in "$@"; do
+  case "$arg" in
+    *status.sync.revision*)
+      n=0; [ -f %[2]q ] && n=$(cat %[2]q)
+      n=$((n + 1)); echo "$n" > %[2]q
+      if [ "$n" -le 2 ]; then rev="v216"; else rev="v220"; fi
+      echo "revision:$rev" >> %[1]q
+      echo -n "$rev"; exit 0 ;;
+    *status.sync.status*)          echo -n "Unknown"; exit 0 ;;
+    *status.health.status*)        echo -n "Healthy"; exit 0 ;;
+    *status.operationState.phase*) echo -n "Succeeded"; exit 0 ;;
+  esac
+done
+exit 0
+`, order, counter)
+
+	// healthz succeeds only once a port-forward has been recorded; the probe returns
+	// a plannable itinerary. This makes a premature tunnel observably useless.
+	curlStub := fmt.Sprintf(`#!/usr/bin/env bash
+target="${!#}"
+case "$target" in
+  *healthz*)
+    grep -q "port-forward" %[1]q 2>/dev/null || exit 7
+    echo "ok"; exit 0 ;;
+  *plan-upgrade*)
+    echo "curl-probe" >> %[1]q
+    echo '{"destinations":[{"rancher":"2.15.1"}],"blockers":[]}'; exit 0 ;;
+esac
+exit 0
+`, order)
+
+	for name, body := range map[string]string{"kubectl": kubectl, "curl": curlStub} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(body), 0o755); err != nil {
+			t.Fatalf("write stub %s: %v", name, err)
+		}
+	}
+
+	cmd := exec.Command("bash", "scripts/verify-deploy.sh", "mst", "v220")
+	cmd.Env = append(os.Environ(),
+		"PATH="+dir+string(os.PathListSeparator)+os.Getenv("PATH"),
+		"MAX_TRIES=10", "SLEEP_TIME=0",
+		"PROBE_SERVICE=svc/website",
+		"PROBE_NAMESPACE=rancherupgrade-mst",
+		"PROBE_LOCAL_PORT=18080",
+		"PROBE_REMOTE_PORT=3000",
+		"PROBE_PATH=/api/plan-upgrade?rancher=2.9.6",
+	)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("gate failed on a deploy that succeeded: %v\n%s", err, out)
+	}
+
+	logged, readErr := os.ReadFile(order)
+	if readErr != nil {
+		t.Fatalf("read order log: %v", readErr)
+	}
+	events := strings.Split(strings.TrimSpace(string(logged)), "\n")
+
+	pfIdx, probeIdx, lastStale := -1, -1, -1
+	for i, e := range events {
+		switch e {
+		case "port-forward":
+			if pfIdx == -1 {
+				pfIdx = i
+			}
+		case "curl-probe":
+			probeIdx = i
+		case "revision:v216":
+			lastStale = i
+		}
+	}
+	if pfIdx == -1 {
+		t.Fatalf("no port-forward was ever opened; the probe cannot have been reachable\n%s", out)
+	}
+	if pfIdx < lastStale {
+		t.Errorf("port-forward opened at step %d, before the revision stopped reporting "+
+			"stale (step %d). The rollout will delete the pod the tunnel is bound to.\nevents: %v",
+			pfIdx, lastStale, events)
+	}
+	if probeIdx == -1 || probeIdx < pfIdx {
+		t.Errorf("probe did not run after the port-forward (probe=%d, forward=%d)\nevents: %v",
+			probeIdx, pfIdx, events)
+	}
+}

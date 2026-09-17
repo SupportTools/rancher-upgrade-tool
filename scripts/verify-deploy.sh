@@ -45,6 +45,15 @@ MAX_TRIES="${MAX_TRIES:-60}"
 SLEEP_TIME="${SLEEP_TIME:-10}"
 PROBE_URL="${PROBE_URL:-}"
 
+# Probe target for environments that are not publicly routable. The script sets the
+# port-forward up ITSELF, deliberately -- see the ordering note at check 4.
+PROBE_SERVICE="${PROBE_SERVICE:-}"
+PROBE_PATH="${PROBE_PATH:-}"
+PROBE_NAMESPACE="${PROBE_NAMESPACE:-}"
+PROBE_LOCAL_PORT="${PROBE_LOCAL_PORT:-18080}"
+PROBE_REMOTE_PORT="${PROBE_REMOTE_PORT:-3000}"
+PROBE_TRIES="${PROBE_TRIES:-5}"
+
 field() {
   kubectl -n "$NAMESPACE" get application "$APP" -o jsonpath="{$1}" 2>/dev/null || true
 }
@@ -117,6 +126,43 @@ esac
 # service answers correctly. Only prd is publicly routable; the other five
 # environments need a port-forward from the runner, which is why this takes a URL
 # rather than assuming one.
+# THE PORT-FORWARD ORDERING BUG THIS OWNS.
+# The workflow used to open the port-forward itself, BEFORE calling this script.
+# That cannot work: this script's whole job is to wait for the new revision to roll
+# out, and the rollout deletes the pod the forward is bound to. Observed on mst at
+# v216 -> v220: the forward came up against the old pod at 19:29:05, the revision
+# flipped at 19:30:07, and the probe hit a dead tunnel one second later --
+# "Failed to connect to 127.0.0.1 port 18080". The deploy was fine; the gate was not.
+#
+# Only this script knows when the rollout finished, so only this script can know
+# when it is safe to open the tunnel. It is therefore established HERE, after the
+# revision and health checks have passed.
+if [ -n "$PROBE_SERVICE" ]; then
+  [ -n "$PROBE_PATH" ] || fail "PROBE_SERVICE is set but PROBE_PATH is not, so there is nothing to probe"
+  probe_ns="${PROBE_NAMESPACE:-${APP_PREFIX:-rancherupgrade}-${ENVIRONMENT}}"
+  echo "  port-forwarding ${PROBE_SERVICE} in ${probe_ns} (after the rollout, not before)"
+  kubectl -n "$probe_ns" port-forward \
+    "$PROBE_SERVICE" "${PROBE_LOCAL_PORT}:${PROBE_REMOTE_PORT}" \
+    >/tmp/pf-verify.log 2>&1 &
+  PF_PID=$!
+  trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
+
+  forwarded=0
+  for _ in $(seq 1 30); do
+    if curl -fsS --max-time 2 "http://127.0.0.1:${PROBE_LOCAL_PORT}/healthz" >/dev/null 2>&1; then
+      forwarded=1
+      break
+    fi
+    sleep 1
+  done
+  if [ "$forwarded" -ne 1 ]; then
+    echo "  port-forward log:"
+    sed -n '1,5p' /tmp/pf-verify.log 2>/dev/null || true
+    fail "port-forward to ${PROBE_SERVICE} in ${probe_ns} never became reachable"
+  fi
+  PROBE_URL="http://127.0.0.1:${PROBE_LOCAL_PORT}${PROBE_PATH}"
+fi
+
 if [ -z "$PROBE_URL" ]; then
   echo "  NO KNOWN-ANSWER PROBE CONFIGURED for ${ENVIRONMENT}."
   echo "  The revision is live, but nothing has confirmed the service answers correctly."
@@ -124,7 +170,19 @@ if [ -z "$PROBE_URL" ]; then
 fi
 
 echo "  probing ${PROBE_URL}"
-body=$(curl -fsS --max-time 20 "$PROBE_URL") || fail "probe request failed"
+# Retry briefly. The revision is already live and healthy, but a just-rolled pod can
+# refuse the first connection, and a single attempt turns that into a false red.
+body=""
+attempt=0
+while [ "$attempt" -lt "$PROBE_TRIES" ]; do
+  if body=$(curl -fsS --max-time 20 "$PROBE_URL" 2>/dev/null); then
+    break
+  fi
+  attempt=$((attempt + 1))
+  echo "  probe attempt ${attempt}/${PROBE_TRIES} failed; retrying"
+  sleep 3
+done
+[ -n "$body" ] || fail "probe request failed after ${PROBE_TRIES} attempts"
 
 # The probe asserts a route the catalog must always be able to plan. An empty
 # destination list is the failure this whole rebuild exists to remove: it reads to a

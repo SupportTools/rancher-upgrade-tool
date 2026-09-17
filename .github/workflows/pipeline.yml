@@ -251,8 +251,14 @@ jobs:
           # while the repo said oci://harbor.support.tools. Nothing reported it,
           # because a deploy from the OLD source still succeeds.
           echo "applying ArgoCD Application rancherupgrade-${ENVIRONMENT} at ${CHART_VERSION}"
+          # --server-side, not a client-side apply. ArgoCD co-owns these objects and
+          # the live Applications carry no managedFields, so the client-side path
+          # cannot compute an update and fails outright:
+          #   metadata.resourceVersion: Invalid value: 0: must be specified for an update
+          # --force-conflicts takes ownership of the spec fields we set here, which
+          # is the point: this manifest is the source of truth for the source.
           sed "s/CHARTVERSION/${CHART_VERSION}/g" "argocd/${ENVIRONMENT}.yaml" \
-            | kubectl -n argocd apply -f - --validate=false
+            | kubectl -n argocd apply --server-side --force-conflicts -f -
 
       - name: Verify the deploy actually happened - ${{ matrix.environment }}
         env:

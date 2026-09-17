@@ -7,7 +7,7 @@ REPO = docker.io/supporttools
 IMAGEFULLNAME = $(REPO)/$(IMAGENAME):$(TAG)
 PLATFORMS = linux/amd64,linux/arm64
 
-.PHONY: help build push buildx bump lint deps security docs test fmt tools all
+.PHONY: help build push buildx bump lint deps security docs test fmt tools all ci fmt-check vet
 
 help:
 	@echo "Makefile commands:"
@@ -62,6 +62,32 @@ test:
 fmt:
 	@echo "Formatting Go code..."
 	go fmt ./...
+
+fmt-check:
+	@echo "Checking Go formatting..."
+	@unformatted=$$(gofmt -l . | grep -v '^vendor/' || true); \
+	if [ -n "$$unformatted" ]; then \
+		echo "Not gofmt'd:"; echo "$$unformatted"; exit 1; \
+	fi
+
+vet:
+	@echo "Running go vet and staticcheck..."
+	go vet ./...
+	staticcheck ./...
+
+# `ci` is what BOTH the CI workflows and a developer run. Keep it that way: the
+# pre-existing divergence (CI ran its own inline tool sequence, humans ran the
+# makefile, nothing checked they agreed) is the reason this target exists.
+#
+# Deliberately excludes `deps`: `go mod vendor` and `go mod tidy` MUTATE the tree,
+# which a verification step must not do. `go mod verify` is the read-only half.
+#
+# Deliberately excludes `lint`: that target still shells out to golint, archived
+# since 2021. Replacing it is tracked separately; a new target should not inherit
+# known rot.
+ci: fmt-check vet test
+	@echo "Verifying module integrity..."
+	go mod verify
 
 build: lint deps security docs test fmt
 	@echo "Building Docker image $(IMAGEFULLNAME)..."

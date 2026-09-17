@@ -1,0 +1,105 @@
+# Scheduled catalog refresh.
+#
+# Opens a PULL REQUEST. It never commits to main, and it is deliberately not part
+# of pipeline.yml: merging to main deploys to production, so a job that regenerates
+# upgrade advice must put a human between the generator and rancher.tips.
+#
+# The generator fails rather than emitting a partial dataset, so a broken scrape
+# produces a red job and no PR, not a quietly degraded catalog.
+#
+# STALENESS ESCALATION (OQ1, resolved). "No PR opened" is silent staleness: a broken
+# scraper leaves the healthy service serving old advice indefinitely, and so does a
+# PR nobody reviews. Both failure modes look like silence, and silence is what let
+# this dataset drift four Rancher releases behind.
+#
+# Two independent signals, so one being ignored does not hide the problem:
+#   - here: a failed sync, or a refresh PR left unreviewed past the threshold,
+#     opens and bumps a tracking issue
+#   - in the service: every API response carries the catalog's age, and the UI shows
+#     a banner once it passes catalog.StaleAfter (30 days)
+#
+# The service-side half keeps working even when nobody is reading issues.
+name: Data sync
+
+on:
+  schedule:
+    # Weekly. Rancher patch releases land far more slowly than daily, and a PR
+    # nobody has reviewed yet should not be replaced by another one.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+
+      - name: Fetch upstream and regenerate
+        run: |
+          go run ./cmd/update-matrix \
+            -fetch \
+            -snapshots snapshots \
+            -catalog data/catalog.json \
+            -report /tmp/pr-body.md
+
+      - name: Verify the regenerated catalog
+        # Golden routes run here. They are the only check that distinguishes
+        # "upstream published something new" from "our parser broke": a
+        # plausible-looking wrong value is well-formed, so the loader accepts it and
+        # the raw diff looks like a normal refresh.
+        run: go test ./...
+
+      - name: Open a pull request
+        id: pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: data/catalog-refresh
+          base: main
+          title: "Catalog refresh: Rancher and Kubernetes compatibility data"
+          body-path: /tmp/pr-body.md
+          commit-message: "data: refresh compatibility catalog from upstream"
+          add-paths: data/catalog.json
+          delete-branch: true
+          labels: data-refresh
+
+      # An open refresh PR that nobody merges is the same outcome as a broken
+      # scraper: the site keeps serving old advice. Escalate rather than assume
+      # someone noticed the PR.
+      - name: Escalate an unreviewed refresh
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STALE_PR_DAYS: 14
+        run: |
+          set -euo pipefail
+          age_days=$(gh pr list --head data/catalog-refresh --state open \
+            --json createdAt --jq '.[0].createdAt // empty' \
+            | { read -r created || true; \
+                [ -n "${created:-}" ] && echo $(( ( $(date -u +%s) - $(date -u -d "$created" +%s) ) / 86400 )) || echo 0; })
+
+          if [ "${age_days:-0}" -gt "$STALE_PR_DAYS" ]; then
+            echo "refresh PR has been open ${age_days} days"
+            ./.github/escalate.sh "Catalog refresh PR unreviewed for ${age_days} days" \
+              "The weekly data sync is working, but its pull request has not been reviewed for ${age_days} days. Until it merges, rancher.tips serves the older catalog. An unreviewed refresh is the same outcome as a broken one."
+          else
+            ./.github/escalate.sh --resolve
+          fi
+
+      # A failed sync produces no PR at all, which is the quietest failure available.
+      - name: Escalate a failed sync
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./.github/escalate.sh "Catalog data sync is failing" \
+            "The weekly sync failed, so no refresh PR was opened and rancher.tips is serving whatever catalog it last had. The generator fails rather than emitting a partial dataset, so this most likely means an upstream shape changed. Check the job log for which source refused to parse."

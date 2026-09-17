@@ -1,62 +1,54 @@
+// Command rancher-upgrade-tool serves rancher.tips: given a Rancher version and the
+// Kubernetes versions of the cluster Rancher runs on and one cluster it manages, it
+// returns every reachable Rancher version with an ordered, sourced route to each.
+//
+// The planning logic lives in internal/planner and the dataset in internal/catalog.
+// This file is wiring: metrics, routes, and the fail-closed startup path.
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"os"
-	"sort"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/hashicorp/go-version"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/supporttools/rancher-upgrade-tool/internal/api"
+	"github.com/supporttools/rancher-upgrade-tool/internal/catalog"
 )
 
-// Platform defines the compatibility of Kubernetes versions with a Rancher version
-type Platform struct {
-	Platform   string `json:"platform"`
-	MinVersion string `json:"min_version"`
-	MaxVersion string `json:"max_version"`
-	Notes      string `json:"notes,omitempty"`
-}
+const (
+	catalogPath = "./data/catalog.json"
 
-// RancherManagerVersion contains supported platforms for each Rancher version
-type RancherManagerVersion struct {
-	SupportedPlatforms []Platform `json:"supported_platforms"`
-}
+	// appPort serves the UI and the API.
+	appPort = ":3000"
 
-// UpgradePaths stores all Rancher versions and their compatibility data
-type UpgradePaths struct {
-	RancherManager map[string]RancherManagerVersion `json:"rancher_manager"`
-}
+	// defaultMetricsPort matches the chart. The app previously bound :9000 while
+	// deployment.yaml annotated 9090, declared containerPort 9090 and service.yaml
+	// exposed 9090, so Prometheus had been scraping a closed port in all six
+	// environments since the chart was written.
+	//
+	// Overridable via METRICS_PORT, because 9090 is the conventional Prometheus port
+	// and a developer running one locally would otherwise collide.
+	defaultMetricsPort = ":9090"
+)
 
-// UpgradeStep represents a single upgrade step
-type UpgradeStep struct {
-	Type     string `json:"type"`     // Rancher or Kubernetes
-	Platform string `json:"platform"` // RKE1, RKE2, etc.
-	From     string `json:"from"`     // Previous version
-	To       string `json:"to"`       // New version
-}
-
-// Custom metrics
 var (
 	totalRequestsLast60Seconds prometheus.Gauge
 	versionsSubmitted          *prometheus.CounterVec
 	requestDuration            prometheus.Histogram
 	activeRequests             prometheus.Gauge
 
-	// For tracking request timestamps
 	requestTimestamps []time.Time
 	mu                sync.Mutex
 )
 
-// Initialize custom metrics
 func initMetrics() {
 	totalRequestsLast60Seconds = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "requests_in_last_60_seconds",
@@ -66,7 +58,7 @@ func initMetrics() {
 	versionsSubmitted = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "versions_submitted_total",
-			Help: "Total number of versions submitted",
+			Help: "Versions submitted, bucketed to catalog-known values (see api.LabelValues)",
 		},
 		[]string{"platform", "rancher_version", "k8s_version"},
 	)
@@ -82,7 +74,6 @@ func initMetrics() {
 		Help: "Current number of active requests.",
 	})
 
-	// Register custom metrics with Prometheus
 	prometheus.MustRegister(
 		totalRequestsLast60Seconds,
 		versionsSubmitted,
@@ -91,306 +82,35 @@ func initMetrics() {
 	)
 }
 
-// LoadUpgradePaths loads the upgrade paths from the JSON file
-func LoadUpgradePaths() (UpgradePaths, error) {
-	file, err := os.Open("./data/upgrade-paths.json")
+// loadCatalog reads and validates the dataset, failing closed.
+//
+// A service that refuses to start is preferable to one confidently serving wrong
+// upgrade advice. The old loader did the opposite: it dropped entries it could not
+// parse and carried on, which is why EKS was invisible for seven Rancher versions
+// for two years without anything complaining.
+func loadCatalog() (*catalog.Catalog, error) {
+	data, err := os.ReadFile(catalogPath)
 	if err != nil {
-		return UpgradePaths{}, fmt.Errorf("failed to load upgrade paths: %v", err)
-	}
-	defer file.Close()
-
-	bytes, err := io.ReadAll(file)
-	if err != nil {
-		return UpgradePaths{}, fmt.Errorf("failed to read upgrade paths file: %v", err)
-	}
-
-	var paths UpgradePaths
-	err = json.Unmarshal(bytes, &paths)
-	if err != nil {
-		return UpgradePaths{}, fmt.Errorf("failed to parse upgrade paths JSON: %v", err)
-	}
-	return paths, nil
-}
-
-// PlanUpgrade generates the Rancher + Kubernetes upgrade plan
-func PlanUpgrade(currentRancher, currentK8s, platform string, versions []string, paths UpgradePaths) ([]UpgradeStep, error) {
-	var upgradeSteps []UpgradeStep
-	keyVersions := GetKeyVersions(versions)
-
-	// Normalize platform name to lowercase for consistent comparison
-	platformLower := strings.ToLower(platform)
-
-	currentRancherVersion, err := version.NewVersion(currentRancher)
-	if err != nil {
-		return nil, fmt.Errorf("invalid current Rancher version: %v", err)
-	}
-
-	for _, v := range keyVersions {
-		nextVersion, err := version.NewVersion(v)
-		if err != nil {
-			return nil, fmt.Errorf("invalid version in key versions: %v", err)
-		}
-
-		if nextVersion.GreaterThan(currentRancherVersion) {
-			// Add Rancher upgrade step
-			upgradeSteps = append(upgradeSteps, UpgradeStep{
-				Type: "Rancher", From: currentRancher, To: v,
-			})
-
-			// Get Kubernetes upgrades for this Rancher version
-			r1 := paths.RancherManager[currentRancher]
-			r2 := paths.RancherManager[v]
-			k8sUpgrades := GetAllowedK8sUpgrades(currentK8s, platformLower, r1, r2)
-
-			// Add Kubernetes upgrade steps
-			for _, upgrade := range k8sUpgrades {
-				upgradeSteps = append(upgradeSteps, upgrade)
-				currentK8s = upgrade.To // Update current Kubernetes version
-			}
-
-			currentRancher = v                  // Update current Rancher version
-			currentRancherVersion = nextVersion // Update current Rancher version object
-		}
-	}
-
-	return upgradeSteps, nil
-}
-
-// GetAllowedK8sUpgrades determines the Kubernetes upgrade path
-// All platforms now require sequential minor version upgrades (e.g., v1.24 -> v1.25 -> v1.26)
-// Skipping minor versions is no longer allowed for any platform
-func GetAllowedK8sUpgrades(currentK8s, platform string, r1, r2 RancherManagerVersion) []UpgradeStep {
-	var upgrades []UpgradeStep
-	k8sVersions := getSortedK8sVersions(platform, r1, r2)
-
-	currentVer, err := parseK8sVersion(currentK8s)
-	if err != nil {
-		return upgrades
-	}
-
-	// Ensure current version is in the list
-	if !versionInList(currentVer, k8sVersions) {
-		k8sVersions = append(k8sVersions, currentVer)
-		sort.Sort(version.Collection(k8sVersions))
-	}
-
-	// No longer allow skipping minor versions for any platform
-	// All platforms must upgrade sequentially (e.g., v1.24 -> v1.25 -> v1.26)
-	allowSkip := false
-
-	for {
-		nextVer := findNextAcceptableK8sVersion(currentVer, k8sVersions, allowSkip)
-		if nextVer == nil {
-			break
-		}
-
-		upgrades = append(upgrades, UpgradeStep{
-			Type:     "Kubernetes",
-			Platform: platform,
-			From:     "v" + currentVer.Original(),
-			To:       "v" + nextVer.Original(),
-		})
-		currentVer = nextVer
-	}
-
-	return upgrades
-}
-
-// findNextAcceptableK8sVersion finds the next acceptable Kubernetes version
-// Since we no longer allow skipping, this will always return the next minor version
-func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*version.Version, _ bool) *version.Version {
-	currentSegments := currentVer.Segments()
-	if len(currentSegments) < 2 {
-		return nil
-	}
-	currentMajor := currentSegments[0]
-	currentMinor := currentSegments[1]
-	targetMinor := currentMinor + 1
-
-	// Find the next minor version (no skipping allowed)
-	var candidate *version.Version
-	for _, v := range k8sVersions {
-		if v.LessThanOrEqual(currentVer) {
-			continue
-		}
-		nextSegments := v.Segments()
-		if len(nextSegments) < 2 {
-			continue
-		}
-		nextMajor := nextSegments[0]
-		nextMinor := nextSegments[1]
-		
-		// Must be same major version
-		if nextMajor != currentMajor {
-			continue
-		}
-		
-		// Must be exactly the next minor version
-		if nextMinor == targetMinor {
-			// Return the highest patch version of this minor
-			if candidate == nil || v.GreaterThan(candidate) {
-				candidate = v
-			}
-		} else if nextMinor > targetMinor && candidate != nil {
-			// We've found a higher minor version, so return the best candidate
-			break
-		}
-	}
-	return candidate
-}
-
-// Checks if a version is in the list
-func versionInList(ver *version.Version, list []*version.Version) bool {
-	for _, v := range list {
-		if v.Equal(ver) {
-			return true
-		}
-	}
-	return false
-}
-
-// getSortedK8sVersions retrieves and sorts the Kubernetes versions for the given platform
-func getSortedK8sVersions(platform string, r1, r2 RancherManagerVersion) []*version.Version {
-	versionSet := make(map[string]*version.Version)
-	platforms := append(r1.SupportedPlatforms, r2.SupportedPlatforms...)
-	platformLower := strings.ToLower(platform)
-
-	for _, p := range platforms {
-		pPlatformLower := strings.ToLower(p.Platform)
-		if pPlatformLower == platformLower {
-			minVerStr := cleanVersion(p.MinVersion)
-			maxVerStr := cleanVersion(p.MaxVersion)
-			minVer, err := version.NewVersion(minVerStr)
-			if err != nil {
-				continue
-			}
-			maxVer, err := version.NewVersion(maxVerStr)
-			if err != nil {
-				continue
-			}
-			// Generate all minor versions between minVer and maxVer
-			versionsBetween := getMinorVersionsBetween(minVer, maxVer, p)
-			for _, v := range versionsBetween {
-				versionSet[v.Original()] = v
-			}
-		}
-	}
-
-	// Convert map to slice
-	var versionList []*version.Version
-	for _, v := range versionSet {
-		versionList = append(versionList, v)
-	}
-
-	// Sort the versions
-	sort.Sort(version.Collection(versionList))
-
-	return versionList
-}
-
-// getMinorVersionsBetween returns all minor versions between min and max versions, including exact versions from data
-func getMinorVersionsBetween(minVer, maxVer *version.Version, platformData Platform) []*version.Version {
-	var versions []*version.Version
-
-	// Include exact min and max versions with their metadata
-	minVerWithMeta, err := version.NewVersion(cleanVersion(platformData.MinVersion))
-	if err == nil {
-		versions = append(versions, minVerWithMeta)
-	}
-
-	maxVerWithMeta, err := version.NewVersion(cleanVersion(platformData.MaxVersion))
-	if err == nil && !maxVerWithMeta.Equal(minVerWithMeta) {
-		versions = append(versions, maxVerWithMeta)
-	}
-
-	// Generate intermediate minor versions
-	currentVer := minVer
-	for {
-		// Increment minor version
-		segments := currentVer.Segments()
-		if len(segments) < 2 {
-			break
-		}
-		major := segments[0]
-		minor := segments[1]
-		newMinor := minor + 1
-		newVerStr := fmt.Sprintf("%d.%d.0", major, newMinor)
-		newVer, err := version.NewVersion(newVerStr)
-		if err != nil {
-			break
-		}
-		if newVer.GreaterThan(maxVer) {
-			break
-		}
-		versions = append(versions, newVer)
-		currentVer = newVer
-	}
-
-	return versions
-}
-
-// cleanVersion removes the "v" prefix from a version string
-func cleanVersion(v string) string {
-	v = strings.TrimPrefix(v, "v")
-	return v
-}
-
-// parseK8sVersion parses a Kubernetes version string
-func parseK8sVersion(v string) (*version.Version, error) {
-	cleaned := cleanVersion(v)
-	ver, err := version.NewVersion(cleaned)
-	if err != nil {
-		log.Printf("Error parsing Kubernetes version '%s': %v", v, err)
 		return nil, err
 	}
-	return ver, nil
+	return catalog.Load(data)
 }
 
-// GetKeyVersions returns the key Rancher versions for the upgrade plan
-func GetKeyVersions(versions []string) []string {
-	var keyVersions []*version.Version
-	for _, v := range versions {
-		if strings.HasSuffix(v, ".9") || v == "2.7.5" || v == "2.8.8" || v == "2.9.2" {
-			ver, err := version.NewVersion(v)
-			if err != nil {
-				continue
-			}
-			keyVersions = append(keyVersions, ver)
-		}
-	}
-
-	// Sort the versions
-	sort.Sort(version.Collection(keyVersions))
-
-	// Convert back to string slices
-	sortedKeyVersions := make([]string, len(keyVersions))
-	for i, v := range keyVersions {
-		sortedKeyVersions[i] = v.String()
-	}
-
-	return sortedKeyVersions
-}
-
-// Main application entry point
 func main() {
-	// Initialize custom metrics
 	initMetrics()
 
-	// Main application Fiber instance
-	app := fiber.New()
+	cat, err := loadCatalog()
+	if err != nil {
+		log.Fatalf("refusing to start: %v", err)
+	}
+	log.Printf("catalog loaded: %d Rancher versions, generated %s", len(cat.Rancher), cat.GeneratedAt)
 
-	// Add the logger middleware
+	app := fiber.New()
 	app.Use(logger.New(logger.Config{
 		Format:     "[${time}] ${ip} ${status} - ${latency} ${method} ${path}\n",
 		TimeFormat: "2006-01-02 15:04:05",
 		TimeZone:   "Local",
 	}))
-
-	// Load upgrade paths
-	upgradePaths, err := LoadUpgradePaths()
-	if err != nil {
-		log.Fatalf("Error loading upgrade paths: %v", err)
-	}
 
 	app.Static("/", "./static")
 
@@ -398,68 +118,32 @@ func main() {
 		return c.SendString("OK")
 	})
 
-	// API route to generate the upgrade plan
-	app.Get("/api/plan-upgrade/:platform/:rancher/:k8s", func(c *fiber.Ctx) error {
-		// Start timer
+	plan := api.Handler(cat)
+	app.Get("/api/plan-upgrade", func(c *fiber.Ctx) error {
 		timer := prometheus.NewTimer(requestDuration)
 		defer timer.ObserveDuration()
 
-		// Increment active requests gauge
 		activeRequests.Inc()
 		defer activeRequests.Dec()
 
-		// Handle request timestamps for sliding window
 		updateRequestTimestamps()
 
-		platform := c.Params("platform")
-		currentRancher := c.Params("rancher")
-		currentK8s := c.Params("k8s")
+		// Label values are bounded to what the catalog knows. They were previously
+		// raw user input on a public unauthenticated endpoint, so any visitor could
+		// allocate unbounded Prometheus series by walking version strings.
+		p, r, k := api.LabelValues(cat,
+			c.Query("downstream_platform"), c.Query("rancher"), c.Query("downstream_k8s"))
+		versionsSubmitted.WithLabelValues(p, r, k).Inc()
 
-		// Increment versions submitted counter
-		versionsSubmitted.WithLabelValues(platform, currentRancher, currentK8s).Inc()
-
-		var versions []string
-		for v := range upgradePaths.RancherManager {
-			versions = append(versions, v)
-		}
-
-		// Sort versions using semantic versioning
-		parsedVersions := make([]*version.Version, 0, len(versions))
-		for _, v := range versions {
-			ver, err := version.NewVersion(v)
-			if err != nil {
-				continue
-			}
-			parsedVersions = append(parsedVersions, ver)
-		}
-		sort.Sort(version.Collection(parsedVersions))
-
-		// Convert back to string slices
-		sortedKeyVersions := make([]string, len(parsedVersions))
-		for i, v := range parsedVersions {
-			sortedKeyVersions[i] = v.String()
-		}
-
-		upgradePath, err := PlanUpgrade(currentRancher, currentK8s, platform, sortedKeyVersions, upgradePaths)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-
-		return c.JSON(fiber.Map{
-			"upgrade_path": upgradePath,
-		})
+		return plan(c)
 	})
 
-	// Start the metrics server on port 9000
 	go startMetricsServer()
 
-	// Start the main application on port 3000
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(appPort))
 }
 
-// updateRequestTimestamps handles the sliding window of request timestamps
+// updateRequestTimestamps maintains the 60-second sliding window gauge.
 func updateRequestTimestamps() {
 	mu.Lock()
 	defer mu.Unlock()
@@ -467,9 +151,8 @@ func updateRequestTimestamps() {
 	now := time.Now()
 	requestTimestamps = append(requestTimestamps, now)
 
-	// Remove timestamps older than 60 seconds
 	cutoff := now.Add(-60 * time.Second)
-	idx := 0
+	idx := len(requestTimestamps)
 	for i, t := range requestTimestamps {
 		if t.After(cutoff) {
 			idx = i
@@ -478,27 +161,44 @@ func updateRequestTimestamps() {
 	}
 	requestTimestamps = requestTimestamps[idx:]
 
-	// Update the gauge
 	totalRequestsLast60Seconds.Set(float64(len(requestTimestamps)))
 }
 
-// startMetricsServer starts a separate Fiber app to serve metrics on port 9000
+func metricsPort() string {
+	if p := os.Getenv("METRICS_PORT"); p != "" {
+		if !strings.HasPrefix(p, ":") {
+			return ":" + p
+		}
+		return p
+	}
+	return defaultMetricsPort
+}
+
+// startMetricsServer serves /metrics from the default Prometheus registry, which is
+// where initMetrics registers.
+//
+// It previously delegated the endpoint to fiberprometheus and ALSO registered a
+// stub handler returning nil, so /metrics answered 200 with an empty body. Combined
+// with the app binding :9000 while the chart declared 9090, the custom metrics were
+// unreachable twice over: nothing scraped the port, and the endpoint had nothing to
+// serve. Fixing only the port would have shipped a scrapeable endpoint that reported
+// nothing and looked healthy.
+//
+// It deliberately does NOT call log.Fatal on a bind failure.
+//
+// It used to, and that makes the metrics port a single point of failure for the
+// whole service: anything already holding the port kills the API, which is the
+// product. Observability failing is worth shouting about, not worth an outage.
+// A missing scrape target is itself an alertable condition now that the port
+// matches the chart and Prometheus can actually reach it.
 func startMetricsServer() {
-	metricsApp := fiber.New()
+	metricsApp := fiber.New(fiber.Config{DisableStartupMessage: true})
+	metricsApp.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
 
-	// Set up Prometheus middleware
-	prometheusMiddleware := fiberprometheus.New("fiber_app")
-	prometheusMiddleware.RegisterAt(metricsApp, "/metrics")
-	metricsApp.Use(prometheusMiddleware.Middleware)
-
-	// Expose /metrics endpoint
-	metricsApp.Get("/metrics", func(c *fiber.Ctx) error {
-		// The Prometheus middleware handles this
-		return nil
-	})
-
-	// Start the metrics server
-	if err := metricsApp.Listen(":9000"); err != nil {
-		log.Fatalf("Failed to start metrics server: %v", err)
+	port := metricsPort()
+	if err := metricsApp.Listen(port); err != nil {
+		log.Printf("METRICS UNAVAILABLE: could not listen on %s: %v. "+
+			"The API is unaffected and still serving; Prometheus will see this host "+
+			"as a down target.", port, err)
 	}
 }

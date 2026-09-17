@@ -1,47 +1,181 @@
-document.getElementById('planButton').addEventListener('click', async () => {
-    const platform = document.getElementById('platform').value;
-    const rancherVersion = document.getElementById('currentRancher').value;
-    const k8sVersion = document.getElementById('currentK8s').value;
+// Rendering is DOM construction, never innerHTML.
+//
+// The old version interpolated server-echoed user input into a template string and
+// assigned it to innerHTML. It did not fire, but only because the server rejected
+// non-semver input before any step was built and the version library's grammar has
+// no angle brackets. That is a safety property nobody chose and no test asserted,
+// and the planner rewrite moved the parser it depended on. textContent does not
+// care what the string contains.
 
-    if (!rancherVersion || !k8sVersion) {
-        document.getElementById('planOutput').innerText =
-            'Please enter both Rancher and Kubernetes versions.';
-        return;
-    }
+const PLAN_URL = "/api/plan-upgrade";
 
-    try {
-        const response = await fetch(`/api/plan-upgrade/${platform}/${rancherVersion}/${k8sVersion}`);
-        const result = await response.json();
+const el = (tag, className, text) => {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined && text !== null) node.textContent = text;
+  return node;
+};
 
-        if (result.error) {
-            document.getElementById('planOutput').innerText = `Error: ${result.error}`;
-        } else if (!result.upgrade_path || result.upgrade_path.length === 0) {
-            document.getElementById('planOutput').innerText = 'No upgrade path found for the provided input.';
-        } else {
-            const formattedPlan = formatUpgradePlan(result.upgrade_path);
-            document.getElementById('planOutput').innerHTML = formattedPlan;
-        }
-    } catch (error) {
-        document.getElementById('planOutput').innerText = 'Error fetching the upgrade plan. Please try again.';
-    }
-});
+const badge = (kind, text) => el("span", `badge badge-${kind}`, text);
 
-// Helper function to format the upgrade plan
-function formatUpgradePlan(upgradePath) {
-    let formatted = '';
-    let firstRancherUpgrade = true; // Track the first Rancher upgrade step
-
-    upgradePath.forEach((step) => {
-        if (step.type === 'Rancher') {
-            if (!firstRancherUpgrade) {
-                formatted += `<br><hr><br>`; // Add separator between Rancher upgrades
-            }
-            formatted += `Rancher ${step.from} -> ${step.to}<br>`;
-            firstRancherUpgrade = false; // Set the flag to false after the first step
-        } else if (step.type === 'Kubernetes') {
-            formatted += `${step.platform} ${step.from} -> ${step.to}<br>`;
-        }
-    });
-
-    return formatted;
+function stepLabel(kind) {
+  switch (kind) {
+    case "rancher": return "Rancher";
+    case "local-k8s": return "Local cluster";
+    case "downstream-k8s": return "Downstream";
+    default: return kind;
+  }
 }
+
+function renderStep(step) {
+  const li = el("li");
+  li.appendChild(el("span", "step-kind", stepLabel(step.kind)));
+
+  const move = el("span", "step-move");
+  move.appendChild(document.createTextNode(step.from));
+  move.appendChild(document.createTextNode(" → "));
+  move.appendChild(document.createTextNode(step.to));
+  li.appendChild(move);
+
+  if (step.platform && step.kind !== "rancher") {
+    li.appendChild(document.createTextNode(` (${step.platform})`));
+  }
+  if (step.as_of) {
+    li.appendChild(document.createTextNode(` · as of ${step.as_of}`));
+  }
+  if (step.source_url) {
+    li.appendChild(document.createTextNode(" · "));
+    const a = el("a", null, "source");
+    a.href = step.source_url;
+    a.rel = "noopener noreferrer";
+    a.target = "_blank";
+    li.appendChild(a);
+  }
+  (step.caveats || []).forEach((c) => li.appendChild(el("p", "caveat", c)));
+  return li;
+}
+
+function renderDestination(dest) {
+  const box = el("div", "dest");
+
+  const head = el("div", "dest-head");
+  head.appendChild(el("span", "dest-title", `Rancher ${dest.rancher}`));
+  if (dest.lifecycle) head.appendChild(badge(dest.lifecycle, `${dest.lifecycle} support`));
+  if (dest.granularity === "minor") head.appendChild(badge("minor", "minor-level"));
+  head.appendChild(el("span", "step-kind", `${dest.steps.length} step${dest.steps.length === 1 ? "" : "s"}`));
+  box.appendChild(head);
+
+  const list = el("ul", "steps");
+  dest.steps.forEach((s) => list.appendChild(renderStep(s)));
+  box.appendChild(list);
+
+  if (dest.granularity_note) box.appendChild(el("p", "note", dest.granularity_note));
+  if (dest.lifecycle_as_of) {
+    box.appendChild(el("p", "note", `Support status as of ${dest.lifecycle_as_of}.`));
+  }
+  return box;
+}
+
+function renderBlocker(b) {
+  const box = el("div", b.kind === "end-of-life" ? "blocker blocker-eol" : "blocker");
+  box.appendChild(el("div", "blocker-kind", b.kind.replace(/-/g, " ")));
+  box.appendChild(el("p", "blocker-constraint", b.constraint));
+  if (b.detail) box.appendChild(el("p", "blocker-detail", b.detail));
+  if (b.source_url) {
+    const a = el("a", null, "source");
+    a.href = b.source_url;
+    a.rel = "noopener noreferrer";
+    a.target = "_blank";
+    box.appendChild(a);
+  }
+  return box;
+}
+
+function render(out, payload) {
+  out.replaceChildren();
+
+  if (payload.error) {
+    const box = el("div", "err");
+    box.appendChild(el("p", "blocker-constraint", payload.error.detail));
+    if (payload.error.field) {
+      box.appendChild(el("p", "blocker-detail", `Field: ${payload.error.field}`));
+    }
+    out.appendChild(box);
+    return;
+  }
+
+  // Staleness banner first, above everything. If the refresh stopped working, a
+  // user acting on these routes should see that before they read them, not after.
+  const cat = payload.catalog;
+  if (cat && cat.stale) {
+    const banner = el("div", "stale");
+    banner.appendChild(el("div", "blocker-kind", "data may be out of date"));
+    banner.appendChild(el("p", "blocker-detail", cat.stale_note));
+    out.appendChild(banner);
+  }
+
+  (payload.blockers || []).forEach((b) => out.appendChild(renderBlocker(b)));
+
+  const dests = payload.destinations || [];
+  if (dests.length === 0 && (payload.blockers || []).length === 0) {
+    // Should not happen: the API never returns a bare empty result. If it does,
+    // say so rather than rendering nothing, which reads as "you are fine".
+    out.appendChild(el("p", "blocker-detail",
+      "No destinations and no explanation were returned. That is a bug, not a clean bill of health."));
+  }
+  dests.forEach((d) => out.appendChild(renderDestination(d)));
+
+  if (cat && cat.generated_at) {
+    out.appendChild(el("p", "claim",
+      `Compatibility data generated ${cat.generated_at}${cat.age_days ? ` (${cat.age_days} days ago)` : ""}.`));
+  }
+  if (payload.claim_note) out.appendChild(el("p", "claim", payload.claim_note));
+  if (payload.scope) out.appendChild(el("p", "claim", payload.scope));
+  if (payload.prerequisites_url) {
+    const p = el("p", "claim");
+    const a = el("a", null, "Rancher upgrade prerequisites");
+    a.href = payload.prerequisites_url;
+    a.rel = "noopener noreferrer";
+    a.target = "_blank";
+    p.appendChild(a);
+    out.appendChild(p);
+  }
+}
+
+document.getElementById("planButton").addEventListener("click", async () => {
+  const out = document.getElementById("planOutput");
+  const value = (id) => document.getElementById(id).value.trim();
+
+  const fields = {
+    rancher: value("currentRancher"),
+    local_platform: value("localPlatform"),
+    local_k8s: value("localK8s"),
+    downstream_platform: value("downstreamPlatform"),
+    downstream_k8s: value("downstreamK8s"),
+  };
+
+  const missing = Object.entries(fields).filter(([, v]) => !v).map(([k]) => k);
+  if (missing.length) {
+    out.replaceChildren();
+    const box = el("div", "err");
+    box.appendChild(el("p", "blocker-constraint",
+      `Fill in every field. Missing: ${missing.join(", ")}`));
+    out.appendChild(box);
+    return;
+  }
+
+  out.replaceChildren(el("p", "note", "Planning…"));
+
+  try {
+    // URLSearchParams encodes. The old code interpolated raw input into path
+    // segments, so a "/" in any field broke routing.
+    const res = await fetch(`${PLAN_URL}?${new URLSearchParams(fields)}`);
+    render(out, await res.json());
+  } catch (err) {
+    out.replaceChildren();
+    const box = el("div", "err");
+    box.appendChild(el("p", "blocker-constraint", "Could not reach the planner."));
+    box.appendChild(el("p", "blocker-detail", String(err)));
+    out.appendChild(box);
+  }
+});

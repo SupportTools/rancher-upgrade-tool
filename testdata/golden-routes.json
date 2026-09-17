@@ -1,0 +1,99 @@
+{
+  "_README": [
+    "Hand-verified expectations asserted against the SHIPPED catalog in CI.",
+    "",
+    "These are not snapshots. Each entry records a fact read off the cited upstream",
+    "source by a human, so a failure means one of two things: upstream genuinely",
+    "changed, or the generator broke. A snapshot test cannot tell those apart,",
+    "which is the whole reason this file exists. Unit tests prove the algorithm;",
+    "these prove the data.",
+    "",
+    "DO NOT update an entry to make a test pass. Re-read the cited source first.",
+    "If upstream changed, update the entry AND the verified_on date in the same",
+    "commit, and say so in the message."
+  ],
+
+  "supported_ranges": [
+    {
+      "rancher": "2.15.1", "platform": "eks", "min": "v1.34", "max": "v1.36",
+      "source": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-15-1/",
+      "verified_on": "2026-09-16"
+    },
+    {
+      "rancher": "2.13.9", "platform": "eks", "min": "v1.32", "max": "v1.34",
+      "source": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-13-9/",
+      "verified_on": "2026-09-16"
+    },
+    {
+      "rancher": "2.11.3", "platform": "eks", "min": "v1.30", "max": "v1.32",
+      "source": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-11-3/",
+      "verified_on": "2026-09-16"
+    },
+    {
+      "rancher": "2.9.6", "platform": "eks", "min": "v1.27", "max": "v1.30",
+      "source": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-9-6/",
+      "verified_on": "2026-09-16"
+    },
+    {
+      "rancher": "2.7.5", "platform": "eks", "min": "v1.23", "max": "v1.26.4-eks-0a21954",
+      "source": "https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-7-5/",
+      "verified_on": "2026-09-16",
+      "note": "2.7.5 still published exact hosted releases. Later matrices stopped, which is why hosted providers are minor-granularity now."
+    }
+  ],
+
+  "states": [
+    {
+      "name": "Rancher 2.15.1 on its lowest certified Kubernetes is valid",
+      "valid": true,
+      "rancher": "2.15.1", "local_platform": "rke2", "local_k8s": "v1.34",
+      "downstream_platform": "eks", "downstream_k8s": "v1.34",
+      "why": "The 2.15.1 matrix certifies v1.34 as the lowest for both RKE2 and EKS."
+    },
+    {
+      "name": "Rancher 2.15.1 one minor below its floor is NOT valid",
+      "valid": false,
+      "rancher": "2.15.1", "local_platform": "rke2", "local_k8s": "v1.33",
+      "downstream_platform": "eks", "downstream_k8s": "v1.34",
+      "why": "v1.33 is below the certified floor of v1.34. Accepting it would be the class of wrong answer this rebuild exists to remove."
+    },
+    {
+      "name": "Rancher on EKS managing RKE2 is valid",
+      "valid": true,
+      "rancher": "2.15.1", "local_platform": "eks", "local_k8s": "v1.35",
+      "downstream_platform": "rke2", "downstream_k8s": "v1.35",
+      "why": "Rancher Manager installs on hosted providers. Every sampled matrix lists AKS, EKS and GKE in the Rancher Manager platforms table."
+    },
+    {
+      "name": "EKS on Rancher 2.5.12 is valid",
+      "valid": true,
+      "rancher": "2.5.12", "local_platform": "rke1", "local_k8s": "v1.19",
+      "downstream_platform": "eks", "downstream_k8s": "v1.20",
+      "why": "REGRESSION GUARD. max_version was the unparseable v1.20.x, so the loader dropped the whole EKS entry and this returned nothing on the live site for two years."
+    }
+  ],
+
+  "reachability": [
+    {
+      "name": "An old 2.6 cluster can still reach the newest Rancher",
+      "rancher": "2.6.9", "local_platform": "rke2", "local_k8s": "v1.22",
+      "downstream_platform": "rke2", "downstream_k8s": "v1.22",
+      "must_reach": ["2.15.1"],
+      "why": "The tool's core value is planning a route from where people actually are, which is usually old and out of support."
+    },
+    {
+      "name": "The previously capped case reaches past 2.9",
+      "rancher": "2.9.6", "local_platform": "rke2", "local_k8s": "v1.28",
+      "downstream_platform": "rke2", "downstream_k8s": "v1.28",
+      "must_reach": ["2.12.13", "2.15.1"],
+      "why": "GetKeyVersions capped every answer at 2.9.2, so nothing beyond the 2.9 line was reachable at all."
+    },
+    {
+      "name": "A hosted downstream cluster still reaches the newest Rancher",
+      "rancher": "2.11.3", "local_platform": "rke2", "local_k8s": "v1.30",
+      "downstream_platform": "eks", "downstream_k8s": "v1.30",
+      "must_reach": ["2.15.1"],
+      "why": "Hosted providers plan at minor granularity, which must not prevent them reaching a destination."
+    }
+  ]
+}

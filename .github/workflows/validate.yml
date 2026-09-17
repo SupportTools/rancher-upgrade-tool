@@ -1,0 +1,44 @@
+# PR validation. Deliberately a SEPARATE workflow from pipeline.yml.
+#
+# pipeline.yml chains Test -> Build -> Publish -> Deploy through `needs:` with no
+# `if:` branch guard on any job. The only thing keeping publication and deployment
+# off pull requests is that pipeline.yml has no `pull_request` trigger. Adding one
+# there would build an image, publish a chart to charts.support.tools, patch six
+# ArgoCD applications and roll unmerged code to rancher.tips.
+#
+# So validation lives here instead, where publishing and deploying are structurally
+# unreachable rather than merely conditioned away. This workflow needs no registry
+# credentials and no kubeconfig, which is also why it works for fork PRs.
+name: Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  Validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          # Matches go.mod. Note pipeline.yml pins "1.22", which setup-go resolves
+          # to the newest 1.22.x, so CI and the shipped image can build on different
+          # patch releases. Tracked as a separate concern.
+          go-version-file: go.mod
+
+      - name: Install analysis tools
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Run the same checks humans run
+        run: make ci
+
+      - name: Build the binary
+        run: CGO_ENABLED=0 go build -trimpath -o /tmp/rancher-upgrade-tool .

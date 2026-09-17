@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-09-16",
+  "rancher": [
+    {
+      "version": "2.5.12",
+      "lifecycle": "ended",
+      "lifecycle_as_of": "2026-09-16",
+      "platforms": [
+        {
+          "platform": "rke2",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "release",
+          "releases": [
+            "v1.18.20+rke2r1",
+            "v1.19.13+rke2r1",
+            "v1.20.9+rke2r1"
+          ],
+          "source_url": "https://example.invalid/",
+          "as_of": "2026-09-16"
+        },
+        {
+          "platform": "eks",
+          "min_version": "v1.18",
+          "max_version": "v1.20",
+          "granularity": "minor",
+          "source_url": "https://example.invalid/",
+          "as_of": "2026-09-16"
+        }
+      ]
+    }
+  ]
+}

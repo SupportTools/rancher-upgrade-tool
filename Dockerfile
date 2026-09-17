@@ -14,10 +14,20 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o main .
+# CGO_ENABLED=0 so the binary is static and does not depend on the runtime
+# image's musl. -trimpath strips local filesystem paths, which otherwise make
+# the binary differ between machines for identical source.
+RUN CGO_ENABLED=0 go build -trimpath -o main .
 
 # Final Stage
-FROM alpine:latest
+# Pinned to match the builder's alpine3.20. Previously `alpine:latest`, which
+# combined with the nightly cron meant production ran a different base image
+# most mornings for identical source.
+#
+# NOTE: a tag pin narrows drift, it does not eliminate it -- alpine:3.20 still
+# moves across 3.20.x patch releases. Pinning by sha256 digest is the stronger
+# form and needs a registry lookup to establish.
+FROM alpine:3.20
 
 WORKDIR /app
 

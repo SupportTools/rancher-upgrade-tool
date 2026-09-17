@@ -1,12 +1,23 @@
 name: CI/CD
 
+# TRIGGERS: never add `pull_request` here. Test -> Build -> Publish -> Deploy chain
+# via `needs:` with no `if:` branch guard on any job, so a PR trigger would build an
+# image, publish a chart and roll unmerged code to all six environments including
+# rancher.tips. PR validation lives in validate.yml, which holds no secrets.
+#
+# The nightly `schedule: "0 0 * * *"` was removed: it redeployed every environment
+# including production each midnight with no code change and nobody watching, and
+# the runtime base was unpinned so the artifact differed night to night. That is
+# also incompatible with fail-closed catalog validation, which would turn one bad
+# dataset into an unattended 00:00 outage.
+#
+# If the cron was delivering base-image patches, replace it deliberately: a
+# scheduled job that opens a PR, not one that deploys.
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-  schedule:
-    - cron: "0 0 * * *" # This will run every day at midnight UTC
 
 jobs:
   Test:
@@ -21,27 +32,20 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install static analysis tools
+      - name: Install analysis tools
         run: |
-          go install golang.org/x/lint/golint@latest
           go install honnef.co/go/tools/cmd/staticcheck@latest
-
-      - name: Install dependency management tools
-        run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
-          go install github.com/psampaz/go-mod-outdated@latest
 
-      - name: Go static analysis
-        run: |
-          golint ./...
-          staticcheck ./...
-          go vet ./...
-
-      - name: Dependency management
-        run: |
-          go mod vendor
-          go mod verify
-          go mod tidy
+      # Single definition, shared with validate.yml and with humans. This job used
+      # to run its own inline golint/staticcheck/go vet/go mod sequence while the
+      # makefile described something different, and nothing checked the two agreed.
+      #
+      # This also gets `go test` into the pipeline for the first time: the job was
+      # named Test and ran no tests, because `go test ./...` against a package with
+      # no test files exits 0 and looked like a passing gate.
+      - name: Run the same checks humans run
+        run: make ci
 
       - name: Security scanning
         run: |

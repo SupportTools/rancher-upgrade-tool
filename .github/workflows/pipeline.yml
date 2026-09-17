@@ -240,15 +240,6 @@ jobs:
           fi
 
       - name: Verify the deploy actually happened - ${{ matrix.environment }}
-        # Replaces a poll of .status.health.status alone. ArgoCD tracks sync and
-        # health separately, so immediately after patching targetRevision the OLD
-        # pods are still running and still Healthy: the previous gate saw Healthy on
-        # its first attempt and passed having deployed nothing.
-        #
-        # scripts/verify-deploy.sh checks revision equality FIRST, then Synced, then
-        # Healthy, then queries the running service for an answer it must always be
-        # able to plan. Its logic is covered by deploy_verify_test.go, which drives
-        # it with a stub kubectl through exactly that false-green scenario.
         env:
           MAX_TRIES: 60
           SLEEP_TIME: 10
@@ -257,31 +248,31 @@ jobs:
           ENVIRONMENT=${{ matrix.environment }}
           CHART_VERSION="v${{ github.run_number }}"
 
-          # Only prd is publicly routable (rancher.tips). The other five need a
-          # port-forward from the runner, which is why the probe takes a URL rather
-          # than assuming one. Note this lengthens every deploy, and the matrix is
-          # max-parallel 1 across six environments.
-          if [ "$ENVIRONMENT" = "prd" ]; then
-            PROBE_HOST="https://rancher.tips"
-          else
-            # Service name and port come from the chart, which renders
-            # `name: website` on port 3000 (a leftover generic name; the HPA
-            # targets Deployment/website too). Guarded by
-            # TestDeployGateTargetsTheServiceTheChartRenders so this cannot drift.
-            kubectl -n "rancherupgrade-${ENVIRONMENT}" port-forward \
-              "svc/website" 18080:3000 >/tmp/pf.log 2>&1 &
-            PF_PID=$!
-            trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
-            for _ in $(seq 1 30); do
-              curl -fsS --max-time 2 http://127.0.0.1:18080/healthz >/dev/null 2>&1 && break
-              sleep 1
-            done
-            PROBE_HOST="http://127.0.0.1:18080"
-          fi
-
           # A query the catalog must always be able to plan. Zero destinations here
           # means the catalog failed to load or the planner is broken, and an empty
           # result is the answer that reads to a user as "you are already current".
-          export PROBE_URL="${PROBE_HOST}/api/plan-upgrade?rancher=2.9.6&local_platform=rke2&local_k8s=v1.28&downstream_platform=rke2&downstream_k8s=v1.28"
+          PROBE_QUERY="/api/plan-upgrade?rancher=2.9.6&local_platform=rke2&local_k8s=v1.28&downstream_platform=rke2&downstream_k8s=v1.28"
+
+          # Only prd is publicly routable (rancher.tips). The other five are reached
+          # by a port-forward that verify-deploy.sh opens ITSELF, after the rollout
+          # it is waiting for has completed.
+          #
+          # This step used to open the forward here, before calling the script. That
+          # is unfixable from this side: the script waits for the new revision, and
+          # the rollout deletes the pod the forward is bound to, so the probe always
+          # raced a dying tunnel. Observed on mst at v216 -> v220.
+          #
+          # Service name and port come from the chart, which renders `name: website`
+          # on port 3000 (a leftover generic name; the HPA targets Deployment/website
+          # too). Guarded by TestDeployGateTargetsTheServiceTheChartRenders.
+          if [ "$ENVIRONMENT" = "prd" ]; then
+            export PROBE_URL="https://rancher.tips${PROBE_QUERY}"
+          else
+            export PROBE_SERVICE="svc/website"
+            export PROBE_NAMESPACE="rancherupgrade-${ENVIRONMENT}"
+            export PROBE_LOCAL_PORT=18080
+            export PROBE_REMOTE_PORT=3000
+            export PROBE_PATH="$PROBE_QUERY"
+          fi
 
           ./scripts/verify-deploy.sh "$ENVIRONMENT" "$CHART_VERSION"

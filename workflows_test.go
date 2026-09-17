@@ -177,19 +177,63 @@ func TestSupersededDatasetIsRetained(t *testing.T) {
 // source still succeeds.
 func TestDeployAppliesTheWholeApplication(t *testing.T) {
 	run := deployStepShell(t, "Deploy Environment")
-	if !strings.Contains(run, "kubectl -n argocd apply") {
-		t.Error("Deploy does not apply the Application manifest, so changes to " +
-			"argocd/*.yaml (repoURL, helm parameters) never reach a live environment")
+	// The whole spec must reach the cluster. Both apply modes are dead ends on
+	// these objects (client-side: empty managedFields; server-side: ArgoCD's own
+	// incomplete status fails revalidation), so the update path is a merge patch
+	// built from the rendered manifest.
+	if !strings.Contains(run, "--patch-file") {
+		t.Error("Deploy does not patch from a file derived from argocd/*.yaml, so " +
+			"changes to repoURL or helm parameters never reach a live environment")
 	}
-	// Client-side apply cannot update these objects at all: ArgoCD co-owns them and
-	// the live Applications carry no managedFields, so kubectl fails with
-	// "metadata.resourceVersion: Invalid value: 0: must be specified for an update".
-	if !strings.Contains(run, "--server-side") {
-		t.Error("Deploy uses a client-side apply, which fails on these Applications")
+	if !strings.Contains(run, "argocd/${ENVIRONMENT}.yaml") {
+		t.Error("Deploy does not read argocd/${ENVIRONMENT}.yaml, so the manifest in " +
+			"the repo is not the source of truth for the live Application")
 	}
-	if strings.Contains(run, "patch application") {
-		t.Error("Deploy patches the Application instead of applying it. A patch " +
-			"updates only the named field and silently freezes the rest of the source.")
+	// An inline single-field patch is the regression: patching only targetRevision
+	// froze repoURL and kept mst on the old chart museum for two full runs.
+	if strings.Contains(run, "spec\\\":{\\\"source\\\":{\\\"targetRevision") ||
+		strings.Contains(run, `-p "{\"spec\"`) {
+		t.Error("Deploy sends an inline single-field patch; it must send the whole spec")
+	}
+}
+
+// The deploy extracts the spec with `awk '/^spec:/{f=1} f'`, which is only correct
+// while `spec:` is the LAST top-level key. If someone reorders a manifest, that awk
+// silently produces a PARTIAL spec and the patch quietly drops whatever followed --
+// exactly the class of silent freeze this whole change removes.
+func TestArgoManifestsKeepSpecLast(t *testing.T) {
+	apps, err := filepath.Glob("argocd/*.yaml")
+	if err != nil || len(apps) == 0 {
+		t.Fatalf("no argocd manifests: %v", err)
+	}
+	for _, p := range apps {
+		raw, err := os.ReadFile(p)
+		if err != nil {
+			t.Fatalf("read %s: %v", p, err)
+		}
+		var doc struct {
+			Kind string `yaml:"kind"`
+		}
+		if err := yaml.Unmarshal(raw, &doc); err != nil {
+			t.Fatalf("parse %s: %v", p, err)
+		}
+		if doc.Kind != "Application" {
+			continue
+		}
+		var lastTop string
+		for _, line := range strings.Split(string(raw), "\n") {
+			if line == "" || line[0] == ' ' || line[0] == '#' || line[0] == '-' {
+				continue
+			}
+			if i := strings.Index(line, ":"); i > 0 {
+				lastTop = line[:i]
+			}
+		}
+		if lastTop != "spec" {
+			t.Errorf("%s: last top-level key is %q, not \"spec\". The deploy extracts "+
+				"the spec with awk from `spec:` to EOF, so anything after it is "+
+				"silently dropped from the patch.", filepath.Base(p), lastTop)
+		}
 	}
 }
 

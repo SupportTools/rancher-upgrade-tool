@@ -251,14 +251,35 @@ jobs:
           # while the repo said oci://harbor.support.tools. Nothing reported it,
           # because a deploy from the OLD source still succeeds.
           echo "applying ArgoCD Application rancherupgrade-${ENVIRONMENT} at ${CHART_VERSION}"
-          # --server-side, not a client-side apply. ArgoCD co-owns these objects and
-          # the live Applications carry no managedFields, so the client-side path
-          # cannot compute an update and fails outright:
-          #   metadata.resourceVersion: Invalid value: 0: must be specified for an update
-          # --force-conflicts takes ownership of the spec fields we set here, which
-          # is the point: this manifest is the source of truth for the source.
-          sed "s/CHARTVERSION/${CHART_VERSION}/g" "argocd/${ENVIRONMENT}.yaml" \
-            | kubectl -n argocd apply --server-side --force-conflicts -f -
+          # Send the WHOLE spec, as a merge patch. Both apply modes are dead ends
+          # on these objects, each verified with --dry-run=server:
+          #   client-side : metadata.resourceVersion: Invalid value: 0: must be
+          #                 specified for an update   (empty managedFields)
+          #   server-side : status.sync.comparedTo.destination: Required value
+          #                 (SSA revalidates ArgoCD's own status, which is
+          #                  incomplete whenever a comparison has failed)
+          # A merge patch touches spec only, so the status schema never applies.
+          #
+          # It must be the whole spec, not one field. Patching only targetRevision
+          # is what froze repoURL and kept mst on the old chart museum for two
+          # full runs while argocd/*.yaml said Harbor.
+          rendered=$(mktemp)
+          sed "s/CHARTVERSION/${CHART_VERSION}/g" "argocd/${ENVIRONMENT}.yaml" > "$rendered"
+
+          if kubectl -n argocd get application "rancherupgrade-${ENVIRONMENT}" >/dev/null 2>&1; then
+            # `spec:` is the last top-level key in these manifests, so everything
+            # from it to EOF is the spec. Asserted by
+            # TestArgoManifestsKeepSpecLast so the assumption cannot rot.
+            specpatch=$(mktemp)
+            awk '/^spec:/{f=1} f' "$rendered" > "$specpatch"
+            test -s "$specpatch" || { echo "::error::extracted an empty spec patch"; exit 1; }
+            echo "patching rancherupgrade-${ENVIRONMENT} spec to ${CHART_VERSION}"
+            kubectl -n argocd patch application "rancherupgrade-${ENVIRONMENT}" \
+              --type merge --patch-file "$specpatch"
+          else
+            echo "creating rancherupgrade-${ENVIRONMENT} at ${CHART_VERSION}"
+            kubectl -n argocd apply -f "$rendered" --validate=false
+          fi
 
       - name: Verify the deploy actually happened - ${{ matrix.environment }}
         env:

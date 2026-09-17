@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# Upstream snapshots fetched by cmd/update-matrix. Not committed: they are large,
+# and the reviewable artifact is the catalog diff plus the journey diff, not several
+# hundred KB of vendor YAML and HTML. "Pinned" here means generate reads from a
+# snapshot directory rather than the network, so generation is reproducible and
+# testable offline.
+snapshots/

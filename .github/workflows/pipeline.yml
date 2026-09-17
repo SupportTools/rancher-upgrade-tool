@@ -193,23 +193,45 @@ jobs:
             | kubectl -n argocd apply -f - --validate=false
           fi
 
-      - name: Wait for Deployment to Stabilize
+      - name: Verify the deploy actually happened - ${{ matrix.environment }}
+        # Replaces a poll of .status.health.status alone. ArgoCD tracks sync and
+        # health separately, so immediately after patching targetRevision the OLD
+        # pods are still running and still Healthy: the previous gate saw Healthy on
+        # its first attempt and passed having deployed nothing.
+        #
+        # scripts/verify-deploy.sh checks revision equality FIRST, then Synced, then
+        # Healthy, then queries the running service for an answer it must always be
+        # able to plan. Its logic is covered by deploy_verify_test.go, which drives
+        # it with a stub kubectl through exactly that false-green scenario.
+        env:
+          MAX_TRIES: 60
+          SLEEP_TIME: 10
         run: |
-          MAX_TRIES=30
-          SLEEP_TIME=10
-          COUNTER=0
-          while [ $COUNTER -lt $MAX_TRIES ]; do
-            HEALTH_STATUS=$(kubectl -n argocd get applications rancherupgrade-${{ matrix.environment }} -o jsonpath='{.status.health.status}')
-            echo "Current health status: $HEALTH_STATUS"
-            if [ "$HEALTH_STATUS" = "Healthy" ]; then
-              echo "Application is healthy."
-              break
-            fi
-            echo "Waiting for application to become healthy..."
-            sleep $SLEEP_TIME
-            let COUNTER=COUNTER+1
-          done
-          if [ $COUNTER -eq $MAX_TRIES ]; then
-            echo "Application did not become healthy in time."
-            exit 1
+          set -euo pipefail
+          ENVIRONMENT=${{ matrix.environment }}
+          CHART_VERSION="v${{ github.run_number }}"
+
+          # Only prd is publicly routable (rancher.tips). The other five need a
+          # port-forward from the runner, which is why the probe takes a URL rather
+          # than assuming one. Note this lengthens every deploy, and the matrix is
+          # max-parallel 1 across six environments.
+          if [ "$ENVIRONMENT" = "prd" ]; then
+            PROBE_HOST="https://rancher.tips"
+          else
+            kubectl -n "rancherupgrade-${ENVIRONMENT}" port-forward \
+              "svc/rancher-upgrade-tool" 18080:80 >/tmp/pf.log 2>&1 &
+            PF_PID=$!
+            trap 'kill "$PF_PID" 2>/dev/null || true' EXIT
+            for _ in $(seq 1 30); do
+              curl -fsS --max-time 2 http://127.0.0.1:18080/healthz >/dev/null 2>&1 && break
+              sleep 1
+            done
+            PROBE_HOST="http://127.0.0.1:18080"
           fi
+
+          # A query the catalog must always be able to plan. Zero destinations here
+          # means the catalog failed to load or the planner is broken, and an empty
+          # result is the answer that reads to a user as "you are already current".
+          export PROBE_URL="${PROBE_HOST}/api/plan-upgrade?rancher=2.9.6&local_platform=rke2&local_k8s=v1.28&downstream_platform=rke2&downstream_k8s=v1.28"
+
+          ./scripts/verify-deploy.sh "$ENVIRONMENT" "$CHART_VERSION"

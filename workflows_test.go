@@ -181,6 +181,12 @@ func TestDeployAppliesTheWholeApplication(t *testing.T) {
 		t.Error("Deploy does not apply the Application manifest, so changes to " +
 			"argocd/*.yaml (repoURL, helm parameters) never reach a live environment")
 	}
+	// Client-side apply cannot update these objects at all: ArgoCD co-owns them and
+	// the live Applications carry no managedFields, so kubectl fails with
+	// "metadata.resourceVersion: Invalid value: 0: must be specified for an update".
+	if !strings.Contains(run, "--server-side") {
+		t.Error("Deploy uses a client-side apply, which fails on these Applications")
+	}
 	if strings.Contains(run, "patch application") {
 		t.Error("Deploy patches the Application instead of applying it. A patch " +
 			"updates only the named field and silently freezes the rest of the source.")

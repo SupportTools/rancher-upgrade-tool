@@ -22,7 +22,7 @@ import (
 // the LATEST patch per cycle today, so regenerating from scratch would flatten
 // exactly the old versions people are actually stuck on, which is the population
 // this tool exists to help.
-func generate(snapDir, catPath string, dry bool) error {
+func generate(snapDir, catPath, reportPath string, dry bool) error {
 	baseRaw, err := os.ReadFile(catPath)
 	if err != nil {
 		return fmt.Errorf("read existing catalog: %w", err)
@@ -157,7 +157,14 @@ func generate(snapDir, catPath string, dry bool) error {
 		return fmt.Errorf("generated catalog does not validate: %w", err)
 	}
 
-	reportJourneyDiff(base, out)
+	summary := reportJourneyDiff(base, out)
+
+	if reportPath != "" {
+		if err := writeReport(reportPath, base, out, summary); err != nil {
+			return fmt.Errorf("write report: %w", err)
+		}
+		fmt.Printf("wrote review report to %s\n", reportPath)
+	}
 
 	encoded, err := json.MarshalIndent(out, "", "  ")
 	if err != nil {
@@ -317,7 +324,7 @@ func guardNoRegression(base, next *catalog.Catalog) error {
 // reviewer assesses operational consequences instead of reading hundreds of changed
 // JSON lines. A plausible-looking wrong number is indistinguishable from a correct
 // new one in a raw diff.
-func reportJourneyDiff(base, next *catalog.Catalog) {
+func reportJourneyDiff(base, next *catalog.Catalog) string {
 	probes := []planner.Node{
 		{Rancher: "2.5.12", LocalPlatform: catalog.RKE1, LocalK8s: "1.19", DownPlatform: catalog.EKS, DownK8s: "1.19"},
 		{Rancher: "2.6.9", LocalPlatform: catalog.RKE2, LocalK8s: "1.22", DownPlatform: catalog.RKE2, DownK8s: "1.22"},
@@ -326,7 +333,13 @@ func reportJourneyDiff(base, next *catalog.Catalog) {
 		{Rancher: "2.11.3", LocalPlatform: catalog.RKE2, LocalK8s: "1.30", DownPlatform: catalog.EKS, DownK8s: "1.30"},
 	}
 
-	fmt.Println("\nJOURNEY DIFF (what changed for real queries, not raw JSON lines)")
+	var buf strings.Builder
+	emit := func(format string, args ...any) {
+		line := fmt.Sprintf(format, args...)
+		fmt.Print(line)
+		buf.WriteString(line)
+	}
+	emit("\nJOURNEY DIFF (what changed for real queries, not raw JSON lines)\n")
 	for _, probe := range probes {
 		before := destinations(base, probe)
 		after := destinations(next, probe)
@@ -346,20 +359,95 @@ func reportJourneyDiff(base, next *catalog.Catalog) {
 			probe.Rancher, probe.LocalPlatform, probe.DownPlatform, probe.DownK8s)
 
 		if len(gained) == 0 && len(lost) == 0 {
-			fmt.Printf("%s: unchanged (%d destinations)\n", label, len(after))
+			emit("%s: unchanged (%d destinations)\n", label, len(after))
 			continue
 		}
-		fmt.Printf("%s: %d -> %d destinations\n", label, len(before), len(after))
+		emit("%s: %d -> %d destinations\n", label, len(before), len(after))
 		if len(moved) > 0 {
-			fmt.Printf("      waypoint moved: %s\n", strings.Join(moved, ", "))
+			emit("      waypoint moved: %s\n", strings.Join(moved, ", "))
 		}
 		if newly := difference(gained, movedTargets(moved)); len(newly) > 0 {
-			fmt.Printf("      NEWLY REACHABLE: %s\n", strings.Join(newly, ", "))
+			emit("      NEWLY REACHABLE: %s\n", strings.Join(newly, ", "))
 		}
 		if len(reallyLost) > 0 {
-			fmt.Printf("      NO LONGER REACHABLE: %s   <-- REVIEW THIS\n", strings.Join(reallyLost, ", "))
+			emit("      NO LONGER REACHABLE: %s   <-- REVIEW THIS\n", strings.Join(reallyLost, ", "))
 		}
 	}
+	return buf.String()
+}
+
+// writeReport produces the pull-request body. A reviewer should be able to judge
+// operational consequences from it without reading a 270KB JSON diff, where a
+// plausible-looking wrong number is indistinguishable from a correct new one.
+func writeReport(path string, base, next *catalog.Catalog, journey string) error {
+	var b strings.Builder
+	b.WriteString("## Catalog refresh\n\n")
+	fmt.Fprintf(&b, "Generated %s by `cmd/update-matrix`.\n\n", next.GeneratedAt)
+
+	fmt.Fprintf(&b, "| | before | after |\n|---|---|---|\n")
+	fmt.Fprintf(&b, "| Rancher versions | %d | %d |\n", len(base.Rancher), len(next.Rancher))
+	fmt.Fprintf(&b, "| newest | %s | %s |\n", newest(base), newest(next))
+
+	beforeG, afterG := granularityCounts(base), granularityCounts(next)
+	fmt.Fprintf(&b, "| release-granularity entries | %d | %d |\n", beforeG, afterG)
+
+	added := addedVersions(base, next)
+	if len(added) > 0 {
+		fmt.Fprintf(&b, "\n**Rancher versions added:** %s\n", strings.Join(added, ", "))
+	}
+
+	b.WriteString("\n### What changed for real queries\n\n```\n")
+	b.WriteString(strings.TrimPrefix(journey, "\n"))
+	b.WriteString("```\n")
+
+	b.WriteString("\n### Reviewer checklist\n\n")
+	b.WriteString("- [ ] Any line marked `REVIEW THIS` is a destination that genuinely stopped being reachable, not a waypoint moving within its minor line.\n")
+	b.WriteString("- [ ] Golden routes passed in CI. They encode facts read off upstream by a human; if one failed, re-read the cited source rather than editing the expectation.\n")
+	b.WriteString("- [ ] Any newly added Rancher version's ranges match its support-matrix page.\n")
+	b.WriteString("\nThis PR is generated. It never commits to main on its own.\n")
+
+	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+func newest(c *catalog.Catalog) string {
+	if len(c.Rancher) == 0 {
+		return "none"
+	}
+	best := c.Rancher[0].Version
+	bv, _ := version.NewVersion(catalog.Normalize(best))
+	for _, rv := range c.Rancher {
+		v, err := version.NewVersion(catalog.Normalize(rv.Version))
+		if err == nil && (bv == nil || v.GreaterThan(bv)) {
+			best, bv = rv.Version, v
+		}
+	}
+	return best
+}
+
+func granularityCounts(c *catalog.Catalog) int {
+	n := 0
+	for _, rv := range c.Rancher {
+		for _, p := range rv.Platforms {
+			if p.Granularity == catalog.GranularityRelease {
+				n++
+			}
+		}
+	}
+	return n
+}
+
+func addedVersions(base, next *catalog.Catalog) []string {
+	had := map[string]bool{}
+	for _, rv := range base.Rancher {
+		had[catalog.Normalize(rv.Version)] = true
+	}
+	var out []string
+	for _, rv := range next.Rancher {
+		if !had[catalog.Normalize(rv.Version)] {
+			out = append(out, rv.Version)
+		}
+	}
+	return out
 }
 
 func minorLine(v string) string {

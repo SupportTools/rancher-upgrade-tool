@@ -1,0 +1,64 @@
+# Scheduled catalog refresh.
+#
+# Opens a PULL REQUEST. It never commits to main, and it is deliberately not part
+# of pipeline.yml: merging to main deploys to production, so a job that regenerates
+# upgrade advice must put a human between the generator and rancher.tips.
+#
+# The generator fails rather than emitting a partial dataset, so a broken scrape
+# produces a red job and no PR, not a quietly degraded catalog.
+#
+# KNOWN GAP, tracked separately: "no PR opened" is silent staleness. A broken
+# scraper leaves the existing healthy service serving old advice indefinitely, and
+# so does a PR nobody reviews. This workflow does not yet have a named owner, a
+# failure notification, or a maximum catalog age. See OQ1.
+name: Data sync
+
+on:
+  schedule:
+    # Weekly. Rancher patch releases land far more slowly than daily, and a PR
+    # nobody has reviewed yet should not be replaced by another one.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+
+      - name: Fetch upstream and regenerate
+        run: |
+          go run ./cmd/update-matrix \
+            -fetch \
+            -snapshots snapshots \
+            -catalog data/catalog.json \
+            -report /tmp/pr-body.md
+
+      - name: Verify the regenerated catalog
+        # Golden routes run here. They are the only check that distinguishes
+        # "upstream published something new" from "our parser broke": a
+        # plausible-looking wrong value is well-formed, so the loader accepts it and
+        # the raw diff looks like a normal refresh.
+        run: go test ./...
+
+      - name: Open a pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: data/catalog-refresh
+          base: main
+          title: "Catalog refresh: Rancher and Kubernetes compatibility data"
+          body-path: /tmp/pr-body.md
+          commit-message: "data: refresh compatibility catalog from upstream"
+          add-paths: data/catalog.json
+          delete-branch: true
+          labels: data-refresh

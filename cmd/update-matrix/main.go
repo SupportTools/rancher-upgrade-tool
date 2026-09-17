@@ -62,6 +62,7 @@ func main() {
 	snapDir := flag.String("snapshots", "snapshots", "directory holding pinned upstream snapshots")
 	catPath := flag.String("catalog", "data/catalog.json", "catalog to extend and rewrite")
 	dry := flag.Bool("dry-run", false, "report what would change without writing")
+	report := flag.String("report", "", "write a pull-request body describing the change to this path")
 	flag.Parse()
 
 	if *fetch {
@@ -70,7 +71,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	if err := generate(*snapDir, *catPath, *dry); err != nil {
+	if err := generate(*snapDir, *catPath, *report, *dry); err != nil {
 		fmt.Fprintf(os.Stderr, "\nGENERATION FAILED, nothing written: %v\n", err)
 		os.Exit(1)
 	}

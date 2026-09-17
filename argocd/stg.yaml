@@ -8,12 +8,21 @@ spec:
     server: https://kubernetes.default.svc
   project: rancherupgrade
   source:
+    # Helm chart served over OCI from Harbor, replacing the git-backed
+    # chart museum at charts.support.tools. That move also removed the
+    # BOT_TOKEN dependency that was blocking deploys.
+    #
+    # The oci:// prefix needs ArgoCD with OCI-URL support (roughly 2.12+).
+    # If this cluster's ArgoCD is older, the fallback is a bare host here
+    # (harbor.support.tools/rancher-upgrade-tool/charts) plus a Helm
+    # repository registered with enableOCI: true. The Harbor project is
+    # PUBLIC, so either way ArgoCD needs no registry credentials.
     chart: rancher-upgrade-tool
     helm:
       parameters:
         - name: ingress.host
           value: stg.rancher.tips
-    repoURL: https://charts.support.tools
+    repoURL: oci://harbor.support.tools/rancher-upgrade-tool/charts
     targetRevision: CHARTVERSION
   syncPolicy:
     syncOptions:

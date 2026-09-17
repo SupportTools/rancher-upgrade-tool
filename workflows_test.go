@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -293,5 +294,140 @@ func TestBothWorkflowsRunTheSameGate(t *testing.T) {
 		if !strings.Contains(ciLine, prereq) {
 			t.Errorf("`ci` target is missing %q: %q", prereq, ciLine)
 		}
+	}
+}
+
+// The chart moved from the git-backed museum at charts.support.tools to OCI on
+// harbor.support.tools. These guard the move, because half-migrating is worse than
+// either end state: the old path needed BOT_TOKEN, which had expired and blocked
+// deploys entirely.
+func TestChartPublishesToHarborOverOCI(t *testing.T) {
+	// Parse the workflow and inspect only `run:` shell and `uses:` actions.
+	// Matching the raw file catches explanatory COMMENTS: the first version of this
+	// test failed on the comment that says to use docker/login-action INSTEAD of
+	// `helm registry login`. Same mistake as TestBothWorkflowsRunTheSameGate made.
+	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	var wf struct {
+		Jobs map[string]struct {
+			Steps []struct {
+				Run  string         `yaml:"run"`
+				Uses string         `yaml:"uses"`
+				With map[string]any `yaml:"with"`
+			} `yaml:"steps"`
+		} `yaml:"jobs"`
+	}
+	if err := yaml.Unmarshal(raw, &wf); err != nil {
+		t.Fatalf("parse pipeline: %v", err)
+	}
+
+	var shell, actions []string
+	withValues := map[string]string{}
+	for _, job := range wf.Jobs {
+		for _, st := range job.Steps {
+			if strings.TrimSpace(st.Run) != "" {
+				shell = append(shell, st.Run)
+			}
+			if st.Uses != "" {
+				actions = append(actions, st.Uses)
+			}
+			for k, v := range st.With {
+				withValues[k] = fmt.Sprint(v)
+			}
+		}
+	}
+	allShell := strings.Join(shell, "\n")
+	allActions := strings.Join(actions, "\n")
+	allWith := fmt.Sprint(withValues)
+
+	// The credential that blocked every deploy must be gone, not merely unused.
+	if strings.Contains(allWith, "BOT_TOKEN") || strings.Contains(allShell, "BOT_TOKEN") {
+		t.Error("pipeline.yml still uses BOT_TOKEN. The git-backed chart push is replaced " +
+			"by an OCI push; that secret had expired and blocked every deploy.")
+	}
+	if strings.Contains(allWith, "supporttools/helm-chart") {
+		t.Error("pipeline.yml still checks out the chart museum repository")
+	}
+	if !strings.Contains(allShell, "oci://harbor.support.tools/rancher-upgrade-tool/charts") {
+		t.Error("pipeline.yml does not push the chart to the Harbor OCI path")
+	}
+
+	// `helm registry login` fails against Harbor even with correct credentials:
+	// Harbor's token service satisfies Docker's auth handshake but rejects Helm's
+	// basic-auth probe against /v2/. helm push reads ~/.docker/config.json instead.
+	if strings.Contains(allShell, "helm registry login") {
+		t.Error("a run: block uses `helm registry login`, which fails against Harbor. " +
+			"Use docker/login-action; helm push reads the docker config.")
+	}
+	if !strings.Contains(allActions, "docker/login-action") {
+		t.Error("pipeline.yml does not use docker/login-action to authenticate to Harbor")
+	}
+}
+
+// OCI registries require a valid SemVer2 chart version. The previous scheme
+// produced "v219", which has no minor or patch and helm push rejects.
+func TestChartVersionIsValidSemver(t *testing.T) {
+	pipeline, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	body := string(pipeline)
+
+	// Substitute a run number the way Actions would, then check the shape.
+	re := regexp.MustCompile(`CHART_VERSION="([^"]+)"`)
+	m := re.FindStringSubmatch(body)
+	if m == nil {
+		t.Fatal("could not find CHART_VERSION in pipeline.yml")
+	}
+	concrete := strings.ReplaceAll(m[1], "${{ github.run_number }}", "219")
+
+	semver := regexp.MustCompile(`^v?\d+\.\d+\.\d+$`)
+	if !semver.MatchString(concrete) {
+		t.Errorf("CHART_VERSION resolves to %q, which is not SemVer2. OCI registries "+
+			"reject it: helm push needs major.minor.patch (a leading v is fine).", concrete)
+	}
+}
+
+// Every environment must pull the chart from Harbor. A single app left pointing at
+// the dead museum would fail to sync while the others succeeded.
+func TestAllArgoAppsPullFromHarbor(t *testing.T) {
+	apps, err := filepath.Glob("argocd/*.yaml")
+	if err != nil || len(apps) == 0 {
+		t.Fatalf("no argocd manifests found: %v", err)
+	}
+	found := 0
+	for _, p := range apps {
+		raw, err := os.ReadFile(p)
+		if err != nil {
+			t.Fatalf("read %s: %v", p, err)
+		}
+		var app struct {
+			Kind string `yaml:"kind"`
+			Spec struct {
+				Source struct {
+					RepoURL string `yaml:"repoURL"`
+					Chart   string `yaml:"chart"`
+				} `yaml:"source"`
+			} `yaml:"spec"`
+		}
+		if err := yaml.Unmarshal(raw, &app); err != nil {
+			t.Fatalf("parse %s: %v", p, err)
+		}
+		if app.Kind != "Application" {
+			continue
+		}
+		found++
+		want := "oci://harbor.support.tools/rancher-upgrade-tool/charts"
+		if app.Spec.Source.RepoURL != want {
+			t.Errorf("%s repoURL = %q, want %q", filepath.Base(p), app.Spec.Source.RepoURL, want)
+		}
+		if app.Spec.Source.Chart != "rancher-upgrade-tool" {
+			t.Errorf("%s chart = %q", filepath.Base(p), app.Spec.Source.Chart)
+		}
+	}
+	if found != 6 {
+		t.Errorf("checked %d Applications, expected 6 (mst, dev, qas, tst, stg, prd)", found)
 	}
 }

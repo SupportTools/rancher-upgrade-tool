@@ -92,41 +92,55 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v4.2.0
 
-      - name: Helm Lint
-        run: helm lint charts/rancher-upgrade-tool/
-
-      - name: Package Helm chart
+      - name: Render and package the chart
         run: |
-          export CHART_VERSION="v${{ github.run_number }}"
+          set -euo pipefail
+
+          # OCI registries require a valid SemVer2 chart version. The previous
+          # scheme, v${{ github.run_number }} -> "v219", is NOT semver (no minor or
+          # patch) and helm push rejects it outright. A leading "v" is fine -- Helm
+          # strips it -- which is why the house convention here is v<maj>.<min>.<pat>
+          # (see harbor.support.tools/beacon/charts/beacon, tagged v1.92.0).
+          export CHART_VERSION="v0.${{ github.run_number }}.0"
           export APP_VERSION="v${{ github.run_number }}"
           export IMAGE_TAG="v${{ github.run_number }}"
           echo "CHART_VERSION=${CHART_VERSION}"
-          echo "APP_VERSION=${APP_VERSION}"
-          echo "IMAGE_TAG=${IMAGE_TAG}"
+          echo "CHART_VERSION=${CHART_VERSION}" >> "$GITHUB_ENV"
+
           envsubst < charts/rancher-upgrade-tool/Chart.yaml.template > charts/rancher-upgrade-tool/Chart.yaml
           envsubst < charts/rancher-upgrade-tool/values.yaml.template > charts/rancher-upgrade-tool/values.yaml
+
+          # Lint AFTER rendering. It used to run before, against the committed
+          # Chart.yaml pinned at 0.1.0 with an empty image tag, so it linted
+          # something that was never packaged or shipped.
+          helm lint charts/rancher-upgrade-tool/
+
           helm package charts/rancher-upgrade-tool --destination helm/repo
+          ls -l helm/repo
 
-      - name: Checkout helm-chart repository
-        uses: actions/checkout@v4
+      # docker/login-action, NOT `helm registry login`. Harbor's token service
+      # returns a valid bearer token for Docker's auth handshake but rejects Helm's
+      # simpler basic-auth probe against /v2/, so `helm registry login` fails with
+      # "unauthorized: authentication required" even on correct credentials.
+      # helm push then reads ~/.docker/config.json transparently.
+      - name: Log in to Harbor
+        uses: docker/login-action@v3
         with:
-          repository: supporttools/helm-chart
-          path: helm-chart
-          token: ${{ secrets.BOT_TOKEN }}
+          registry: harbor.support.tools
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Configure Git
+      - name: Push the chart to Harbor
         run: |
-          git config --global user.email "github-action@users.noreply.github.com"
-          git config --global user.name "GitHub Action"
+          set -euo pipefail
+          helm push "helm/repo/rancher-upgrade-tool-${CHART_VERSION}.tgz" \
+            oci://harbor.support.tools/rancher-upgrade-tool/charts
 
-      - name: Update Helm repository
-        run: |
-          cp helm/repo/rancher-upgrade-tool-*.tgz helm-chart/
-          cd helm-chart
-          helm repo index . --url https://charts.support.tools/
-          git add .
-          git commit -m "Update Helm chart for rancher-upgrade-tool"
-          git push
+          # Prove it landed rather than trusting the push's exit code.
+          helm show chart \
+            oci://harbor.support.tools/rancher-upgrade-tool/charts/rancher-upgrade-tool \
+            --version "${CHART_VERSION}" > /dev/null
+          echo "verified ${CHART_VERSION} is readable from Harbor"
 
   Deploy:
     # In-cluster ARC runner on a1-ops-prd (namespace arc-runners-supporttools); required so the

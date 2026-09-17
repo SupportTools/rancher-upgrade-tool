@@ -219,12 +219,12 @@ func findNextAcceptableK8sVersion(currentVer *version.Version, k8sVersions []*ve
 		}
 		nextMajor := nextSegments[0]
 		nextMinor := nextSegments[1]
-		
+
 		// Must be same major version
 		if nextMajor != currentMajor {
 			continue
 		}
-		
+
 		// Must be exactly the next minor version
 		if nextMinor == targetMinor {
 			// Return the highest patch version of this minor

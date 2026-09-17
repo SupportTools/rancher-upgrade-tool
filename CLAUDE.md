@@ -62,7 +62,7 @@ Key components:
 
 1. **Web Framework**: Uses Fiber v2 for high-performance HTTP handling
 2. **Version Management**: Uses HashiCorp's go-version library for semantic version parsing and comparison
-3. **Metrics**: Integrated Prometheus metrics on port 9000
+3. **Metrics**: Prometheus metrics on port 9090 (matching the chart; `METRICS_PORT` overrides locally)
 4. **Frontend**: Static HTML/CSS/JS served from the `/static` directory
 
 ### Core Logic Flow
@@ -163,11 +163,49 @@ Two things about the chart worth knowing before you touch the pipeline:
    probe against `/v2/`, so `helm registry login` fails on correct credentials.
    `helm push` reads `~/.docker/config.json` transparently.
 
-**ArgoCD sync status will read `Unknown` forever**, and that is expected: ArgoCD
-cannot compute a diff for an OCI Helm source. `scripts/verify-deploy.sh` therefore
-gates on **sync revision equality plus health plus a live known-answer probe**, not
-on `Synced`. Revision equality is the check that matters; it is what stops a healthy
-*old* revision from reporting a successful deploy.
+**Do not gate a deploy on any ArgoCD revision field.** Two properties make them
+unusable for "did the right thing deploy", and both produced a false green here:
+
+- `.status.sync.revision` reports the revision that was **requested**, not the one
+  that synced. mst reported `sync.revision: v221`, `Healthy`, `Succeeded` while
+  `syncResult.revision` was `v216` and the pods were running image `v216`.
+- For a working OCI source that same field is a `sha256:` **digest**, not a chart
+  version, so a version-equality check against it can never match a correct
+  deploy either.
+
+`scripts/verify-deploy.sh` therefore gates on, in order: the `repoURL` prefix (a
+source migration that never reaches the live Application is otherwise invisible),
+`targetRevision` equal to the chart version just published, `Synced` + `Healthy` +
+`Succeeded`, then **`GET <host>/version` equal to the app version just built**, then
+a known-answer API probe. The `/version` check is load-bearing: it observes the
+running code rather than the intent to run it, and needs no cluster credentials.
+
+`Synced` is required, **not** waived. An earlier version of this script treated
+`Unknown` as expected-and-permanent for OCI sources; that is false on this cluster
+(every other OCI-sourced Application reports `Synced`), and mst reported `Unknown`
+precisely *because* it had been asked for a chart version that did not exist.
+Waiving it is what let that bug survive a full pipeline run.
+
+**Deploy applies the whole Application, never patches one field.** Patching only
+`targetRevision` freezes the rest of the source, so the move to Harbor had no
+effect on any live environment for two full runs while `argocd/*.yaml` said
+otherwise.
+
+**Every environment is publicly routable** -- `mst|dev|qas|tst|stg.rancher.tips`
+and `rancher.tips` -- so verification never needs a port-forward. Port-forwarding
+was tried and failed twice: once racing the rollout the gate was waiting for, once
+on RBAC the CI ServiceAccount does not have.
+
+### Routes
+
+- `GET /` -- the single-page UI (static)
+- `GET /api/plan-upgrade` -- the planner; query parameters above
+- `GET /healthz` -- liveness/readiness, returns `OK`
+- `GET /version` -- build identity and catalog freshness. `version` is linked in
+  at build time from the Dockerfile's `VERSION` arg
+  (`-ldflags "-X main.buildVersion=..."`). It exists so a deploy can be verified
+  from outside the cluster; see the deployment notes above.
+- `:9090/metrics` -- Prometheus
 
 ## Important Considerations
 

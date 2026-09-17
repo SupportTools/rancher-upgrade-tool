@@ -12,17 +12,19 @@ spec:
     # chart museum at charts.support.tools. That move also removed the
     # BOT_TOKEN dependency that was blocking deploys.
     #
-    # The oci:// prefix needs ArgoCD with OCI-URL support (roughly 2.12+).
-    # If this cluster's ArgoCD is older, the fallback is a bare host here
-    # (harbor.support.tools/rancher-upgrade-tool/charts) plus a Helm
-    # repository registered with enableOCI: true. The Harbor project is
-    # PUBLIC, so either way ArgoCD needs no registry credentials.
+    # repoURL must be the FULL artifact path, INCLUDING the chart name.
+    # ArgoCD uses it verbatim to resolve the OCI digest and does NOT append
+    # spec.source.chart. With the chart name omitted it looked for
+    #   harbor.support.tools/rancher-upgrade-tool/charts:v0.223.0 -> not found
+    # and sat at ComparisonError/Unknown while the old release kept serving.
+    # Same shape as the working mattoxengineering and taskforge Applications.
+    # The Harbor project is PUBLIC, so ArgoCD needs no registry credentials.
     chart: rancher-upgrade-tool
     helm:
       parameters:
         - name: ingress.host
           value: rancher.tips
-    repoURL: oci://harbor.support.tools/rancher-upgrade-tool/charts
+    repoURL: oci://harbor.support.tools/rancher-upgrade-tool/charts/rancher-upgrade-tool
     targetRevision: CHARTVERSION
   syncPolicy:
     syncOptions:

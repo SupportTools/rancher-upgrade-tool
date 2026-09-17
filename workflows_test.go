@@ -517,9 +517,16 @@ func TestAllArgoAppsPullFromHarbor(t *testing.T) {
 			continue
 		}
 		found++
-		want := "oci://harbor.support.tools/rancher-upgrade-tool/charts"
+		// The FULL artifact path, including the chart name. ArgoCD resolves the
+		// OCI digest from repoURL verbatim and does NOT append spec.source.chart.
+		// With the chart name omitted it looked for
+		//   harbor.support.tools/rancher-upgrade-tool/charts:v0.223.0 -> not found
+		// and every environment sat at ComparisonError/Unknown while the previous
+		// release kept serving traffic.
+		want := "oci://harbor.support.tools/rancher-upgrade-tool/charts/rancher-upgrade-tool"
 		if app.Spec.Source.RepoURL != want {
-			t.Errorf("%s repoURL = %q, want %q", filepath.Base(p), app.Spec.Source.RepoURL, want)
+			t.Errorf("%s repoURL = %q, want %q.\nArgoCD does not append the chart name; "+
+				"the path must be complete.", filepath.Base(p), app.Spec.Source.RepoURL, want)
 		}
 		if app.Spec.Source.Chart != "rancher-upgrade-tool" {
 			t.Errorf("%s chart = %q", filepath.Base(p), app.Spec.Source.Chart)

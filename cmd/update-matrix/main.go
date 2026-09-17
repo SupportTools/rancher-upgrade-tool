@@ -99,10 +99,10 @@ func get(url, dest string) error {
 	if len(body) == 0 {
 		return fmt.Errorf("%s: empty body", url)
 	}
-	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), 0o750); err != nil {
 		return err
 	}
-	return os.WriteFile(dest, body, 0o644)
+	return os.WriteFile(dest, body, 0o600)
 }
 
 func doFetch(snapDir string) error {
@@ -142,6 +142,8 @@ func doFetch(snapDir string) error {
 }
 
 func readEOL(snapDir string) ([]eolCycle, error) {
+	// #nosec G304 -- snapDir is an operator-supplied flag on a build-time CLI that
+	// never runs in the request path. There is no untrusted input to traverse with.
 	raw, err := os.ReadFile(filepath.Join(snapDir, "endoflife-rancher.json"))
 	if err != nil {
 		return nil, fmt.Errorf("endoflife snapshot: %w (run with -fetch first)", err)

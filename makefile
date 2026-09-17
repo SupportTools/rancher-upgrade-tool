@@ -7,7 +7,7 @@ REPO = docker.io/supporttools
 IMAGEFULLNAME = $(REPO)/$(IMAGENAME):$(TAG)
 PLATFORMS = linux/amd64,linux/arm64
 
-.PHONY: help build push buildx bump lint deps security docs test fmt tools all ci fmt-check vet
+.PHONY: help build push buildx bump lint deps security docs test fmt tools all ci fmt-check vet scan
 
 help:
 	@echo "Makefile commands:"
@@ -75,17 +75,25 @@ vet:
 	go vet ./...
 	staticcheck ./...
 
-# `ci` is what BOTH the CI workflows and a developer run. Keep it that way: the
-# pre-existing divergence (CI ran its own inline tool sequence, humans ran the
-# makefile, nothing checked they agreed) is the reason this target exists.
+scan:
+	@echo "Running gosec..."
+	gosec -quiet ./...
+
+# `ci` is what BOTH the CI workflows and a developer run, and it must be the
+# COMPLETE gate. Anything a workflow verifies on top of `make ci` is drift by
+# construction: a green Validate stops meaning the merge will pass.
+#
+# That happened. `ci` omitted gosec while pipeline.yml ran it as a separate step,
+# so a PR went green and the merge failed on 9 gosec findings. `scan` exists to
+# close that, and TestBothWorkflowsRunTheSameGate keeps it closed.
 #
 # Deliberately excludes `deps`: `go mod vendor` and `go mod tidy` MUTATE the tree,
 # which a verification step must not do. `go mod verify` is the read-only half.
 #
 # Deliberately excludes `lint`: that target still shells out to golint, archived
 # since 2021. Replacing it is tracked separately; a new target should not inherit
-# known rot.
-ci: fmt-check vet test
+# known rot. `scan` uses gosec directly for the same reason.
+ci: fmt-check vet test scan
 	@echo "Verifying module integrity..."
 	go mod verify
 

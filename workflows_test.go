@@ -214,3 +214,84 @@ func TestDeployGateTargetsTheServiceTheChartRenders(t *testing.T) {
 			wantPort, httpPort)
 	}
 }
+
+// Validate must predict the merge. If pipeline.yml verifies anything that
+// validate.yml does not, a green PR stops meaning a green merge.
+//
+// That exact drift shipped: `make ci` omitted gosec while pipeline.yml ran it as a
+// separate step, so PR #6 went green and the merge failed on 9 gosec findings with
+// Build, Publish and Deploy skipped.
+//
+// Checks the parsed `run:` shell of every step, NOT the raw file: the first version
+// of this test matched a tool name inside a COMMENT and reported a violation that
+// did not exist.
+func TestBothWorkflowsRunTheSameGate(t *testing.T) {
+	type stepped struct {
+		Jobs map[string]struct {
+			Steps []struct {
+				Name string `yaml:"name"`
+				Run  string `yaml:"run"`
+			} `yaml:"steps"`
+		} `yaml:"jobs"`
+	}
+
+	runScripts := func(name string) []string {
+		raw, err := os.ReadFile(filepath.Join(".github/workflows", name))
+		if err != nil {
+			t.Fatalf("read %s: %v", name, err)
+		}
+		var w stepped
+		if err := yaml.Unmarshal(raw, &w); err != nil {
+			t.Fatalf("parse %s: %v", name, err)
+		}
+		var out []string
+		for _, job := range w.Jobs {
+			for _, st := range job.Steps {
+				if strings.TrimSpace(st.Run) != "" {
+					out = append(out, st.Run)
+				}
+			}
+		}
+		return out
+	}
+
+	// Every workflow that verifies the code must go through `make ci`.
+	verifiers := []string{"pipeline.yml", "validate.yml", "data-sync.yml"}
+	for _, wf := range verifiers {
+		scripts := runScripts(wf)
+		joined := strings.Join(scripts, "\n")
+
+		if !strings.Contains(joined, "make ci") {
+			t.Errorf("%s does not run `make ci`; the gates cannot be equivalent", wf)
+		}
+
+		// No verification tool invoked directly. It belongs in `make ci`, where
+		// developers and every other workflow get it too.
+		for _, tool := range []string{"gosec ./...", "staticcheck ./...", "go vet ./...", "go test ./..."} {
+			if strings.Contains(joined, tool) {
+				t.Errorf("%s invokes %q directly in a run: block. Put it in `make ci`, "+
+					"otherwise a green PR stops predicting a green merge.", wf, tool)
+			}
+		}
+	}
+
+	// `make ci` must actually carry the full gate.
+	mk, err := os.ReadFile("makefile")
+	if err != nil {
+		t.Fatalf("read makefile: %v", err)
+	}
+	var ciLine string
+	for _, l := range strings.Split(string(mk), "\n") {
+		if strings.HasPrefix(l, "ci:") {
+			ciLine = l
+		}
+	}
+	if ciLine == "" {
+		t.Fatal("makefile has no `ci:` target")
+	}
+	for _, prereq := range []string{"fmt-check", "vet", "test", "scan"} {
+		if !strings.Contains(ciLine, prereq) {
+			t.Errorf("`ci` target is missing %q: %q", prereq, ciLine)
+		}
+	}
+}

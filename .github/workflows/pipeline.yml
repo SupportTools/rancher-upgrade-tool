@@ -44,12 +44,11 @@ jobs:
       # This also gets `go test` into the pipeline for the first time: the job was
       # named Test and ran no tests, because `go test ./...` against a package with
       # no test files exits 0 and looked like a passing gate.
+      # ONLY `make ci`. Nothing extra belongs here: a step that verifies something
+      # `make ci` does not means a green Validate no longer predicts a green merge,
+      # which is how 9 gosec findings passed a PR and failed the merge.
       - name: Run the same checks humans run
         run: make ci
-
-      - name: Security scanning
-        run: |
-          gosec ./...
 
   Build:
     needs: Test

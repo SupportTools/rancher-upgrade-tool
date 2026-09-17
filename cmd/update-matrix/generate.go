@@ -23,6 +23,7 @@ import (
 // exactly the old versions people are actually stuck on, which is the population
 // this tool exists to help.
 func generate(snapDir, catPath, reportPath string, dry bool) error {
+	// #nosec G304 -- operator-supplied path on a build-time CLI, not a request path.
 	baseRaw, err := os.ReadFile(catPath)
 	if err != nil {
 		return fmt.Errorf("read existing catalog: %w", err)
@@ -33,10 +34,12 @@ func generate(snapDir, catPath, reportPath string, dry bool) error {
 			"trustworthy: %w", err)
 	}
 
+	// #nosec G304 -- operator-supplied path on a build-time CLI, not a request path.
 	rke2Raw, err := os.ReadFile(filepath.Join(snapDir, "kdm-rke2.yaml"))
 	if err != nil {
 		return fmt.Errorf("kdm rke2 snapshot: %w (run with -fetch first)", err)
 	}
+	// #nosec G304 -- operator-supplied path on a build-time CLI, not a request path.
 	k3sRaw, err := os.ReadFile(filepath.Join(snapDir, "kdm-k3s.yaml"))
 	if err != nil {
 		return fmt.Errorf("kdm k3s snapshot: %w (run with -fetch first)", err)
@@ -175,7 +178,7 @@ func generate(snapDir, catPath, reportPath string, dry bool) error {
 		fmt.Printf("\ndry run: would write %d bytes to %s\n", len(encoded), catPath)
 		return nil
 	}
-	if err := os.WriteFile(catPath, encoded, 0o644); err != nil {
+	if err := os.WriteFile(catPath, encoded, 0o600); err != nil {
 		return err
 	}
 	fmt.Printf("\nwrote %s (%d Rancher versions)\n", catPath, len(out.Rancher))
@@ -204,6 +207,7 @@ func buildEntry(latest string, c eolCycle, snapDir string, rke2KDM, k3sKDM *kdmF
 	asOf string, now time.Time) (*catalog.RancherVersion, error) {
 
 	page := filepath.Join(snapDir, "matrix", "rancher-"+latest+".html")
+	// #nosec G304 -- operator-supplied path on a build-time CLI, not a request path.
 	html, err := os.ReadFile(page)
 	if err != nil {
 		// No matrix page: SUSE retires very old ones. Skip the version rather than
@@ -406,7 +410,7 @@ func writeReport(path string, base, next *catalog.Catalog, journey string) error
 	b.WriteString("- [ ] Any newly added Rancher version's ranges match its support-matrix page.\n")
 	b.WriteString("\nThis PR is generated. It never commits to main on its own.\n")
 
-	return os.WriteFile(path, []byte(b.String()), 0o644)
+	return os.WriteFile(path, []byte(b.String()), 0o600)
 }
 
 func newest(c *catalog.Catalog) string {

@@ -81,6 +81,9 @@ jobs:
             -f Dockerfile .
 
   Publish:
+    outputs:
+      chart_version: ${{ steps.chart.outputs.chart_version }}
+      app_version: ${{ steps.chart.outputs.app_version }}
     runs-on: ubuntu-latest
     needs:
       - Build
@@ -93,6 +96,7 @@ jobs:
         uses: azure/setup-helm@v4.2.0
 
       - name: Render and package the chart
+        id: chart
         run: |
           set -euo pipefail
 
@@ -106,6 +110,14 @@ jobs:
           export IMAGE_TAG="v${{ github.run_number }}"
           echo "CHART_VERSION=${CHART_VERSION}"
           echo "CHART_VERSION=${CHART_VERSION}" >> "$GITHUB_ENV"
+
+          # Exported so Deploy and Verify use the version that was actually
+          # PUBLISHED rather than recomputing it. They disagreed once already:
+          # Publish pushed v0.221.0 while Deploy patched targetRevision to v221,
+          # so ArgoCD was asked for a chart that had never existed, kept the old
+          # release running, and still reported the requested revision back.
+          echo "chart_version=${CHART_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "app_version=${APP_VERSION}" >> "$GITHUB_OUTPUT"
 
           envsubst < charts/rancher-upgrade-tool/Chart.yaml.template > charts/rancher-upgrade-tool/Chart.yaml
           envsubst < charts/rancher-upgrade-tool/values.yaml.template > charts/rancher-upgrade-tool/values.yaml
@@ -224,20 +236,23 @@ jobs:
 
       - name: Deploy Environment - ${{ matrix.environment }}
         run: |
+          set -euo pipefail
           ENVIRONMENT=${{ matrix.environment }}
-          CHART_VERSION="v${{ github.run_number }}"
+          CHART_VERSION="${{ needs.Publish.outputs.chart_version }}"
+          test -n "$CHART_VERSION" || { echo "::error::Publish exported no chart_version"; exit 1; }
 
-          # Check if application exists
-          if kubectl -n argocd get application rancherupgrade-${ENVIRONMENT} &>/dev/null; then
-            echo "ArgoCD Application 'rancherupgrade-${ENVIRONMENT}' exists. Patching targetRevision to ${CHART_VERSION}."
-            kubectl -n argocd patch application "rancherupgrade-${ENVIRONMENT}" \
-              --type merge \
-              -p "{\"spec\":{\"source\":{\"targetRevision\":\"${CHART_VERSION}\"}}}"
-          else
-            echo "ArgoCD Application 'rancherupgrade-${ENVIRONMENT}' does not exist. Creating..."
-            sed "s/CHARTVERSION/${CHART_VERSION}/g" argocd/${ENVIRONMENT}.yaml \
+          # ALWAYS apply the whole Application, never patch one field.
+          #
+          # This used to patch only spec.source.targetRevision when the
+          # Application already existed. Every other part of the source was
+          # therefore frozen at whatever was first applied, so migrating the
+          # chart to Harbor had no effect on any live environment: mst went two
+          # full pipeline runs still pulling from https://charts.support.tools
+          # while the repo said oci://harbor.support.tools. Nothing reported it,
+          # because a deploy from the OLD source still succeeds.
+          echo "applying ArgoCD Application rancherupgrade-${ENVIRONMENT} at ${CHART_VERSION}"
+          sed "s/CHARTVERSION/${CHART_VERSION}/g" "argocd/${ENVIRONMENT}.yaml" \
             | kubectl -n argocd apply -f - --validate=false
-          fi
 
       - name: Verify the deploy actually happened - ${{ matrix.environment }}
         env:
@@ -246,33 +261,25 @@ jobs:
         run: |
           set -euo pipefail
           ENVIRONMENT=${{ matrix.environment }}
-          CHART_VERSION="v${{ github.run_number }}"
 
-          # A query the catalog must always be able to plan. Zero destinations here
-          # means the catalog failed to load or the planner is broken, and an empty
-          # result is the answer that reads to a user as "you are already current".
-          PROBE_QUERY="/api/plan-upgrade?rancher=2.9.6&local_platform=rke2&local_k8s=v1.28&downstream_platform=rke2&downstream_k8s=v1.28"
+          export EXPECTED_CHART_VERSION="${{ needs.Publish.outputs.chart_version }}"
+          APP_VERSION="${{ needs.Publish.outputs.app_version }}"
+          test -n "$EXPECTED_CHART_VERSION" && test -n "$APP_VERSION" \
+            || { echo "::error::Publish exported no versions"; exit 1; }
 
-          # Only prd is publicly routable (rancher.tips). The other five are reached
-          # by a port-forward that verify-deploy.sh opens ITSELF, after the rollout
-          # it is waiting for has completed.
-          #
-          # This step used to open the forward here, before calling the script. That
-          # is unfixable from this side: the script waits for the new revision, and
-          # the rollout deletes the pod the forward is bound to, so the probe always
-          # raced a dying tunnel. Observed on mst at v216 -> v220.
-          #
-          # Service name and port come from the chart, which renders `name: website`
-          # on port 3000 (a leftover generic name; the HPA targets Deployment/website
-          # too). Guarded by TestDeployGateTargetsTheServiceTheChartRenders.
+          # Every environment has a public ingress with valid TLS. An earlier
+          # version of this step believed only prd was routable and tried to
+          # port-forward; that failed twice -- once racing the rollout it was
+          # waiting for, once on RBAC the CI ServiceAccount does not have.
           if [ "$ENVIRONMENT" = "prd" ]; then
-            export PROBE_URL="https://rancher.tips${PROBE_QUERY}"
+            export PROBE_HOST="https://rancher.tips"
           else
-            export PROBE_SERVICE="svc/website"
-            export PROBE_NAMESPACE="rancherupgrade-${ENVIRONMENT}"
-            export PROBE_LOCAL_PORT=18080
-            export PROBE_REMOTE_PORT=3000
-            export PROBE_PATH="$PROBE_QUERY"
+            export PROBE_HOST="https://${ENVIRONMENT}.rancher.tips"
           fi
 
-          ./scripts/verify-deploy.sh "$ENVIRONMENT" "$CHART_VERSION"
+          # A query the catalog must always be able to plan. Zero destinations
+          # here means the catalog failed to load or the planner is broken, and
+          # an empty result reads to a user as "you are already current".
+          export PROBE_PATH="/api/plan-upgrade?rancher=2.9.6&local_platform=rke2&local_k8s=v1.28&downstream_platform=rke2&downstream_k8s=v1.28"
+
+          ./scripts/verify-deploy.sh "$ENVIRONMENT" "$APP_VERSION"

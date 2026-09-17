@@ -166,80 +166,122 @@ func TestSupersededDatasetIsRetained(t *testing.T) {
 // Caught exactly that before a merge: the gate referenced
 // svc/rancher-upgrade-tool on port 80 while the chart renders `name: website` on
 // port 3000.
-func TestDeployGateTargetsTheServiceTheChartRenders(t *testing.T) {
-	svc, err := os.ReadFile("charts/rancher-upgrade-tool/templates/service.yaml")
-	if err != nil {
-		t.Fatalf("read service template: %v", err)
+// The deploy must APPLY the whole Application, never patch a single field.
+//
+// THE REGRESSION. Deploy used to patch only spec.source.targetRevision when the
+// Application already existed, which froze every other part of the source at
+// whatever was first applied. Migrating the chart to Harbor therefore had no
+// effect on any live environment: mst went two full pipeline runs still pulling
+// from https://charts.support.tools while argocd/*.yaml said
+// oci://harbor.support.tools. Nothing reported it, because a deploy from the OLD
+// source still succeeds.
+func TestDeployAppliesTheWholeApplication(t *testing.T) {
+	run := deployStepShell(t, "Deploy Environment")
+	if !strings.Contains(run, "kubectl -n argocd apply") {
+		t.Error("Deploy does not apply the Application manifest, so changes to " +
+			"argocd/*.yaml (repoURL, helm parameters) never reach a live environment")
 	}
-	var rendered struct {
-		Metadata struct{ Name string } `yaml:"metadata"`
-		Spec     struct {
-			Ports []struct {
-				Port int    `yaml:"port"`
-				Name string `yaml:"name"`
-			} `yaml:"ports"`
-		} `yaml:"spec"`
-	}
-	if err := yaml.Unmarshal(svc, &rendered); err != nil {
-		t.Fatalf("parse service template: %v", err)
-	}
-	if rendered.Metadata.Name == "" {
-		t.Fatal("service template has no metadata.name")
-	}
-
-	var httpPort int
-	for _, p := range rendered.Spec.Ports {
-		if p.Name == "http" {
-			httpPort = p.Port
-		}
-	}
-	if httpPort == 0 {
-		t.Fatal("service template declares no port named http")
-	}
-
-	pipeline, err := os.ReadFile(".github/workflows/pipeline.yml")
-	if err != nil {
-		t.Fatalf("read pipeline: %v", err)
-	}
-	body := string(pipeline)
-
-	wantRef := "svc/" + rendered.Metadata.Name
-	if !strings.Contains(body, wantRef) {
-		t.Errorf("deploy gate does not port-forward to %q, which is what the chart "+
-			"renders. A wrong service name fails the gate on the first environment and "+
-			"blocks the whole matrix.", wantRef)
-	}
-	// The port pair is no longer spelled in the workflow. The workflow names the
-	// remote port and verify-deploy.sh does the forwarding, because only the script
-	// knows when the rollout it is waiting for has finished. Assert both halves.
-	wantRemote := fmt.Sprintf("PROBE_REMOTE_PORT=%d", httpPort)
-	if !strings.Contains(body, wantRemote) {
-		t.Errorf("deploy gate does not set %q; the chart's http port is %d",
-			wantRemote, httpPort)
-	}
-
-	script, err := os.ReadFile("scripts/verify-deploy.sh")
-	if err != nil {
-		t.Fatalf("read verify-deploy.sh: %v", err)
-	}
-	if !strings.Contains(string(script), "${PROBE_LOCAL_PORT}:${PROBE_REMOTE_PORT}") {
-		t.Error("verify-deploy.sh does not forward PROBE_LOCAL_PORT:PROBE_REMOTE_PORT, " +
-			"so the ports the workflow supplies are not actually used")
+	if strings.Contains(run, "patch application") {
+		t.Error("Deploy patches the Application instead of applying it. A patch " +
+			"updates only the named field and silently freezes the rest of the source.")
 	}
 }
 
-// THE REGRESSION. The workflow used to open the port-forward itself, in the step
-// that then called verify-deploy.sh. That races by construction: the script waits
-// for the new revision to roll out, and the rollout deletes the pod the forward is
-// bound to. On mst at v216 -> v220 the forward came up against the old pod, the
-// revision flipped 62s later, and the probe hit a dead tunnel:
-// "Failed to connect to 127.0.0.1 port 18080". Publish and the deploy were both
-// fine; only the gate was broken, and it cancelled the other five environments.
+// Publish, Deploy and Verify must agree on the version, by DERIVATION not by
+// coincidence.
 //
-// Inspects parsed `run:` shell, not the raw file, so a comment describing the bug
-// cannot trip it.
-func TestDeployGateDoesNotPortForwardBeforeVerifying(t *testing.T) {
-	type stepped struct {
+// THE REGRESSION. Publish pushed the chart as v0.<run>.0 (SemVer2, required by
+// OCI) while Deploy independently recomputed "v<run>" and patched that as
+// targetRevision. ArgoCD was asked for a chart that had never been published, so
+// it kept the previous release running -- and reported the requested revision
+// back, which the gate then matched against itself.
+func TestDeployAndVerifyConsumeThePublishedVersion(t *testing.T) {
+	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	var wf struct {
+		Jobs map[string]struct {
+			Outputs map[string]string `yaml:"outputs"`
+		} `yaml:"jobs"`
+	}
+	if err := yaml.Unmarshal(raw, &wf); err != nil {
+		t.Fatalf("parse pipeline: %v", err)
+	}
+	for _, key := range []string{"chart_version", "app_version"} {
+		if _, ok := wf.Jobs["Publish"].Outputs[key]; !ok {
+			t.Errorf("Publish does not export %q, so Deploy and Verify cannot consume "+
+				"the version that was actually published", key)
+		}
+	}
+
+	for _, step := range []string{"Deploy Environment", "Verify the deploy actually happened"} {
+		run := deployStepShell(t, step)
+		if !strings.Contains(run, "needs.Publish.outputs") {
+			t.Errorf("step %q does not read needs.Publish.outputs; recomputing the "+
+				"version independently is how Publish and Deploy came to disagree", step)
+		}
+	}
+}
+
+// Verification must be configured for EVERY environment in the matrix. All six
+// have a public ingress with valid TLS, so there is no environment that may skip
+// the check. An earlier version believed only prd was routable.
+func TestEveryEnvironmentIsVerifiedOverItsPublicIngress(t *testing.T) {
+	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	var wf struct {
+		Jobs map[string]struct {
+			Strategy struct {
+				Matrix struct {
+					Environment []string `yaml:"environment"`
+				} `yaml:"matrix"`
+			} `yaml:"strategy"`
+		} `yaml:"jobs"`
+	}
+	if err := yaml.Unmarshal(raw, &wf); err != nil {
+		t.Fatalf("parse pipeline: %v", err)
+	}
+	envs := wf.Jobs["Deploy"].Strategy.Matrix.Environment
+	if len(envs) == 0 {
+		t.Fatal("Deploy declares no environment matrix")
+	}
+
+	run := deployStepShell(t, "Verify the deploy actually happened")
+	if !strings.Contains(run, "PROBE_HOST") {
+		t.Fatal("verify step sets no PROBE_HOST")
+	}
+	if !strings.Contains(run, "PROBE_PATH") {
+		t.Error("verify step sets no PROBE_PATH, so nothing confirms the service answers")
+	}
+
+	// prd is special-cased to the apex domain; every other environment must be
+	// reachable through the <env>.rancher.tips form the step derives.
+	for _, env := range envs {
+		if env == "prd" {
+			if !strings.Contains(run, "https://rancher.tips") {
+				t.Error("prd is not probed at https://rancher.tips")
+			}
+			continue
+		}
+		if !strings.Contains(run, "${ENVIRONMENT}.rancher.tips") {
+			t.Errorf("environment %q has no derived probe host", env)
+		}
+	}
+}
+
+// deployStepShell returns the parsed `run:` shell of a Deploy-job step whose name
+// contains want. Parsed, never raw file text: comments in these steps describe
+// the bugs they fix and name the very strings under test.
+func deployStepShell(t *testing.T, want string) string {
+	t.Helper()
+	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
+	if err != nil {
+		t.Fatalf("read pipeline: %v", err)
+	}
+	var wf struct {
 		Jobs map[string]struct {
 			Steps []struct {
 				Name string `yaml:"name"`
@@ -247,39 +289,23 @@ func TestDeployGateDoesNotPortForwardBeforeVerifying(t *testing.T) {
 			} `yaml:"steps"`
 		} `yaml:"jobs"`
 	}
-	raw, err := os.ReadFile(".github/workflows/pipeline.yml")
-	if err != nil {
-		t.Fatalf("read pipeline: %v", err)
-	}
-	var wf stepped
 	if err := yaml.Unmarshal(raw, &wf); err != nil {
 		t.Fatalf("parse pipeline: %v", err)
 	}
-	// Strip full-line comments before matching. The comment in this very step
-	// explains the bug and names port-forward; matching raw `run:` text reported a
-	// violation that did not exist. Same trap as TestBothWorkflowsRunTheSameGate
-	// and TestChartPublishesToHarborOverOCI hit earlier.
-	executable := func(run string) string {
-		var keep []string
-		for _, line := range strings.Split(run, "\n") {
-			if strings.HasPrefix(strings.TrimSpace(line), "#") {
-				continue
+	for _, st := range wf.Jobs["Deploy"].Steps {
+		if strings.Contains(st.Name, want) {
+			var keep []string
+			for _, line := range strings.Split(st.Run, "\n") {
+				if strings.HasPrefix(strings.TrimSpace(line), "#") {
+					continue
+				}
+				keep = append(keep, line)
 			}
-			keep = append(keep, line)
-		}
-		return strings.Join(keep, "\n")
-	}
-
-	for jobName, job := range wf.Jobs {
-		for _, st := range job.Steps {
-			if strings.Contains(executable(st.Run), "port-forward") {
-				t.Errorf("job %q step %q opens a port-forward in workflow shell. "+
-					"The forward must be opened by verify-deploy.sh AFTER it confirms "+
-					"the new revision is live, or the rollout kills the tunnel the "+
-					"probe depends on.", jobName, st.Name)
-			}
+			return strings.Join(keep, "\n")
 		}
 	}
+	t.Fatalf("no Deploy step matching %q", want)
+	return ""
 }
 
 // Validate must predict the merge. If pipeline.yml verifies anything that

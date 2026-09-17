@@ -23,6 +23,24 @@ import (
 	"github.com/supporttools/rancher-upgrade-tool/internal/catalog"
 )
 
+// version is the build identity, injected at link time with
+//
+//	-ldflags "-X main.buildVersion=v221"
+//
+// It exists so a deploy can be VERIFIED FROM OUTSIDE THE CLUSTER. Every prior
+// attempt to verify a deploy leaned on ArgoCD's .status.sync.revision, which for
+// an OCI Helm source is a sha256 digest, not a chart version -- and which reports
+// the revision that was REQUESTED, not the one that synced. Both properties let a
+// deploy of nothing report success: mst sat on image v216 while ArgoCD reported
+// revision v221 Healthy and the pipeline went looking for a matching string.
+//
+// A version the running process reports about itself cannot be faked by the
+// control plane's desired state, and needs no cluster credentials to read.
+// Named buildVersion, not version: package main already imports
+// github.com/hashicorp/go-version as `version`, and a package-level var of that
+// name shadows it for every file in the package.
+var buildVersion = "dev"
+
 const (
 	catalogPath = "./data/catalog.json"
 
@@ -116,6 +134,21 @@ func main() {
 
 	app.Get("/healthz", func(c *fiber.Ctx) error {
 		return c.SendString("OK")
+	})
+
+	// Read by scripts/verify-deploy.sh over the environment's public ingress. This
+	// is the actual-state check the deploy gate had no way to make.
+	app.Get("/version", func(c *fiber.Ctx) error {
+		now := time.Now()
+		body := fiber.Map{
+			"version":           buildVersion,
+			"catalog_generated": cat.GeneratedAt,
+			"catalog_stale":     cat.IsStale(now),
+		}
+		if age, ok := cat.Age(now); ok {
+			body["catalog_age_days"] = int(age.Hours() / 24)
+		}
+		return c.JSON(body)
 	})
 
 	plan := api.Handler(cat)

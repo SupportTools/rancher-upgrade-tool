@@ -13,11 +13,21 @@ RUN go mod download
 # Copy the source code and required directories to the Working Directory inside the container
 COPY . .
 
+# Build identity, passed by CI as --build-arg VERSION="v<run_number>".
+#
+# These three args were ALREADY being passed by the pipeline and silently
+# discarded, because the Dockerfile declared no ARG to receive them. VERSION is
+# now linked into the binary and served at /version, which is what lets a deploy
+# be verified from outside the cluster -- see the note on `version` in main.go.
+ARG VERSION=dev
+ARG GIT_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
 # Build the Go app
 # CGO_ENABLED=0 so the binary is static and does not depend on the runtime
 # image's musl. -trimpath strips local filesystem paths, which otherwise make
 # the binary differ between machines for identical source.
-RUN CGO_ENABLED=0 go build -trimpath -o main .
+RUN CGO_ENABLED=0 go build -trimpath -ldflags "-X main.buildVersion=${VERSION}" -o main .
 
 # Final Stage
 # Pinned to match the builder's alpine3.20. Previously `alpine:latest`, which

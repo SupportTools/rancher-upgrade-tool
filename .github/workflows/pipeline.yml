@@ -130,6 +130,30 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
+      # Harbor does not auto-create projects. Without this, a missing project
+      # surfaces as an opaque push failure; with it, the job says exactly what to do.
+      - name: Check the Harbor project exists
+        run: |
+          set -euo pipefail
+          PROJECT=rancher-upgrade-tool
+          if curl -sf --max-time 20 \
+               "https://harbor.support.tools/api/v2.0/projects?name=${PROJECT}" \
+             | grep -q "\"name\":\"${PROJECT}\""; then
+            echo "Harbor project ${PROJECT} exists"
+          else
+            echo "::error::Harbor project '${PROJECT}' does not exist."
+            echo "Harbor does not create projects on push, so the chart cannot be published."
+            echo ""
+            echo "Create it once, as PUBLIC (public means ArgoCD needs no registry"
+            echo "credentials to pull the chart):"
+            echo "  https://harbor.support.tools/harbor/projects  ->  NEW PROJECT"
+            echo "  name: ${PROJECT}   access level: public"
+            echo ""
+            echo "This follows the convention already in use: beacon, rucc, node-doctor"
+            echo "and posthog each own a project, with charts under a charts/ path."
+            exit 1
+          fi
+
       - name: Push the chart to Harbor
         run: |
           set -euo pipefail

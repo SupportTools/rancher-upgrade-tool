@@ -1,18 +1,48 @@
+:root {
+    /* Neutrals carry a slight teal bias so they read as chosen rather than default. */
+    --surface: #ffffff;
+    --surface-2: #f1f5f5;
+    --surface-3: #e5eceb;
+    --ground: #f6f8f8;
+    --ink: #17211f;
+    --ink-2: #566664;
+    --ink-3: #87938f;
+    --line: #dde4e3;
+    --line-2: #c6d1d0;
+    --accent: #00727c;
+    --accent-soft: #e0efef;
+    --accent-ink: #00565e;
+
+    /* One colour per axis, reused by the lanes and the step rows so a colour means
+       the same thing everywhere on the page. */
+    --axis-local: #00727c;
+    --axis-down: #4e4ea0;
+    --axis-ranch: #1f6f4a;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--ground);
+    color: var(--ink);
     margin: 0;
     padding: 0;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 880px;
     margin: 50px auto;
-    padding: 20px;
-    background-color: #ffffff;
+    padding: 20px 16px;
+    background-color: var(--surface);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     text-align: center;
     border-radius: 8px;
+}
+
+/* The form stays a comfortable reading width; only the results use the full
+   container, because the lane diagram needs the room. */
+.form {
+    max-width: 620px;
+    margin: 0 auto;
 }
 
 .logo {
@@ -29,14 +59,22 @@ select {
     width: 100%;
     padding: 10px;
     margin-top: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--line-2);
     border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
 }
 
 button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: var(--accent);
     color: white;
     border: none;
     border-radius: 5px;
@@ -45,7 +83,12 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: var(--accent-ink);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
 }
 
 pre {
@@ -55,17 +98,41 @@ pre {
     border-radius: 5px;
     overflow: auto;
 }
+
 /* --- itinerary output ------------------------------------------------------ */
 .lede { color: #555; font-size: 0.9rem; line-height: 1.45; margin: 0 0 1rem; }
 
-fieldset { border: 1px solid #ddd; border-radius: 6px; padding: 0.75rem 1rem 0.25rem; margin: 0 0 1rem; }
+fieldset { border: 1px solid var(--line); border-radius: 6px; padding: 0.75rem 1rem 0.25rem; margin: 0 0 1rem; }
 legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 
 #planOutput { margin-top: 1.25rem; text-align: left; }
 
-.dest { border: 1px solid #ddd; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 0.75rem; }
-.dest-head { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-.dest-title { font-weight: 600; }
+/* --- destination picker ---------------------------------------------------- */
+.picker { border: 1px solid var(--line); border-radius: 6px; margin-bottom: 0.75rem; }
+.picker-head { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+               padding: 0.65rem 0.8rem 0; }
+.picker-eyebrow { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.09em;
+                  text-transform: uppercase; color: var(--ink-3); }
+.picker-from { font-size: 0.78rem; color: var(--ink-2); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.6rem 0.8rem 0.75rem; }
+.chip { width: auto; font: inherit; font-size: 0.82rem; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.3rem 0.6rem; border-radius: 999px;
+        border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+.chip:hover { border-color: var(--accent); background: var(--surface); }
+.chip-v { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
+.chip-n { font-size: 0.7rem; color: var(--ink-3); }
+.chip[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft);
+                              color: var(--accent-ink); }
+.chip[aria-selected="true"] .chip-n { color: var(--accent-ink); }
+
+/* --- one destination ------------------------------------------------------- */
+.dest { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.dest-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+             padding: 0.7rem 0.8rem; }
+.dest-title { font-weight: 700; font-size: 1.05rem; }
+.dest-count { margin-left: auto; font-size: 0.78rem; color: var(--ink-2); }
 
 .badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
          border-radius: 999px; padding: 0.1rem 0.5rem; border: 1px solid transparent; }
@@ -74,15 +141,94 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 .badge-ended   { background: #fdeaea; color: #98252b; }
 .badge-minor   { background: #eef1f5; color: #445; }
 
+/* --- lanes ----------------------------------------------------------------- */
+.lanes-wrap { background: var(--surface-2); border-top: 1px solid var(--line);
+              border-bottom: 1px solid var(--line); }
+.lanes-cap { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap;
+             padding: 0.55rem 0.8rem 0; font-size: 0.64rem; font-weight: 700;
+             letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
+
+/* Only this container may scroll sideways; the page body never does. */
+.lanes-scroll { overflow-x: auto; padding: 0.6rem 0.8rem 0.75rem; }
+.lanes { display: flex; flex-direction: column; gap: 0.35rem; min-width: 520px; }
+.lane { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.7rem; align-items: center; }
+.lane-id { min-width: 0; }
+.lane-name { display: flex; align-items: center; gap: 0.35rem; font-size: 0.64rem;
+             font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.lane-span { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+             font-size: 0.66rem; color: var(--ink-2); white-space: nowrap; }
+
+.axis-dot { width: 8px; height: 8px; border-radius: 2px; flex: none; display: inline-block; }
+.axis-local .axis-dot { background: var(--axis-local); }
+.axis-down  .axis-dot { background: var(--axis-down); }
+.axis-ranch .axis-dot { background: var(--axis-ranch); }
+.lane.axis-local .lane-name { color: var(--axis-local); }
+.lane.axis-down  .lane-name { color: var(--axis-down); }
+.lane.axis-ranch .lane-name { color: var(--axis-ranch); }
+
+.lane-track { display: flex; gap: 3px; align-items: center; }
+.slot { flex: 1 1 0; min-width: 0; height: 28px; position: relative;
+        display: flex; align-items: center; justify-content: center; }
+/* A faint rail so an empty column still reads as part of the lane. */
+.slot::before { content: ""; position: absolute; left: -2px; right: -2px; top: 50%;
+                height: 1px; background: var(--line-2); opacity: 0.55; }
+
+.mark { position: relative; z-index: 1; width: 100%; height: 100%;
+        display: flex; align-items: center; justify-content: center;
+        border: 0; border-radius: 4px; padding: 0 3px; color: #fff;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.62rem; font-weight: 600;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mark-step { cursor: pointer; }
+.mark-step:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.mark-step[data-active="true"] { box-shadow: 0 0 0 2px var(--surface-2), 0 0 0 4px var(--ink); }
+.axis-local .mark-step { background: var(--axis-local); }
+.axis-down  .mark-step { background: var(--axis-down); }
+.axis-ranch .mark-step { background: var(--axis-ranch); }
+
+/* The starting state, deliberately not styled as a step. */
+.slot-start .mark { background: var(--surface-3); color: var(--ink-2);
+                    border: 1px dashed var(--line-2); }
+
+.lane-ticks { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.7rem;
+              min-width: 520px; margin-top: 3px; }
+.tick-row { display: flex; gap: 3px; }
+.tick-row span { flex: 1 1 0; text-align: center; font-size: 0.6rem; color: var(--ink-3);
+                 font-variant-numeric: tabular-nums; }
+
+/* --- step rows ------------------------------------------------------------- */
+.rows-cap { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap;
+            padding: 0.6rem 0.8rem 0.3rem; font-size: 0.64rem; font-weight: 700;
+            letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
+
 .steps { list-style: none; margin: 0; padding: 0; }
-.steps li { padding: 0.3rem 0; border-top: 1px solid #f0f0f0; font-size: 0.9rem; }
-.steps li:first-child { border-top: none; }
-.step-kind { display: inline-block; min-width: 9.5rem; color: #666; font-size: 0.78rem;
-             text-transform: uppercase; letter-spacing: 0.03em; }
-.step-move { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.step-row { display: grid; grid-template-columns: 1.5rem 8.5rem 1fr; gap: 0.6rem;
+            align-items: baseline; padding: 0.3rem 0.8rem;
+            border-top: 1px solid var(--line); scroll-margin: 4rem; }
+.step-row[aria-current="true"] { background: var(--accent-soft); }
+.step-num { font-size: 0.72rem; color: var(--ink-3); text-align: right;
+            font-variant-numeric: tabular-nums; }
+.step-kind { display: inline-flex; align-items: center; gap: 0.35rem;
+             color: var(--ink-2); font-size: 0.66rem; font-weight: 700;
+             text-transform: uppercase; letter-spacing: 0.06em; }
+.step-row.axis-local .step-kind { color: var(--axis-local); }
+.step-row.axis-down  .step-kind { color: var(--axis-down); }
+.step-row.axis-ranch .step-kind { color: var(--axis-ranch); }
+
+.step-move { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap;
+             min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+             font-size: 0.82rem; }
+.v-to { font-weight: 600; }
+.v-arrow { color: var(--ink-3); }
+.v-plat { color: var(--ink-3); font-size: 0.74rem; }
+
+/* The catalog date and source links, once per card instead of once per step. */
+.dest-foot { display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem;
+             padding: 0.5rem 0.8rem; border-top: 1px solid var(--line);
+             background: var(--surface-2); font-size: 0.74rem; color: var(--ink-2); }
 
 .note, .caveat { font-size: 0.8rem; color: #666; line-height: 1.4; margin: 0.4rem 0 0; }
-.caveat { color: #8a5a00; }
+.caveat { color: #8a5a00; grid-column: 3; }
 
 .blocker { border-left: 3px solid #c0392b; background: #fdf6f6; padding: 0.6rem 0.9rem;
            margin-bottom: 0.6rem; border-radius: 0 4px 4px 0; }
@@ -98,3 +244,13 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 .stale { border-left: 3px solid #b8860b; background: #fffbea; padding: 0.7rem 0.95rem;
          margin-bottom: 0.8rem; border-radius: 0 4px 4px 0; }
 .stale .blocker-kind { color: #8a6d00; }
+
+@media (max-width: 560px) {
+    .container { margin: 20px auto; }
+    .step-row { grid-template-columns: 1.4rem 1fr; row-gap: 0.1rem; }
+    .step-kind { grid-column: 2; }
+    .step-move { grid-column: 2; }
+    .caveat { grid-column: 2; }
+    .lane { grid-template-columns: 6rem 1fr; }
+    .lane-ticks { grid-template-columns: 6rem 1fr; }
+}

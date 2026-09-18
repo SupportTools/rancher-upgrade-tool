@@ -60,6 +60,7 @@ const (
 var (
 	totalRequestsLast60Seconds prometheus.Gauge
 	versionsSubmitted          *prometheus.CounterVec
+	fleetSize                  *prometheus.CounterVec
 	requestDuration            prometheus.Histogram
 	activeRequests             prometheus.Gauge
 
@@ -81,6 +82,17 @@ func initMetrics() {
 		[]string{"platform", "rancher_version", "k8s_version"},
 	)
 
+	// Bucketed, never labelled by cluster identity or user-supplied label. See
+	// api.ClusterCountBucket for why: the fleet parameters are caller-controlled on
+	// a public unauthenticated endpoint.
+	fleetSize = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "fleet_size_total",
+			Help: "Downstream cluster count per request, bucketed (see api.ClusterCountBucket)",
+		},
+		[]string{"clusters"},
+	)
+
 	requestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
 		Name:    "request_duration_seconds",
 		Help:    "Histogram of response latency (seconds) of requests.",
@@ -95,6 +107,7 @@ func initMetrics() {
 	prometheus.MustRegister(
 		totalRequestsLast60Seconds,
 		versionsSubmitted,
+		fleetSize,
 		requestDuration,
 		activeRequests,
 	)
@@ -164,9 +177,18 @@ func main() {
 		// Label values are bounded to what the catalog knows. They were previously
 		// raw user input on a public unauthenticated endpoint, so any visitor could
 		// allocate unbounded Prometheus series by walking version strings.
+		// The fleet parameters widen the attack surface: cluster COUNT, per-cluster
+		// platforms and free-form cluster LABELS are all caller-controlled. Labels
+		// never reach a metric, and the count is bucketed, so the label space stays
+		// finite and known in advance.
 		p, r, k := api.LabelValues(cat,
-			c.Query("downstream_platform"), c.Query("rancher"), c.Query("downstream_k8s"))
+			c.Query("downstream_platform_1", c.Query("downstream_platform")),
+			c.Query("rancher"),
+			c.Query("downstream_k8s_1", c.Query("downstream_k8s")))
 		versionsSubmitted.WithLabelValues(p, r, k).Inc()
+		fleetSize.WithLabelValues(api.ClusterCountBucket(api.FleetSize(func(key string) string {
+			return c.Query(key)
+		}))).Inc()
 
 		return plan(c)
 	})

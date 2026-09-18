@@ -328,6 +328,26 @@ func guardNoRegression(base, next *catalog.Catalog) error {
 // reviewer assesses operational consequences instead of reading hundreds of changed
 // JSON lines. A plausible-looking wrong number is indistinguishable from a correct
 // new one in a raw diff.
+// reportWindowShape surfaces window-shape findings in the pull-request body, which
+// is where a human is actually looking. A P3 gap means no fleet can cross that
+// Rancher hop at all, whatever order the upgrades are done in -- that deserves to
+// be stated once here rather than rediscovered one query at a time in production.
+func reportWindowShape(c *catalog.Catalog) string {
+	findings := catalog.CheckWindows(c)
+	if len(findings) == 0 {
+		return "Support windows: floors and ceilings rise monotonically and consecutive " +
+			"windows overlap on every platform.\n"
+	}
+	var buf strings.Builder
+	buf.WriteString("Support-window findings (the planner tolerates these; they are listed " +
+		"because they describe upstream, not a bug):\n")
+	for _, f := range findings {
+		fmt.Fprintf(&buf, "  %s\n", f)
+	}
+	buf.WriteString("\nA P3 finding is the serious one: no fleet can cross that Rancher hop.\n")
+	return buf.String()
+}
+
 func reportJourneyDiff(base, next *catalog.Catalog) string {
 	probes := []planner.Node{
 		planner.NodeOf("2.5.12", catalog.RKE1, "1.19", catalog.EKS, "1.19"),
@@ -404,10 +424,15 @@ func writeReport(path string, base, next *catalog.Catalog, journey string) error
 	b.WriteString(strings.TrimPrefix(journey, "\n"))
 	b.WriteString("```\n")
 
+	b.WriteString("\n### Support-window shape\n\n```\n")
+	b.WriteString(reportWindowShape(next))
+	b.WriteString("```\n")
+
 	b.WriteString("\n### Reviewer checklist\n\n")
 	b.WriteString("- [ ] Any line marked `REVIEW THIS` is a destination that genuinely stopped being reachable, not a waypoint moving within its minor line.\n")
 	b.WriteString("- [ ] Golden routes passed in CI. They encode facts read off upstream by a human; if one failed, re-read the cited source rather than editing the expectation.\n")
 	b.WriteString("- [ ] Any newly added Rancher version's ranges match its support-matrix page.\n")
+	b.WriteString("- [ ] Any NEW support-window finding above is a real upstream change, not a scrape error. A P3 finding means no fleet can cross that Rancher hop at all.\n")
 	b.WriteString("\nThis PR is generated. It never commits to main on its own.\n")
 
 	return os.WriteFile(path, []byte(b.String()), 0o600)

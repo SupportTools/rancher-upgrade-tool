@@ -51,11 +51,35 @@ three internal packages:
 
 - `internal/catalog` — the dataset, its types, and the fail-closed loader. A malformed
   entry stops the service rather than being dropped.
-- `internal/planner` — the transition graph. State is
-  (rancher, localPlatform+localK8s, downstreamPlatform+downstreamK8s); an edge moves
-  exactly one component and is emitted only when BOTH endpoints are individually
-  valid. Compatibility describes valid states; upgrade planning requires valid
-  transitions, and conflating the two is what let the old code emit unsafe routes.
+- `internal/planner` — the transition model. State is
+  (rancher, local cluster, **every** downstream cluster); an edge moves exactly one
+  component and is emitted only when BOTH endpoints are individually valid.
+  Compatibility describes valid states; upgrade planning requires valid transitions,
+  and conflating the two is what let the old code emit unsafe routes.
+
+  **Validity is a conjunction over the whole fleet.** Rancher can only move when
+  every attached cluster sits inside the target version's window. Asking the
+  one-cluster question repeatedly gives answers that are individually true and
+  collectively wrong, because each one assumes the others do not exist.
+
+  **It is a linear walk, not a search** — `docs/fleet-planning-algorithm.md` has the
+  measurements. Every move raises one component by one minor and nothing is
+  downgraded, so every valid route to a destination has the same length: shortest-path
+  buys nothing and only feasibility was ever in question. Search also does not scale
+  (15,431 nodes at four clusters, past the old `maxNodes` of 10,000).
+
+  **The trap, if you ever touch this:** do not raise a lagging cluster straight to the
+  next window's floor. Raising v1.22 → v1.25 passes through v1.23 and v1.24, and each
+  intermediate must be valid under the Rancher version *currently in effect*. That
+  shortcut disagreed with exhaustive search on 18 of 36 valid starts on a
+  gap-containing catalog. Every raise goes through `Edges`, one minor at a time.
+
+  **Two different questions, both answered.** `destinations` is what is reachable
+  after upgrades; `binding_constraint` is what the fleet can run *today* with no
+  cluster upgrades, and which clusters hold it there. A fleet on v1.28/v1.30/v1.29 can
+  reach 2.15.1 — 28 steps away — while only being able to run 2.10.12 right now.
+  Reporting only the first would list seven destinations and never mention the
+  pace-setters.
 - `internal/api` — input normalization, the typed error contract, the response envelope.
 
 Key components:
@@ -68,7 +92,14 @@ Key components:
 ### Core Logic Flow
 
 1. **Upgrade Path Calculation** (`GET /api/plan-upgrade`, query parameters):
-   `rancher`, `local_platform`, `local_k8s`, `downstream_platform`, `downstream_k8s`.
+   `rancher`, `local_platform`, `local_k8s`, and one or more downstream clusters as
+   `downstream_platform_N` / `downstream_k8s_N` / `downstream_label_N` (indexes from 1,
+   contiguous, capped at 8). Full contract in `docs/api.md`.
+
+   **`downstream_platform` and `downstream_k8s` with no suffix are slot 1 and are
+   permanently supported.** Not politeness to old links: `scripts/verify-deploy.sh`
+   probes that exact URL in all six environments and fails the deploy if it stops
+   returning destinations. Do not remove it as dead API surface.
    Versions are accepted with or without a leading `v` on every parameter.
    - Validates every parameter against the catalog before planning, returning a typed
      400 naming the field rather than an empty plan.
@@ -94,6 +125,19 @@ Key components:
    - The same rule applies to the Rancher axis, and adjacency there is NUMERIC, not
      catalog order: a Rancher minor absent from the catalog produces a blocker rather
      than a hop across it, even when both endpoints validate.
+   - **Both ends of a support window bind.** A cluster upgraded *ahead* of Rancher
+     blocks a hop too, and unlike a lagging cluster it cannot be fixed by upgrading,
+     because Kubernetes has no downgrade. Never phrase that case as something to
+     upgrade. On this catalog ceilings rise monotonically, so the case arises only in
+     the *starting* state — exactly what you get by upgrading a downstream cluster
+     before Rancher.
+   - **A fleet can be structurally unmanageable.** Windows are 3 to 6 Kubernetes
+     minors wide, so a fleet spread wider than the widest window cannot be managed by
+     *any* single Rancher version, in any order. This is a property of the domain, not
+     of this implementation: v1.28 together with v1.34 is 7 minors and no catalog
+     entry contains it. The planner returns a terminal blocker carrying the arithmetic,
+     because "no route found" reads as a tool limitation rather than a fact about the
+     cluster estate.
    - Not enforced, and captured only as notes because the tool does not collect
      per-node input: kubelet and kube-proxy may be up to three minor versions older
      than kube-apiserver (two below 1.25); control-plane components may be one minor
@@ -132,6 +176,23 @@ One range per (rancher, platform), governing BOTH the cluster Rancher is install
 on and the clusters it manages. The T0 source spike found those identical for every
 Rancher version sampled, and the validator asserts it so a future divergence fails
 loudly rather than being assumed away.
+
+**Window-shape properties, checked but not enforced.** `catalog.CheckWindows` reports
+three properties per platform across Rancher versions: floors non-decreasing (P1),
+ceilings non-decreasing (P2), and consecutive windows overlapping (P3). The planner
+deliberately does **not** rely on any of them — it validates every intermediate state —
+so a violation is logged at startup and surfaced in the data-sync pull request rather
+than being fatal. A P3 gap is a true fact about upstream with an operational meaning
+(no fleet can cross that Rancher hop at all), and taking the pod down over it would
+trade a correct answer for no answer.
+
+Comparison is by **minor**, not full version. Clusters move along the minor axis, and
+full-version comparison produces a false positive on real data: semver sorts
+`v1.17.17-rancher2-4` *below* `v1.17.17`, because a suffix is a prerelease.
+
+One known real violation is allowlisted in `catalog_data_test.go` with its evidence:
+Rancher 2.7.0 genuinely narrowed EKS support relative to 2.6.14. A *new* violation
+fails the test.
 
 `granularity` is `release` or `minor`. RKE2 and k3s can be `release`, because KDM
 publishes real release lists. AKS, EKS and GKE are `minor`, because SUSE stopped

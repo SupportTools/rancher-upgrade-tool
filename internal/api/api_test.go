@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -84,7 +85,10 @@ func TestRegression_VPrefixedVersionsBehaveIdentically(t *testing.T) {
 	if errA != nil || errB != nil {
 		t.Fatalf("parse failed: %v / %v", errA, errB)
 	}
-	if a != b {
+	// Node carries a cluster slice now, so == no longer compiles. DeepEqual is the
+	// right comparison anyway: the property under test is that the two parses agree
+	// in full, not that they share a memory layout.
+	if !reflect.DeepEqual(a, b) {
 		t.Errorf("v-prefixed input produced a different node:\n  %+v\n  %+v", a, b)
 	}
 }
@@ -94,8 +98,7 @@ func TestRegression_VPrefixedVersionsBehaveIdentically(t *testing.T) {
 func TestPlan_NeverEmitsNull(t *testing.T) {
 	c := shipped(t)
 	// A state with nothing reachable: newest catalogued Rancher line.
-	n := planner.Node{Rancher: "2.11.3", LocalPlatform: catalog.RKE2, LocalK8s: "v1.32",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.32"}
+	n := planner.NodeOf("2.11.3", catalog.RKE2, "v1.32", catalog.RKE2, "v1.32")
 	out, err := Plan(c, n)
 	if err != nil {
 		t.Fatalf("Plan: %v", err)
@@ -122,8 +125,7 @@ func TestPlan_NeverEmitsNull(t *testing.T) {
 // which would read as "no upgrade available" rather than "this product is over".
 func TestPlan_RKE1ReturnsEndOfLifeNotice(t *testing.T) {
 	c := shipped(t)
-	n := planner.Node{Rancher: "2.8.5", LocalPlatform: catalog.RKE1, LocalK8s: "v1.26",
-		DownPlatform: catalog.RKE1, DownK8s: "v1.26"}
+	n := planner.NodeOf("2.8.5", catalog.RKE1, "v1.26", catalog.RKE1, "v1.26")
 	out, err := Plan(c, n)
 	if err != nil {
 		t.Fatalf("Plan: %v", err)
@@ -165,8 +167,7 @@ func TestLabelValues_BoundsTheLabelSpace(t *testing.T) {
 // reads as though the two sides came from different places.
 func TestPlan_KubernetesVersionsRenderConsistently(t *testing.T) {
 	c := shipped(t)
-	n := planner.Node{Rancher: "2.9.4", LocalPlatform: catalog.RKE2, LocalK8s: "1.28",
-		DownPlatform: catalog.RKE2, DownK8s: "1.28"}
+	n := planner.NodeOf("2.9.4", catalog.RKE2, "1.28", catalog.RKE2, "1.28")
 	out, err := Plan(c, n)
 	if err != nil {
 		t.Fatalf("Plan: %v", err)
@@ -223,8 +224,7 @@ func TestCatalogInfo_ReportsFreshnessAndGoesStale(t *testing.T) {
 
 func TestPlan_EveryResponseCarriesCatalogFreshness(t *testing.T) {
 	c := shipped(t)
-	out, err := Plan(c, planner.Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2,
-		LocalK8s: "v1.28", DownPlatform: catalog.RKE2, DownK8s: "v1.28"})
+	out, err := Plan(c, planner.NodeOf("2.9.6", catalog.RKE2, "v1.28", catalog.RKE2, "v1.28"))
 	if err != nil {
 		t.Fatalf("Plan: %v", err)
 	}

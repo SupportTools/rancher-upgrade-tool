@@ -120,11 +120,7 @@ func TestGolden_SupportedRangesMatchUpstream(t *testing.T) {
 func TestGolden_StatesValidateAsExpected(t *testing.T) {
 	g, c := loadGolden(t)
 	for _, want := range g.States {
-		node := planner.Node{
-			Rancher:       want.Rancher,
-			LocalPlatform: catalog.Platform(want.LocalPlat), LocalK8s: want.LocalK8s,
-			DownPlatform: catalog.Platform(want.DownPlat), DownK8s: want.DownK8s,
-		}
+		node := planner.NodeOf(want.Rancher, catalog.Platform(want.LocalPlat), want.LocalK8s, catalog.Platform(want.DownPlat), want.DownK8s)
 		got, err := planner.Valid(c, node)
 		if err != nil {
 			t.Errorf("%s: Valid returned an error: %v", want.Name, err)
@@ -140,11 +136,7 @@ func TestGolden_StatesValidateAsExpected(t *testing.T) {
 func TestGolden_DestinationsRemainReachable(t *testing.T) {
 	g, c := loadGolden(t)
 	for _, want := range g.Reachability {
-		node := planner.Node{
-			Rancher:       want.Rancher,
-			LocalPlatform: catalog.Platform(want.LocalPlat), LocalK8s: want.LocalK8s,
-			DownPlatform: catalog.Platform(want.DownPlat), DownK8s: want.DownK8s,
-		}
+		node := planner.NodeOf(want.Rancher, catalog.Platform(want.LocalPlat), want.LocalK8s, catalog.Platform(want.DownPlat), want.DownK8s)
 		res, err := planner.Reachable(c, node)
 		if err != nil {
 			t.Errorf("%s: Reachable returned an error: %v", want.Name, err)

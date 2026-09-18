@@ -67,10 +67,7 @@ func TestShippedCatalog_WaypointsReachTheNewestData(t *testing.T) {
 // because of the v1.20.x typo. It must now plan.
 func TestShippedCatalog_EKSOnRancher2512Plans(t *testing.T) {
 	c := shipped(t)
-	start := planner.Node{
-		Rancher: "2.5.12", LocalPlatform: catalog.RKE1, LocalK8s: "v1.19",
-		DownPlatform: catalog.EKS, DownK8s: "v1.19",
-	}
+	start := planner.NodeOf("2.5.12", catalog.RKE1, "v1.19", catalog.EKS, "v1.19")
 	valid, err := planner.Valid(c, start)
 	if err != nil {
 		t.Fatalf("Valid: %v", err)
@@ -95,10 +92,10 @@ func TestShippedCatalog_EKSOnRancher2512Plans(t *testing.T) {
 func TestShippedCatalog_NoRouteSkipsAKubernetesMinor(t *testing.T) {
 	c := shipped(t)
 	starts := []planner.Node{
-		{Rancher: "2.5.12", LocalPlatform: catalog.RKE1, LocalK8s: "v1.19", DownPlatform: catalog.EKS, DownK8s: "v1.19"},
-		{Rancher: "2.6.9", LocalPlatform: catalog.RKE2, LocalK8s: "v1.22", DownPlatform: catalog.RKE2, DownK8s: "v1.22"},
-		{Rancher: "2.8.5", LocalPlatform: catalog.K3s, LocalK8s: "v1.26", DownPlatform: catalog.AKS, DownK8s: "v1.26"},
-		{Rancher: "2.9.4", LocalPlatform: catalog.RKE2, LocalK8s: "v1.28", DownPlatform: catalog.RKE2, DownK8s: "v1.28"},
+		planner.NodeOf("2.5.12", catalog.RKE1, "v1.19", catalog.EKS, "v1.19"),
+		planner.NodeOf("2.6.9", catalog.RKE2, "v1.22", catalog.RKE2, "v1.22"),
+		planner.NodeOf("2.8.5", catalog.K3s, "v1.26", catalog.AKS, "v1.26"),
+		planner.NodeOf("2.9.4", catalog.RKE2, "v1.28", catalog.RKE2, "v1.28"),
 	}
 	for _, start := range starts {
 		res, err := planner.Reachable(c, start)
@@ -125,10 +122,7 @@ func TestShippedCatalog_NoRouteSkipsAKubernetesMinor(t *testing.T) {
 // provenance is the thing this rebuild exists to stop shipping.
 func TestShippedCatalog_EveryStepCitesItsSource(t *testing.T) {
 	c := shipped(t)
-	start := planner.Node{
-		Rancher: "2.6.9", LocalPlatform: catalog.RKE2, LocalK8s: "v1.22",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.22",
-	}
+	start := planner.NodeOf("2.6.9", catalog.RKE2, "v1.22", catalog.RKE2, "v1.22")
 	res, err := planner.Reachable(c, start)
 	if err != nil {
 		t.Fatalf("Reachable: %v", err)
@@ -153,10 +147,7 @@ func TestShippedCatalog_EveryStepCitesItsSource(t *testing.T) {
 // reads as "you are already current".
 func TestShippedCatalog_UnsupportedStartExplainsItself(t *testing.T) {
 	c := shipped(t)
-	start := planner.Node{
-		Rancher: "2.9.4", LocalPlatform: catalog.RKE2, LocalK8s: "v1.21",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.21",
-	}
+	start := planner.NodeOf("2.9.4", catalog.RKE2, "v1.21", catalog.RKE2, "v1.21")
 	res, err := planner.Reachable(c, start)
 	if err != nil {
 		t.Fatalf("Reachable: %v", err)

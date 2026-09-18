@@ -50,8 +50,7 @@ func mustMinor(t *testing.T, v string) (int, int) {
 // support. Every endpoint of every emitted edge must validate on its own.
 func TestRegression_EveryEdgeEndpointIndividuallyValid(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.27", catalog.RKE2, "v1.27")
 
 	res, err := Reachable(c, start)
 	if err != nil {
@@ -89,8 +88,7 @@ func TestRegression_EveryEdgeEndpointIndividuallyValid(t *testing.T) {
 // whole design.
 func TestRegression_ExactlyOneComponentPerEdge(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.27", catalog.RKE2, "v1.27")
 
 	edges, err := Edges(c, start)
 	if err != nil {
@@ -107,7 +105,7 @@ func TestRegression_ExactlyOneComponentPerEdge(t *testing.T) {
 		if e.From.LocalK8s != e.To.LocalK8s {
 			moved++
 		}
-		if e.From.DownK8s != e.To.DownK8s {
+		if e.From.Clusters[0].K8s != e.To.Clusters[0].K8s {
 			moved++
 		}
 		if moved != 1 {
@@ -124,8 +122,7 @@ func TestRegression_ExactlyOneComponentPerEdge(t *testing.T) {
 // first, and no edge out of the start node may be a Rancher hop.
 func TestRegression_K8sRaisedBeforeRancherHop(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.27", catalog.RKE2, "v1.27")
 
 	edges, err := Edges(c, start)
 	if err != nil {
@@ -166,8 +163,7 @@ func TestRegression_K8sRaisedBeforeRancherHop(t *testing.T) {
 // ace8f40 hardcoded this as an unsourced constant with no test. This is the test.
 func TestRegression_NoKubernetesMinorSkipped(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.27", catalog.RKE2, "v1.27")
 
 	res, err := Reachable(c, start)
 	if err != nil {
@@ -218,8 +214,7 @@ func TestRegression_NoRancherMinorSkippedWhenCatalogHasAGap(t *testing.T) {
 			"numeric, not catalog order")
 	}
 
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.30",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.30"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.30", catalog.RKE2, "v1.30")
 	res, err := Reachable(c, start)
 	if err != nil {
 		t.Fatalf("Reachable: %v", err)
@@ -259,8 +254,7 @@ func TestWaypoints_LatestPatchPerMinor(t *testing.T) {
 // "you are already current".
 func TestUnsupportedStart_IsNotAnEmptyResult(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.21",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.21"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.21", catalog.RKE2, "v1.21")
 
 	res, err := Reachable(c, start)
 	if err != nil {
@@ -284,8 +278,7 @@ func TestUnsupportedStart_IsNotAnEmptyResult(t *testing.T) {
 // for Rancher Manager".
 func TestLocalPlatform_HostedProvidersCanHostRancher(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.EKS, LocalK8s: "v1.28",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.28"}
+	start := NodeOf("2.9.6", catalog.EKS, "v1.28", catalog.RKE2, "v1.28")
 
 	ok, err := Valid(c, start)
 	if err != nil {
@@ -302,8 +295,7 @@ func TestLocalPlatform_HostedProvidersCanHostRancher(t *testing.T) {
 // RKE2 route planned from real KDM releases.
 func TestRoute_HostedProviderIsMinorGranularity(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.28",
-		DownPlatform: catalog.EKS, DownK8s: "v1.28"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.28", catalog.EKS, "v1.28")
 
 	res, err := Reachable(c, start)
 	if err != nil {
@@ -324,8 +316,7 @@ func TestRoute_HostedProviderIsMinorGranularity(t *testing.T) {
 // cluster it manages, so the result must not read as fleet-wide clearance.
 func TestResult_StatesItsScope(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.28",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.28"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.28", catalog.RKE2, "v1.28")
 
 	res, err := Reachable(c, start)
 	if err != nil {
@@ -352,7 +343,7 @@ func applyStep(n Node, s Step) Node {
 	case StepLocal:
 		n.LocalK8s = s.To
 	case StepDown:
-		n.DownK8s = s.To
+		n.Clusters[0].K8s = s.To
 	}
 	return n
 }
@@ -369,8 +360,7 @@ func applyStep(n Node, s Step) Node {
 // any valid route. Only comparing whole results across runs exposes it.
 func TestRegression_ReachableIsDeterministic(t *testing.T) {
 	c := load(t, "basic.json")
-	start := Node{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "v1.27",
-		DownPlatform: catalog.RKE2, DownK8s: "v1.27"}
+	start := NodeOf("2.9.6", catalog.RKE2, "v1.27", catalog.RKE2, "v1.27")
 
 	signature := func() string {
 		res, err := Reachable(c, start)

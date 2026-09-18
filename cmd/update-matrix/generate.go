@@ -330,11 +330,11 @@ func guardNoRegression(base, next *catalog.Catalog) error {
 // new one in a raw diff.
 func reportJourneyDiff(base, next *catalog.Catalog) string {
 	probes := []planner.Node{
-		{Rancher: "2.5.12", LocalPlatform: catalog.RKE1, LocalK8s: "1.19", DownPlatform: catalog.EKS, DownK8s: "1.19"},
-		{Rancher: "2.6.9", LocalPlatform: catalog.RKE2, LocalK8s: "1.22", DownPlatform: catalog.RKE2, DownK8s: "1.22"},
-		{Rancher: "2.8.5", LocalPlatform: catalog.K3s, LocalK8s: "1.26", DownPlatform: catalog.AKS, DownK8s: "1.26"},
-		{Rancher: "2.9.6", LocalPlatform: catalog.RKE2, LocalK8s: "1.28", DownPlatform: catalog.RKE2, DownK8s: "1.28"},
-		{Rancher: "2.11.3", LocalPlatform: catalog.RKE2, LocalK8s: "1.30", DownPlatform: catalog.EKS, DownK8s: "1.30"},
+		planner.NodeOf("2.5.12", catalog.RKE1, "1.19", catalog.EKS, "1.19"),
+		planner.NodeOf("2.6.9", catalog.RKE2, "1.22", catalog.RKE2, "1.22"),
+		planner.NodeOf("2.8.5", catalog.K3s, "1.26", catalog.AKS, "1.26"),
+		planner.NodeOf("2.9.6", catalog.RKE2, "1.28", catalog.RKE2, "1.28"),
+		planner.NodeOf("2.11.3", catalog.RKE2, "1.30", catalog.EKS, "1.30"),
 	}
 
 	var buf strings.Builder
@@ -360,7 +360,7 @@ func reportJourneyDiff(base, next *catalog.Catalog) string {
 		moved, reallyLost := splitMoves(lost, gained)
 
 		label := fmt.Sprintf("  Rancher %s, %s local / %s downstream at %s",
-			probe.Rancher, probe.LocalPlatform, probe.DownPlatform, probe.DownK8s)
+			probe.Rancher, probe.LocalPlatform, probe.Clusters[0].Platform, probe.Clusters[0].K8s)
 
 		if len(gained) == 0 && len(lost) == 0 {
 			emit("%s: unchanged (%d destinations)\n", label, len(after))

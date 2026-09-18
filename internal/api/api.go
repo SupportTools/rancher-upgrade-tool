@@ -193,12 +193,17 @@ func ParseRequest(c *catalog.Catalog, q func(string) string) (planner.Node, *API
 	if n.LocalK8s, apiErr = normalizeVersion("local_k8s", q("local_k8s")); apiErr != nil {
 		return n, apiErr
 	}
-	if n.DownPlatform, apiErr = normalizePlatform("downstream_platform", q("downstream_platform")); apiErr != nil {
+	var downPlat catalog.Platform
+	var downK8s string
+	if downPlat, apiErr = normalizePlatform("downstream_platform", q("downstream_platform")); apiErr != nil {
 		return n, apiErr
 	}
-	if n.DownK8s, apiErr = normalizeVersion("downstream_k8s", q("downstream_k8s")); apiErr != nil {
+	if downK8s, apiErr = normalizeVersion("downstream_k8s", q("downstream_k8s")); apiErr != nil {
 		return n, apiErr
 	}
+	n.Clusters = []planner.Cluster{{
+		ID: "c1", Label: "Cluster 1", Platform: downPlat, K8s: downK8s,
+	}}
 	return n, nil
 }
 
@@ -221,7 +226,7 @@ func Plan(c *catalog.Catalog, n planner.Node) (*Response, error) {
 		Start: StartState{
 			Rancher:    n.Rancher,
 			Local:      ClusterState{Platform: string(n.LocalPlatform), K8s: displayK8s(n.LocalK8s)},
-			Downstream: ClusterState{Platform: string(n.DownPlatform), K8s: displayK8s(n.DownK8s)},
+			Downstream: ClusterState{Platform: string(n.Clusters[0].Platform), K8s: displayK8s(n.Clusters[0].K8s)},
 		},
 	}
 	if rv, ok := c.Find(n.Rancher); ok {
@@ -266,7 +271,7 @@ func Plan(c *catalog.Catalog, n planner.Node) (*Response, error) {
 	// RKE1 is end of life and left the Rancher support matrix between 2.11.3 and
 	// 2.13.9. An empty version list would read as "no upgrade available" rather
 	// than "this product is over, migrate to RKE2".
-	for role, p := range map[string]catalog.Platform{"local": n.LocalPlatform, "downstream": n.DownPlatform} {
+	for role, p := range map[string]catalog.Platform{"local": n.LocalPlatform, "downstream": n.Clusters[0].Platform} {
 		if p == catalog.RKE1 {
 			out.Blockers = append(out.Blockers, Blocker{
 				Kind:       "end-of-life",

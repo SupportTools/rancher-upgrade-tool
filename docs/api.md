@@ -212,8 +212,9 @@ beyond the furthest reachable one is not. Names what is holding the fleet back:
 ```json
 {
   "binding_constraint": {
+    "highest_now": "2.10.12",
     "blocked_rancher": "2.11.17",
-    "requires_k8s": "v1.30",
+    "requires_k8s": "v1.30.9+rke2r1",
     "clusters": [
       {"id": "c1", "label": "Cluster 1", "k8s": "v1.28", "position": "behind"},
       {"id": "c3", "label": "Cluster 3", "k8s": "v1.29", "position": "behind"},
@@ -223,10 +224,21 @@ beyond the furthest reachable one is not. Names what is holding the fleet back:
 }
 ```
 
+`highest_now` is the newest Rancher version the fleet can run **with no cluster
+upgrades at all**. That is a different question from what `destinations` lists, and
+both matter: the example fleet above can *reach* 2.15.1, 28 steps away, while only
+being able to *run* 2.10.12 today. Reporting only reachability would list seven
+destinations and never mention which clusters set the pace.
+
 `position` is `behind` (below the floor — fixable by upgrading) or `ahead` (above the
 ceiling — **not** fixable, since Kubernetes has no downgrade). The distinction is the
 whole point: telling someone to upgrade a cluster that is already too new is worse
 than saying nothing.
+
+On this catalog, window ceilings rise monotonically with the Rancher version, so
+`ahead` can only arise from the **starting** state — the Rancher someone is already
+running not supporting a cluster that has been upgraded past it. That is exactly what
+you get by upgrading a downstream cluster before Rancher.
 
 With one lagging cluster the wording names it as *the* constraint on the fleet. With
 several, they set the pace together and are all listed; the API does not pick one
@@ -288,6 +300,13 @@ For a fleet request the error names the **cluster**, not just the field, because
 
 `conflicting-parameter` covers supplying both `downstream_platform` and
 `downstream_platform_1` with different values. `too-many-clusters` states the cap.
+
+**`field` names the parameter the caller actually used.** A request using the
+unsuffixed `downstream_k8s` is refused against `downstream_k8s`, not
+`downstream_k8s_1` — reporting a field the caller never wrote sends them looking for
+something that is not in their request. The `cluster_label` prefix on `detail` is
+added only for a genuine multi-cluster request, so single-cluster messages are
+unchanged.
 
 ### Mixed platforms and mixed granularity
 

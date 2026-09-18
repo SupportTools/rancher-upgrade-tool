@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -341,4 +342,123 @@ func minorOf(v *version.Version) int {
 		return -1
 	}
 	return seg[1]
+}
+
+// WindowFinding is one violation of the window-shape properties below.
+type WindowFinding struct {
+	Property string // "P1", "P2" or "P3"
+	Platform Platform
+	From     string // the earlier Rancher version
+	To       string // the later Rancher version
+	Detail   string
+}
+
+func (f WindowFinding) String() string {
+	return fmt.Sprintf("%s %s: %s -> %s: %s", f.Property, f.Platform, f.From, f.To, f.Detail)
+}
+
+// CheckWindows reports violations of three properties of the support windows, per
+// platform, across Rancher versions in ascending order:
+//
+//	P1  window floors are non-decreasing
+//	P2  window ceilings are non-decreasing
+//	P3  consecutive windows OVERLAP: floor(R+1) <= ceiling(R)
+//
+// COMPARISON IS BY MINOR, not by full version, and that is deliberate. Clusters
+// move along the minor axis -- that is the axis the skip rule governs and the axis
+// where a gap makes a hop uncrossable. A ceiling that dips by a PATCH inside the
+// same minor creates no gap a fleet cannot cross.
+//
+// It also avoids a false positive that full-version comparison produces on real
+// data: semver sorts "v1.17.17-rancher2-4" BELOW "v1.17.17", because a suffix is a
+// prerelease. Comparing those two as versions reports a regression that does not
+// exist. Comparing minors sees v1.17 and v1.17.
+//
+// WHY THIS IS NOT FATAL, which is the judgement call in this function.
+//
+// The planner deliberately does NOT depend on any of these. It raises one minor at
+// a time and validates each intermediate state against the Rancher version in
+// effect, so it stays correct on a catalog where the properties fail. That was
+// measured: see docs/fleet-planning-algorithm.md, where the shortcut version
+// disagreed with exhaustive search on 18 of 36 valid start states on a
+// gap-containing catalog, and the adopted version on none.
+//
+// So a violation is not corruption, and the fail-closed loader is the wrong
+// response. A P3 gap is a TRUE fact about upstream with an operational meaning --
+// no fleet can cross that Rancher hop at all, whatever order the upgrades are done
+// in -- and taking the whole service down over it would trade a correct answer for
+// no answer. The planner already reports it per query as a blocker.
+//
+// What a violation deserves is to be NAMED ONCE, loudly, where a human is looking:
+// in the data-sync pull request and in the startup log, rather than being
+// rediscovered one query at a time. That is what this function is for.
+func CheckWindows(c *Catalog) []WindowFinding {
+	type entry struct {
+		rancher    string
+		parsed     *version.Version
+		min, max   *version.Version
+		minS, maxS string
+	}
+
+	byPlatform := map[Platform][]entry{}
+	for _, rv := range c.Rancher {
+		rp, err := parseVersion(rv.Version)
+		if err != nil {
+			continue // Validate already rejects unparseable versions
+		}
+		for i := range rv.Platforms {
+			sup := &rv.Platforms[i]
+			lo, err := parseVersion(sup.MinVersion)
+			if err != nil {
+				continue
+			}
+			hi, err := parseVersion(sup.MaxVersion)
+			if err != nil {
+				continue
+			}
+			byPlatform[sup.Platform] = append(byPlatform[sup.Platform], entry{
+				rancher: rv.Version, parsed: rp,
+				min: lo, max: hi, minS: sup.MinVersion, maxS: sup.MaxVersion,
+			})
+		}
+	}
+
+	plats := make([]Platform, 0, len(byPlatform))
+	for p := range byPlatform {
+		plats = append(plats, p)
+	}
+	// Fixed order so the findings are stable between runs; a diff that reorders
+	// itself is unreadable in a pull request.
+	sort.Slice(plats, func(i, j int) bool { return plats[i] < plats[j] })
+
+	var out []WindowFinding
+	for _, p := range plats {
+		rows := byPlatform[p]
+		sort.Slice(rows, func(i, j int) bool { return rows[i].parsed.LessThan(rows[j].parsed) })
+
+		for i := 1; i < len(rows); i++ {
+			prev, cur := rows[i-1], rows[i]
+			if minorOf(cur.min) < minorOf(prev.min) || majorOf(cur.min) < majorOf(prev.min) {
+				out = append(out, WindowFinding{
+					Property: "P1", Platform: p, From: prev.rancher, To: cur.rancher,
+					Detail: fmt.Sprintf("floor went backwards, %s -> %s", prev.minS, cur.minS),
+				})
+			}
+			if minorOf(cur.max) < minorOf(prev.max) || majorOf(cur.max) < majorOf(prev.max) {
+				out = append(out, WindowFinding{
+					Property: "P2", Platform: p, From: prev.rancher, To: cur.rancher,
+					Detail: fmt.Sprintf("ceiling went backwards, %s -> %s", prev.maxS, cur.maxS),
+				})
+			}
+			if minorOf(cur.min) > minorOf(prev.max) || majorOf(cur.min) > majorOf(prev.max) {
+				out = append(out, WindowFinding{
+					Property: "P3", Platform: p, From: prev.rancher, To: cur.rancher,
+					Detail: fmt.Sprintf("windows do not overlap: %s ends at %s, %s starts at %s. "+
+						"No fleet can cross this hop, whatever order the upgrades are done in.",
+						prev.rancher, prev.maxS, cur.rancher, cur.minS),
+				})
+			}
+		}
+	}
+	return out
 }

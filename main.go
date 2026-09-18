@@ -134,6 +134,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("refusing to start: %v", err)
 	}
+	// Window-shape findings are logged, not fatal. The planner validates every
+	// intermediate state so it stays correct when these fail, and a P3 gap is a true
+	// fact about upstream -- taking the pod down over it would trade a correct answer
+	// for no answer. See catalog.CheckWindows.
+	for _, f := range catalog.CheckWindows(cat) {
+		log.Printf("catalog window-shape finding: %s", f)
+	}
 	log.Printf("catalog loaded: %d Rancher versions, generated %s", len(cat.Rancher), cat.GeneratedAt)
 
 	app := fiber.New()

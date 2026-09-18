@@ -16,8 +16,18 @@
     /* One colour per axis, reused by the lanes and the step rows so a colour means
        the same thing everywhere on the page. */
     --axis-local: #00727c;
-    --axis-down: #4e4ea0;
     --axis-ranch: #1f6f4a;
+    /* One per downstream cluster, allocated by position and reused by the input
+       rows, the support strip and the lanes. Chosen to stay distinguishable in
+       greyscale as well as colour. */
+    --axis-c1: #4e4ea0;
+    --axis-c2: #a0562b;
+    --axis-c3: #7a3e86;
+    --axis-c4: #1f6e7a;
+    --axis-c5: #8a5b00;
+    --axis-c6: #9c3d5a;
+    --axis-c7: #3f6d2f;
+    --axis-c8: #5c5f6b;
 }
 
 body {
@@ -160,11 +170,26 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 
 .axis-dot { width: 8px; height: 8px; border-radius: 2px; flex: none; display: inline-block; }
 .axis-local .axis-dot { background: var(--axis-local); }
-.axis-down  .axis-dot { background: var(--axis-down); }
 .axis-ranch .axis-dot { background: var(--axis-ranch); }
+.axis-c1 .axis-dot { background: var(--axis-c1); }
+.axis-c2 .axis-dot { background: var(--axis-c2); }
+.axis-c3 .axis-dot { background: var(--axis-c3); }
+.axis-c4 .axis-dot { background: var(--axis-c4); }
+.axis-c5 .axis-dot { background: var(--axis-c5); }
+.axis-c6 .axis-dot { background: var(--axis-c6); }
+.axis-c7 .axis-dot { background: var(--axis-c7); }
+.axis-c8 .axis-dot { background: var(--axis-c8); }
+
 .lane.axis-local .lane-name { color: var(--axis-local); }
-.lane.axis-down  .lane-name { color: var(--axis-down); }
 .lane.axis-ranch .lane-name { color: var(--axis-ranch); }
+.lane.axis-c1 .lane-name { color: var(--axis-c1); }
+.lane.axis-c2 .lane-name { color: var(--axis-c2); }
+.lane.axis-c3 .lane-name { color: var(--axis-c3); }
+.lane.axis-c4 .lane-name { color: var(--axis-c4); }
+.lane.axis-c5 .lane-name { color: var(--axis-c5); }
+.lane.axis-c6 .lane-name { color: var(--axis-c6); }
+.lane.axis-c7 .lane-name { color: var(--axis-c7); }
+.lane.axis-c8 .lane-name { color: var(--axis-c8); }
 
 .lane-track { display: flex; gap: 3px; align-items: center; }
 .slot { flex: 1 1 0; min-width: 0; height: 28px; position: relative;
@@ -183,8 +208,15 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
 .mark-step:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .mark-step[data-active="true"] { box-shadow: 0 0 0 2px var(--surface-2), 0 0 0 4px var(--ink); }
 .axis-local .mark-step { background: var(--axis-local); }
-.axis-down  .mark-step { background: var(--axis-down); }
 .axis-ranch .mark-step { background: var(--axis-ranch); }
+.axis-c1 .mark-step { background: var(--axis-c1); }
+.axis-c2 .mark-step { background: var(--axis-c2); }
+.axis-c3 .mark-step { background: var(--axis-c3); }
+.axis-c4 .mark-step { background: var(--axis-c4); }
+.axis-c5 .mark-step { background: var(--axis-c5); }
+.axis-c6 .mark-step { background: var(--axis-c6); }
+.axis-c7 .mark-step { background: var(--axis-c7); }
+.axis-c8 .mark-step { background: var(--axis-c8); }
 
 /* The starting state, deliberately not styled as a step. */
 .slot-start .mark { background: var(--surface-3); color: var(--ink-2);
@@ -212,8 +244,15 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
              color: var(--ink-2); font-size: 0.66rem; font-weight: 700;
              text-transform: uppercase; letter-spacing: 0.06em; }
 .step-row.axis-local .step-kind { color: var(--axis-local); }
-.step-row.axis-down  .step-kind { color: var(--axis-down); }
 .step-row.axis-ranch .step-kind { color: var(--axis-ranch); }
+.step-row.axis-c1 .step-kind { color: var(--axis-c1); }
+.step-row.axis-c2 .step-kind { color: var(--axis-c2); }
+.step-row.axis-c3 .step-kind { color: var(--axis-c3); }
+.step-row.axis-c4 .step-kind { color: var(--axis-c4); }
+.step-row.axis-c5 .step-kind { color: var(--axis-c5); }
+.step-row.axis-c6 .step-kind { color: var(--axis-c6); }
+.step-row.axis-c7 .step-kind { color: var(--axis-c7); }
+.step-row.axis-c8 .step-kind { color: var(--axis-c8); }
 
 .step-move { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap;
              min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -253,4 +292,86 @@ legend { font-size: 0.8rem; font-weight: 600; color: #444; padding: 0 0.4rem; }
     .caveat { grid-column: 2; }
     .lane { grid-template-columns: 6rem 1fr; }
     .lane-ticks { grid-template-columns: 6rem 1fr; }
+}
+
+/* --- fleet input rows ------------------------------------------------------ */
+.fleet-row { display: grid; grid-template-columns: 1rem 1fr 8rem 6.5rem 2rem;
+             gap: 0.4rem; align-items: center; margin-bottom: 0.45rem; }
+.fleet-swatch { display: flex; align-items: center; justify-content: center; }
+.fleet-row input, .fleet-row select { width: 100%; margin-top: 0; padding: 0.4rem 0.5rem;
+                                      font-size: 0.85rem; }
+.fleet-name { font-family: inherit; }
+.fleet-k8s { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.fleet-del { width: 2rem; padding: 0.35rem 0; font-size: 1rem; line-height: 1;
+             background: var(--surface); color: var(--ink-2);
+             border: 1px solid var(--line-2); border-radius: 4px; }
+.fleet-del:hover:not(:disabled) { background: var(--surface); border-color: #c0392b; color: #c0392b; }
+.fleet-del:disabled { opacity: 0.4; cursor: not-allowed; }
+.add-cluster { width: auto; margin: 0.2rem 0 0; padding: 0.4rem 0.8rem; font-size: 0.85rem;
+               background: transparent; color: var(--accent);
+               border: 1px dashed var(--line-2); border-radius: 5px; }
+.add-cluster:hover { background: var(--accent-soft); border-color: var(--accent); }
+.fleet-hint { font-size: 0.78rem; color: var(--ink-3); line-height: 1.45;
+              margin: 0.5rem 0 0.25rem; text-align: left; }
+
+/* --- binding constraint ---------------------------------------------------- */
+.binding { border: 1px solid var(--line); border-left: 3px solid #8a5a00;
+           background: #fdfaf3; border-radius: 0 6px 6px 0;
+           padding: 0.7rem 0.9rem; margin-bottom: 0.75rem; }
+.binding-title { font-weight: 700; font-size: 0.95rem; color: #7a4f00; }
+.binding-detail { font-size: 0.85rem; color: #555; line-height: 1.5; margin: 0.3rem 0 0; }
+.binding-cluster { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                   font-weight: 600; color: var(--ink); }
+.binding-ahead { color: #98252b; }
+
+/* --- support window strip -------------------------------------------------- */
+.strip-box { border: 1px solid var(--line); border-radius: 6px; margin-bottom: 0.75rem; }
+.strip-head { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+              padding: 0.65rem 0.8rem 0.35rem; }
+.strip-scroll { overflow-x: auto; padding: 0.35rem 0.8rem 0.75rem; }
+.strip { min-width: 460px; }
+.strip-row { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.7rem;
+             align-items: center; padding: 0.12rem 0; }
+.strip-who { display: flex; align-items: center; gap: 0.35rem; min-width: 0; }
+.strip-v { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+           font-size: 0.8rem; font-weight: 600; }
+.strip-bar { position: relative; height: 24px; border-radius: 5px;
+             background: var(--surface-2); border: 1px solid var(--line); }
+.strip-win { position: absolute; top: 0; bottom: 0; border-radius: 4px;
+             background: var(--accent-soft); border: 1px solid var(--accent); }
+/* A version that cannot hold the whole fleet reads as inert rather than available. */
+.strip-row[data-fits="false"] .strip-win { background: var(--surface-3); border-color: var(--line-2); }
+.strip-wl { position: absolute; inset: 0; display: flex; align-items: center;
+            justify-content: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.6rem; color: var(--accent-ink); white-space: nowrap; }
+.strip-row[data-fits="false"] .strip-wl { color: var(--ink-3); }
+.strip-dot { position: absolute; top: 50%; width: 11px; height: 11px;
+             margin-left: -5.5px; margin-top: -5.5px; border-radius: 50%;
+             border: 2px solid var(--surface); z-index: 2; }
+/* Shape as well as colour, so the distinction survives greyscale. */
+.strip-dot[data-out="true"] { border-radius: 2px; }
+.strip-dot.axis-local { background: var(--axis-local); }
+.strip-dot.axis-c1 { background: var(--axis-c1); }
+.strip-dot.axis-c2 { background: var(--axis-c2); }
+.strip-dot.axis-c3 { background: var(--axis-c3); }
+.strip-dot.axis-c4 { background: var(--axis-c4); }
+.strip-dot.axis-c5 { background: var(--axis-c5); }
+.strip-dot.axis-c6 { background: var(--axis-c6); }
+.strip-dot.axis-c7 { background: var(--axis-c7); }
+.strip-dot.axis-c8 { background: var(--axis-c8); }
+.strip-axis { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.7rem;
+              min-width: 460px; margin-top: 0.2rem; }
+.strip-ticks { position: relative; height: 1rem; }
+.strip-ticks span { position: absolute; transform: translateX(-50%);
+                    font-size: 0.6rem; color: var(--ink-3); white-space: nowrap;
+                    font-variant-numeric: tabular-nums; }
+
+.lane-note { font-size: 0.75rem; color: var(--ink-3); margin: 0.4rem 0 0;
+             min-width: 520px; line-height: 1.45; }
+
+@media (max-width: 560px) {
+    .fleet-row { grid-template-columns: 1rem 1fr 2rem; row-gap: 0.3rem; }
+    .fleet-plat, .fleet-k8s { grid-column: 2; }
+    .strip-row { grid-template-columns: 6rem 1fr; }
+    .strip-axis { grid-template-columns: 6rem 1fr; }
 }

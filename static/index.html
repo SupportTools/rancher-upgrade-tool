@@ -46,22 +46,17 @@
         </fieldset>
 
         <fieldset>
-            <legend>Downstream cluster &mdash; the one you are planning</legend>
-            <div class="input-group">
-                <label for="downstreamPlatform">Platform</label>
-                <select id="downstreamPlatform">
-                    <option value="rke2">RKE2</option>
-                    <option value="k3s">K3s</option>
-                    <option value="rke1">RKE1 (end of life)</option>
-                    <option value="aks">AKS</option>
-                    <option value="eks">EKS</option>
-                    <option value="gke">GKE</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="downstreamK8s">Kubernetes version</label>
-                <input type="text" id="downstreamK8s" placeholder="v1.28 (or 1.28)">
-            </div>
+            <legend>Downstream clusters &mdash; every cluster this Rancher manages</legend>
+            <!-- Rows are built by app.js so adding and removing a cluster is one
+                 code path, and so the colour assigned to each cluster is allocated
+                 once and reused by the support strip and the lanes. -->
+            <div id="fleetRows"></div>
+            <button type="button" id="addCluster" class="add-cluster">+ Add cluster</button>
+            <p class="fleet-hint">
+                Rancher can only move when <em>every</em> attached cluster sits inside the
+                target version&rsquo;s support window, so the fleet is planned as a set rather
+                than one cluster at a time.
+            </p>
         </fieldset>
 
         <div class="input-group">

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -107,5 +108,76 @@ func TestFrontendRendersOneDestinationAtATime(t *testing.T) {
 	if !strings.Contains(string(css), "overflow-x: auto") {
 		t.Error("style.css has no horizontal scroll container; the lane diagram is wider " +
 			"than a phone screen and would scroll the page body instead")
+	}
+}
+
+// The fleet UI. These are coupling checks: the three surfaces (input rows, support
+// strip, lanes) each carry information the others cannot, so losing one silently
+// degrades the answer rather than breaking the page.
+func TestFrontendRendersTheFleetSurfaces(t *testing.T) {
+	js, err := os.ReadFile("static/app.js")
+	if err != nil {
+		t.Fatalf("read static/app.js: %v", err)
+	}
+	code := stripJSComments(string(js))
+
+	for sym, why := range map[string]string{
+		"renderWindowStrip":       "the support strip is the only view that does not decompose into per-cluster answers",
+		"renderBindingConstraint": "without it the page never says which cluster is holding the fleet back",
+		"lanesFor":                "lanes must scale to one per cluster, not a fixed three",
+		"clusterColour":           "a cluster's colour must be allocated once and reused across all three surfaces",
+	} {
+		if !strings.Contains(code, sym) {
+			t.Errorf("static/app.js no longer defines %s: %s", sym, why)
+		}
+	}
+
+	// Indexed parameters, per the contract in docs/api.md.
+	if !strings.Contains(code, "downstream_platform_${n}") &&
+		!strings.Contains(code, "`downstream_platform_${n}`") {
+		t.Error("static/app.js does not send indexed downstream parameters")
+	}
+
+	html, err := os.ReadFile("static/index.html")
+	if err != nil {
+		t.Fatalf("read static/index.html: %v", err)
+	}
+	for _, id := range []string{"fleetRows", "addCluster"} {
+		if !strings.Contains(string(html), id) {
+			t.Errorf("index.html has no %q element; clusters cannot be added", id)
+		}
+	}
+	// The single-cluster fields are gone, so nothing can quietly send one cluster
+	// while the user has entered several.
+	for _, gone := range []string{`id="downstreamPlatform"`, `id="downstreamK8s"`} {
+		if strings.Contains(string(html), gone) {
+			t.Errorf("index.html still carries %s; the fleet rows replaced it", gone)
+		}
+	}
+}
+
+// A cluster's colour must exist for every slot up to the API cap, or the eighth
+// cluster renders unstyled, and out-of-window dots must differ in SHAPE as well as
+// colour so the distinction survives greyscale and colour-blindness.
+func TestFrontendFleetColoursCoverTheClusterCap(t *testing.T) {
+	css, err := os.ReadFile("static/style.css")
+	if err != nil {
+		t.Fatalf("read static/style.css: %v", err)
+	}
+	body := string(css)
+
+	// api.MaxClusters is 8; keep the palette at least that wide.
+	for i := 1; i <= 8; i++ {
+		token := fmt.Sprintf("--axis-c%d", i)
+		if !strings.Contains(body, token) {
+			t.Errorf("style.css defines no %s, so cluster %d would render unstyled", token, i)
+		}
+	}
+	if !strings.Contains(body, `.strip-dot[data-out="true"]`) {
+		t.Error("style.css does not distinguish out-of-window dots by shape; colour alone " +
+			"fails in greyscale and for colour-blind readers")
+	}
+	if !strings.Contains(body, `.strip-row[data-fits="false"]`) {
+		t.Error("style.css does not mark Rancher versions that cannot hold the whole fleet")
 	}
 }

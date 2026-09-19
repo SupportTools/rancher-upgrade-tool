@@ -21,7 +21,7 @@ on:
 
 jobs:
   Test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
 
     steps:
       - name: Checkout code
@@ -52,7 +52,7 @@ jobs:
 
   Build:
     needs: Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
 
     steps:
       - uses: actions/checkout@v4
@@ -84,7 +84,7 @@ jobs:
     outputs:
       chart_version: ${{ steps.chart.outputs.chart_version }}
       app_version: ${{ steps.chart.outputs.app_version }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     needs:
       - Build
 

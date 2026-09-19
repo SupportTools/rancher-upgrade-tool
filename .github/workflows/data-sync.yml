@@ -43,6 +43,8 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          # GOCACHE/GOMODCACHE already live on the runner's persistent shared /cache; setup-go's cache step only re-archives it
+          cache: false
 
       - name: Install analysis tools
         # Must match the other workflows; `make ci` needs both.

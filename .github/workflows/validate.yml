@@ -33,6 +33,8 @@ jobs:
           # to the newest 1.22.x, so CI and the shipped image can build on different
           # patch releases. Tracked as a separate concern.
           go-version-file: go.mod
+          # GOCACHE/GOMODCACHE already live on the runner's persistent shared /cache; setup-go's cache step only re-archives it
+          cache: false
 
       - name: Install analysis tools
         # Must match pipeline.yml. `make ci` needs both; a missing tool here makes

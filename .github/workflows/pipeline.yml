@@ -31,6 +31,8 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.22"
+          # GOCACHE/GOMODCACHE already live on the runner's persistent shared /cache; setup-go's cache step only re-archives it
+          cache: false
 
       - name: Install analysis tools
         # The on-prem runner image sets GOTOOLCHAIN=local; @latest tools need a newer Go

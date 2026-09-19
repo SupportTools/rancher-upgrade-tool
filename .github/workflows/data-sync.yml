@@ -46,6 +46,10 @@ jobs:
 
       - name: Install analysis tools
         # Must match the other workflows; `make ci` needs both.
+        # The on-prem runner image sets GOTOOLCHAIN=local; @latest tools need a newer Go
+        # than go.mod's. Let only this step fetch one, as GitHub-hosted runners do.
+        env:
+          GOTOOLCHAIN: auto
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
           go install github.com/securego/gosec/v2/cmd/gosec@latest

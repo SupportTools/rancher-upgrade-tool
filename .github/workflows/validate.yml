@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   Validate:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-linux
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,10 +33,16 @@ jobs:
           # to the newest 1.22.x, so CI and the shipped image can build on different
           # patch releases. Tracked as a separate concern.
           go-version-file: go.mod
+          # GOCACHE/GOMODCACHE already live on the runner's persistent shared /cache; setup-go's cache step only re-archives it
+          cache: false
 
       - name: Install analysis tools
         # Must match pipeline.yml. `make ci` needs both; a missing tool here makes
         # Validate pass for the wrong reason.
+        # The on-prem runner image sets GOTOOLCHAIN=local; @latest tools need a newer Go
+        # than go.mod's. Let only this step fetch one, as GitHub-hosted runners do.
+        env:
+          GOTOOLCHAIN: auto
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
           go install github.com/securego/gosec/v2/cmd/gosec@latest

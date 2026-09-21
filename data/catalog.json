@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17",
+  "generated_at": "2026-09-21",
   "rancher": [
     {
       "version": "2.5.0",
@@ -864,7 +864,7 @@
             "v1.21.4+rke2r2"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -884,7 +884,7 @@
             "v1.21.9+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -942,7 +942,7 @@
             "v1.21.9+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -962,7 +962,7 @@
             "v1.21.9+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1020,7 +1020,7 @@
             "v1.21.9+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1040,7 +1040,7 @@
             "v1.21.9+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1115,7 +1115,7 @@
             "v1.22.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1150,7 +1150,7 @@
             "v1.22.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1236,7 +1236,7 @@
             "v1.23.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1281,7 +1281,7 @@
             "v1.23.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1355,7 +1355,7 @@
             "v1.23.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1389,7 +1389,7 @@
             "v1.23.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1463,7 +1463,7 @@
             "v1.23.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1497,7 +1497,7 @@
             "v1.23.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1583,7 +1583,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1629,7 +1629,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1715,7 +1715,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1761,7 +1761,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1847,7 +1847,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -1893,7 +1893,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -1979,7 +1979,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2025,7 +2025,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2111,7 +2111,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2157,7 +2157,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2243,7 +2243,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2289,7 +2289,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2375,7 +2375,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2421,7 +2421,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2507,7 +2507,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2553,7 +2553,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2619,7 +2619,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2646,7 +2646,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2712,7 +2712,7 @@
             "v1.24.17+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2739,7 +2739,7 @@
             "v1.24.17+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2813,7 +2813,7 @@
             "v1.25.16+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2848,7 +2848,7 @@
             "v1.25.16+k3s4"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -2922,7 +2922,7 @@
             "v1.25.16+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -2957,7 +2957,7 @@
             "v1.25.16+k3s4"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3031,7 +3031,7 @@
             "v1.25.16+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3066,7 +3066,7 @@
             "v1.25.16+k3s4"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3149,7 +3149,7 @@
             "v1.26.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3193,7 +3193,7 @@
             "v1.26.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3276,7 +3276,7 @@
             "v1.26.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3320,7 +3320,7 @@
             "v1.26.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3403,7 +3403,7 @@
             "v1.26.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3447,7 +3447,7 @@
             "v1.26.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3530,7 +3530,7 @@
             "v1.26.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3574,7 +3574,7 @@
             "v1.26.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3657,7 +3657,7 @@
             "v1.26.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -3701,7 +3701,7 @@
             "v1.26.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3762,7 +3762,7 @@
             "v1.27.16+rke2r2"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -3799,7 +3799,7 @@
             "v1.27.16+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3860,7 +3860,7 @@
             "v1.27.16+rke2r2"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -3897,7 +3897,7 @@
             "v1.27.16+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -3966,7 +3966,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4011,7 +4011,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4080,7 +4080,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4125,7 +4125,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4194,7 +4194,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4239,7 +4239,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4308,7 +4308,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4353,7 +4353,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4422,7 +4422,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4467,7 +4467,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4536,7 +4536,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4581,7 +4581,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4650,7 +4650,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4695,7 +4695,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4764,7 +4764,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4809,7 +4809,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4878,7 +4878,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -4923,7 +4923,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -4992,7 +4992,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5037,7 +5037,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5106,7 +5106,7 @@
             "v1.28.15+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5151,7 +5151,7 @@
             "v1.28.15+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5245,7 +5245,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5318,7 +5318,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5412,7 +5412,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5485,7 +5485,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5579,7 +5579,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5652,7 +5652,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5746,7 +5746,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5819,7 +5819,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -5913,7 +5913,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -5986,7 +5986,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6080,7 +6080,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6153,7 +6153,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6247,7 +6247,7 @@
             "v1.31.5+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6320,7 +6320,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6394,7 +6394,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6445,7 +6445,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6519,7 +6519,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6570,7 +6570,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6644,7 +6644,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6695,7 +6695,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6769,7 +6769,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6820,7 +6820,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -6894,7 +6894,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -6945,7 +6945,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7019,7 +7019,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7070,7 +7070,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7144,7 +7144,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7195,7 +7195,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7269,7 +7269,7 @@
             "v1.31.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7320,7 +7320,7 @@
             "v1.31.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7391,7 +7391,7 @@
             "v1.32.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7439,7 +7439,7 @@
             "v1.32.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7510,7 +7510,7 @@
             "v1.32.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7558,7 +7558,7 @@
             "v1.32.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7629,7 +7629,7 @@
             "v1.32.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7677,7 +7677,7 @@
             "v1.32.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7748,7 +7748,7 @@
             "v1.32.13+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "rke1",
@@ -7796,7 +7796,7 @@
             "v1.32.13+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7827,7 +7827,7 @@
     {
       "version": "2.12.13",
       "lifecycle": "limited",
-      "lifecycle_as_of": "2026-09-17",
+      "lifecycle_as_of": "2026-09-21",
       "platforms": [
         {
           "platform": "rke2",
@@ -7871,7 +7871,7 @@
             "v1.33.13+rke2r2"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -7914,7 +7914,7 @@
             "v1.33.13+k3s2"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -7945,7 +7945,7 @@
     {
       "version": "2.13.9",
       "lifecycle": "limited",
-      "lifecycle_as_of": "2026-09-17",
+      "lifecycle_as_of": "2026-09-21",
       "platforms": [
         {
           "platform": "rke2",
@@ -7996,7 +7996,7 @@
             "v1.34.11+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -8045,7 +8045,7 @@
             "v1.34.11+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -8076,7 +8076,7 @@
     {
       "version": "2.14.5",
       "lifecycle": "full",
-      "lifecycle_as_of": "2026-09-17",
+      "lifecycle_as_of": "2026-09-21",
       "platforms": [
         {
           "platform": "rke2",
@@ -8127,7 +8127,7 @@
             "v1.35.8+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -8175,7 +8175,7 @@
             "v1.35.8+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",
@@ -8206,7 +8206,7 @@
     {
       "version": "2.15.1",
       "lifecycle": "full",
-      "lifecycle_as_of": "2026-09-17",
+      "lifecycle_as_of": "2026-09-21",
       "platforms": [
         {
           "platform": "rke2",
@@ -8244,7 +8244,7 @@
             "v1.36.4+rke2r1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels-rke2.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "k3s",
@@ -8281,7 +8281,7 @@
             "v1.36.4+k3s1"
           ],
           "source_url": "https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/release-v2.15/channels.yaml",
-          "as_of": "2026-09-17"
+          "as_of": "2026-09-21"
         },
         {
           "platform": "aks",

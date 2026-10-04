@@ -580,3 +580,53 @@ func TestAllArgoAppsPullFromHarbor(t *testing.T) {
 		t.Errorf("checked %d Applications, expected 6 (mst, dev, qas, tst, stg, prd)", found)
 	}
 }
+
+// The self-hosted runner image (SupportTools/ci-runners) bakes helm, kubectl,
+// staticcheck and gosec. Fetching them again at job time put an external download
+// on the critical path of every run: an installer action hanging on get.helm.sh
+// skipped a production deploy elsewhere in the org (taskforge-2670, taskforge-2678).
+//
+// Checks parsed `uses:` and `run:` values, not the raw file, so a comment that
+// explains the rule cannot trip it.
+func TestNoJobTimeToolDownloads(t *testing.T) {
+	type stepped struct {
+		Jobs map[string]struct {
+			Steps []struct {
+				Uses string `yaml:"uses"`
+				Run  string `yaml:"run"`
+			} `yaml:"steps"`
+		} `yaml:"jobs"`
+	}
+	bakedInstallers := []string{
+		"azure/setup-helm", "azure/setup-kubectl",
+		"golangci/golangci-lint-action", "sigstore/cosign-installer",
+	}
+	latestInstall := regexp.MustCompile(`go install \S+@latest`)
+
+	files, err := filepath.Glob(".github/workflows/*.yml")
+	if err != nil || len(files) == 0 {
+		t.Fatalf("no workflows found: %v", err)
+	}
+	for _, f := range files {
+		raw, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatalf("read %s: %v", f, err)
+		}
+		var w stepped
+		if err := yaml.Unmarshal(raw, &w); err != nil {
+			t.Fatalf("parse %s: %v", f, err)
+		}
+		for name, job := range w.Jobs {
+			for _, st := range job.Steps {
+				for _, inst := range bakedInstallers {
+					if strings.HasPrefix(st.Uses, inst+"@") {
+						t.Errorf("%s job %s uses %s; the runner image bakes that tool, call it directly", f, name, st.Uses)
+					}
+				}
+				if m := latestInstall.FindString(st.Run); m != "" {
+					t.Errorf("%s job %s runs %q; use the baked binary or pin a version", f, name, m)
+				}
+			}
+		}
+	}
+}

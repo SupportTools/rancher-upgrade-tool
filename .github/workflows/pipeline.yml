@@ -161,13 +161,33 @@ jobs:
 
       # Harbor does not auto-create projects. Without this, a missing project
       # surfaces as an opaque push failure; with it, the job says exactly what to do.
+      #
+      # The lookup is AUTHENTICATED, and a refusal is reported as a refusal. It used
+      # to be anonymous `curl -sf`, which folded every non-2xx into "does not exist".
+      # By 2026-10-23 Harbor answered anonymous API calls with 401, including for
+      # projects that certainly exist (beacon), so a live project was reported missing
+      # and the job told the reader to create something that was already there.
+      # Credentials go to curl on stdin (-K -), never on argv.
       - name: Check the Harbor project exists
+        env:
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
         run: |
           set -euo pipefail
           PROJECT=rancher-upgrade-tool
-          if curl -sf --max-time 20 \
-               "https://harbor.support.tools/api/v2.0/projects?name=${PROJECT}" \
-             | grep -q "\"name\":\"${PROJECT}\""; then
+          body=$(mktemp)
+          code=$(printf 'user = "%s:%s"\n' "$HARBOR_USERNAME" "$HARBOR_PASSWORD" \
+            | curl -s --max-time 20 -K - -o "$body" -w '%{http_code}' \
+                "https://harbor.support.tools/api/v2.0/projects?name=${PROJECT}") || code=000
+          if [ "$code" = 401 ] || [ "$code" = 403 ]; then
+            echo "::error::Harbor refused the project lookup (HTTP ${code}) for the HARBOR_USERNAME account."
+            echo "This says nothing about whether '${PROJECT}' exists. Check the HARBOR_USERNAME /"
+            echo "HARBOR_PASSWORD secrets and that the account can see the project."
+            exit 1
+          elif [ "$code" != 200 ]; then
+            echo "::error::Harbor project lookup failed (HTTP ${code}); cannot tell whether '${PROJECT}' exists."
+            exit 1
+          elif grep -q "\"name\":\"${PROJECT}\"" "$body"; then
             echo "Harbor project ${PROJECT} exists"
           else
             echo "::error::Harbor project '${PROJECT}' does not exist."

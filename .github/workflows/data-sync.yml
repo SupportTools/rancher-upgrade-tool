@@ -31,6 +31,9 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # escalate.sh creates its label and opens/comments on/closes the tracking issue.
+  # Without this the job token has no issues scope at all.
+  issues: write
 
 jobs:
   refresh:

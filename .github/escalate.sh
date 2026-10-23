@@ -9,6 +9,19 @@ set -euo pipefail
 MARKER="<!-- rancher-tips-staleness-tracker -->"
 LABEL="${ESCALATE_LABEL:-data-staleness}"
 
+# The label is created here rather than assumed to exist. Before this, the label
+# had never been created on the repo, so `gh issue create --label` refused
+# ("could not add label: 'data-staleness' not found") and every failed sync from
+# 2026-09-21 on escalated to nobody. --force makes it idempotent: it updates an
+# existing label instead of failing. A real failure (permissions) still stops the
+# script, because an escalation that cannot be raised must not look like success.
+ensure_label() {
+  gh label create "$LABEL" --force \
+    --color "B60205" \
+    --description "Catalog data is stale: the weekly sync failed or its PR is unreviewed" \
+    >/dev/null
+}
+
 existing=$(gh issue list --state open --label "$LABEL" --json number,title \
   --jq '.[0].number // empty' 2>/dev/null || true)
 
@@ -33,6 +46,8 @@ Why this matters: the tool answers upgrade questions people act on against produ
 Run: ${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}
 
 ${MARKER}"
+
+ensure_label
 
 if [ -n "$existing" ]; then
   gh issue comment "$existing" --body "$FULL"

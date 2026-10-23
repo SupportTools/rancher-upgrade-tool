@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/go-version"
 	"github.com/supporttools/rancher-upgrade-tool/internal/catalog"
 	"github.com/supporttools/rancher-upgrade-tool/internal/planner"
 )
@@ -133,6 +134,41 @@ func TestGolden_StatesValidateAsExpected(t *testing.T) {
 	}
 }
 
+// sameLineAtLeast reports whether got is on floor's major.minor line at floor's
+// patch or newer.
+//
+// A destination is a waypoint, and a waypoint is the LATEST patch of its minor
+// (planner.Waypoints). So an expectation naming an exact patch is broken by every
+// upstream patch release, not by a parser fault: 2.15.2 replaced 2.15.1 as the 2.15
+// destination on 2026-09-23 and the weekly sync went red until this changed. The
+// floor keeps the teeth that matter: a missing minor line fails, and so does a line
+// that regressed below the patch a human verified.
+func sameLineAtLeast(t *testing.T, got, floor string) bool {
+	t.Helper()
+	g, err := version.NewVersion(catalog.Normalize(got))
+	if err != nil {
+		t.Fatalf("destination %q does not parse: %v", got, err)
+	}
+	f, err := version.NewVersion(catalog.Normalize(floor))
+	if err != nil {
+		t.Fatalf("expectation %q does not parse: %v", floor, err)
+	}
+	gs, fs := g.Segments(), f.Segments()
+	return gs[0] == fs[0] && gs[1] == fs[1] && !g.LessThan(f)
+}
+
+func reachesLineAtLeast(t *testing.T, res *planner.Result, floor string) bool {
+	t.Helper()
+	for _, r := range res.Routes {
+		if sameLineAtLeast(t, r.Destination, floor) {
+			return true
+		}
+	}
+	return false
+}
+
+// TestGolden_DestinationsRemainReachable treats each must_reach entry as a floor on
+// its minor line, not an exact patch; see sameLineAtLeast for why.
 func TestGolden_DestinationsRemainReachable(t *testing.T) {
 	g, c := loadGolden(t)
 	for _, want := range g.Reachability {
@@ -142,12 +178,8 @@ func TestGolden_DestinationsRemainReachable(t *testing.T) {
 			t.Errorf("%s: Reachable returned an error: %v", want.Name, err)
 			continue
 		}
-		reached := map[string]bool{}
-		for _, r := range res.Routes {
-			reached[r.Destination] = true
-		}
 		for _, target := range want.MustReach {
-			if !reached[target] {
+			if !reachesLineAtLeast(t, res, target) {
 				got := make([]string, 0, len(res.Routes))
 				for _, r := range res.Routes {
 					got = append(got, r.Destination)

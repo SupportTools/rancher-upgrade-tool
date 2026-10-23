@@ -67,8 +67,10 @@ func TestFleet_LaggingClustersSetThePace(t *testing.T) {
 
 	// Reachable eventually: everything, because the clusters can be raised.
 	got := destinations(t, res)
-	if len(got) == 0 || got[len(got)-1] != "2.15.1" {
-		t.Errorf("reachable = %v, expected the walk to reach 2.15.1 by raising clusters first", got)
+	// Destinations are latest-patch waypoints, so these assert the minor line with a
+	// patch floor rather than an exact patch (see sameLineAtLeast).
+	if len(got) == 0 || !sameLineAtLeast(t, got[len(got)-1], "2.15.1") {
+		t.Errorf("reachable = %v, expected the walk to reach 2.15 (>= 2.15.1) by raising clusters first", got)
 	}
 
 	// Runnable today: only up to 2.10.12.
@@ -76,11 +78,11 @@ func TestFleet_LaggingClustersSetThePace(t *testing.T) {
 		t.Fatal("no binding constraint reported; the fleet cannot run the next Rancher version today")
 	}
 	bc := res.BindingConstraint
-	if bc.HighestNow != "2.10.12" {
-		t.Errorf("highest runnable today = %q, want 2.10.12", bc.HighestNow)
+	if !sameLineAtLeast(t, bc.HighestNow, "2.10.12") {
+		t.Errorf("highest runnable today = %q, want 2.10 (>= 2.10.12)", bc.HighestNow)
 	}
-	if bc.BlockedRancher != "2.11.17" {
-		t.Errorf("blocked rancher = %q, want 2.11.17", bc.BlockedRancher)
+	if !sameLineAtLeast(t, bc.BlockedRancher, "2.11.17") {
+		t.Errorf("blocked rancher = %q, want 2.11 (>= 2.11.17)", bc.BlockedRancher)
 	}
 
 	behind := map[string]string{}

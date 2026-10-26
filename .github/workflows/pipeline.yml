@@ -193,13 +193,17 @@ jobs:
             echo "::error::Harbor project '${PROJECT}' does not exist."
             echo "Harbor does not create projects on push, so the chart cannot be published."
             echo ""
-            echo "Create it once, as PUBLIC (public means ArgoCD needs no registry"
-            echo "credentials to pull the chart):"
+            echo "Create it once, as PRIVATE. Do not make it public: ArgoCD pulls the"
+            echo "chart with the repo-creds Secret repo-creds-harbor-support-tools in the"
+            echo "argocd namespace on a1-ops-prd (oci://harbor.support.tools, robot\$fleet-pull,"
+            echo "materialized by ESO), matched by URL prefix:"
             echo "  https://harbor.support.tools/harbor/projects  ->  NEW PROJECT"
-            echo "  name: ${PROJECT}   access level: public"
+            echo "  name: ${PROJECT}   access level: private (leave Public unchecked)"
             echo ""
-            echo "This follows the convention already in use: beacon, rucc, node-doctor"
-            echo "and posthog each own a project, with charts under a charts/ path."
+            echo "robot\$fleet-pull is a system robot that covers every project, so ArgoCD"
+            echo "needs no per-project grant. The HARBOR_USERNAME account needs push on it."
+            echo "This follows the convention already in use: beacon, rucc and node-doctor"
+            echo "each own a private project, with charts under a charts/ path."
             exit 1
           fi
 

@@ -18,7 +18,10 @@ spec:
     #   harbor.support.tools/rancher-upgrade-tool/charts:v0.223.0 -> not found
     # and sat at ComparisonError/Unknown while the old release kept serving.
     # Same shape as the working mattoxengineering and taskforge Applications.
-    # The Harbor project is PUBLIC, so ArgoCD needs no registry credentials.
+    # The Harbor project is PRIVATE (since 2026-10-25). ArgoCD pulls the chart
+    # with the repo-creds Secret repo-creds-harbor-support-tools in the argocd
+    # namespace on a1-ops-prd (oci://harbor.support.tools, robot$fleet-pull,
+    # materialized by ESO). It matches by URL prefix, so nothing here names it.
     chart: rancher-upgrade-tool
     helm:
       parameters:

@@ -28,12 +28,20 @@ on:
     - cron: "0 6 * * 1"
   workflow_dispatch:
 
+# GITHUB_TOKEN cannot open the refresh PR: "Allow GitHub Actions to create and
+# approve pull requests" is off for this repo/org, and the enterprise policy page
+# that controls it is out of reach (cluster-services-1176). The PR is opened with a
+# GitHub App installation token instead (see "Mint GitHub App token" below), so the
+# job token itself only needs to read code, list PRs, and manage the tracking issue.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  # escalate step: `gh pr list` on the refresh branch
+  pull-requests: read
   # escalate.sh creates its label and opens/comments on/closes the tracking issue.
   # Without this the job token has no issues scope at all.
   issues: write
+  # GitHub OIDC -> Vault jwt login for the App key (main-only role)
+  id-token: write
 
 jobs:
   refresh:
@@ -81,10 +89,52 @@ jobs:
         # the raw diff looks like a normal refresh.
         run: make ci
 
+      # WHERE THE CREDENTIALS COME FROM (cluster-services-1176). The PR is opened by
+      # the GitHub App "supporttools-rancher-upgrade-tool-data-sync", installed on
+      # SupportTools/rancher-upgrade-tool ONLY, with Contents: write and Pull
+      # requests: write. Its App ID and private key live ONLY in Vault at
+      # secret/github/rancher-upgrade-tool-data-sync-app (fields app_id,
+      # installation_id, private_key); nothing is stored as a GitHub secret.
+      # The job reads them through GitHub OIDC with the jwt role
+      # gha-rancher-upgrade-tool-datasync, which is bound to this repository AND
+      # ref refs/heads/main: the weekly schedule and a dispatch from main can read
+      # the key, a pull_request or branch run cannot. Policy and role:
+      # cluster-services vault/policies/gha-rancher-upgrade-tool-datasync-read.hcl
+      # and vault/github-actions-oidc-rancher-upgrade-tool-datasync-setup.sh.
+      - name: Vault login (GitHub OIDC) and data-sync App credentials
+        id: vault
+        uses: hashicorp/vault-action@4c06c5ccf5c0761b6029f56cfb1dcf5565918a3b # v3.4.0
+        with:
+          url: https://vault.support.tools
+          method: jwt
+          path: github-actions
+          role: gha-rancher-upgrade-tool-datasync # main-only role
+          jwtGithubAudience: https://github.com/SupportTools
+          exportEnv: false
+          secrets: |
+            secret/data/github/rancher-upgrade-tool-data-sync-app app_id | APP_ID ;
+            secret/data/github/rancher-upgrade-tool-data-sync-app private_key | APP_PRIVATE_KEY
+
+      # A 1-hour installation token, scoped down to this one repo and the two
+      # permissions the PR needs; the action revokes it when the job ends.
+      - name: Mint GitHub App token (SupportTools/rancher-upgrade-tool)
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ steps.vault.outputs.APP_ID }}
+          private-key: ${{ steps.vault.outputs.APP_PRIVATE_KEY }}
+          owner: SupportTools
+          repositories: rancher-upgrade-tool
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Open a pull request
         id: pr
         uses: peter-evans/create-pull-request@v6
         with:
+          # The App token, not GITHUB_TOKEN (see above). A PR opened by an App also
+          # triggers validate.yml, which a GITHUB_TOKEN-opened PR would not.
+          token: ${{ steps.app-token.outputs.token }}
           branch: data/catalog-refresh
           base: main
           title: "Catalog refresh: Rancher and Kubernetes compatibility data"

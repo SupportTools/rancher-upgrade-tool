@@ -630,3 +630,64 @@ func TestNoJobTimeToolDownloads(t *testing.T) {
 		}
 	}
 }
+
+// REGRESSION GUARD (cluster-services-1176). GITHUB_TOKEN may not open pull
+// requests in this repo ("GitHub Actions is not permitted to create or approve
+// pull requests"), so every Data sync run failed at its last step and the catalog
+// went stale for weeks. The refresh PR must be opened with a GitHub App
+// installation token minted in the same job, with the minting action pinned to a
+// commit SHA (it handles the App private key).
+func TestDataSyncOpensThePRWithAnAppToken(t *testing.T) {
+	type step struct {
+		ID   string            `yaml:"id"`
+		Uses string            `yaml:"uses"`
+		With map[string]string `yaml:"with"`
+	}
+	var wf struct {
+		Permissions map[string]string `yaml:"permissions"`
+		Jobs        map[string]struct {
+			Steps []step `yaml:"steps"`
+		} `yaml:"jobs"`
+	}
+	raw, err := os.ReadFile(".github/workflows/data-sync.yml")
+	if err != nil {
+		t.Fatalf("read data-sync.yml: %v", err)
+	}
+	if err := yaml.Unmarshal(raw, &wf); err != nil {
+		t.Fatalf("parse data-sync.yml: %v", err)
+	}
+	if wf.Permissions["id-token"] != "write" {
+		t.Error("data-sync.yml needs permissions id-token: write for the Vault OIDC login")
+	}
+
+	pinned := regexp.MustCompile(`^actions/create-github-app-token@[0-9a-f]{40}$`)
+	var mintID string
+	var prToken string
+	var sawPR bool
+	for _, job := range wf.Jobs {
+		for _, st := range job.Steps {
+			switch {
+			case strings.HasPrefix(st.Uses, "actions/create-github-app-token@"):
+				if !pinned.MatchString(st.Uses) {
+					t.Errorf("%s is not pinned to a full commit SHA", st.Uses)
+				}
+				if st.With["repositories"] != "rancher-upgrade-tool" {
+					t.Errorf("App token repositories = %q, want only rancher-upgrade-tool", st.With["repositories"])
+				}
+				mintID = st.ID
+			case strings.HasPrefix(st.Uses, "peter-evans/create-pull-request@"):
+				sawPR = true
+				prToken = st.With["token"]
+			}
+		}
+	}
+	if !sawPR {
+		t.Fatal("data-sync.yml no longer opens a pull request")
+	}
+	if mintID == "" {
+		t.Fatal("data-sync.yml mints no GitHub App token")
+	}
+	if want := "${{ steps." + mintID + ".outputs.token }}"; prToken != want {
+		t.Errorf("create-pull-request token = %q, want %q (GITHUB_TOKEN cannot open PRs here)", prToken, want)
+	}
+}

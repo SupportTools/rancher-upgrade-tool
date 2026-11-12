@@ -39,6 +39,10 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags "-X main.buildVersion=${VERSION}" 
 # form and needs a registry lookup to establish.
 FROM alpine:3.20
 
+# USN-8944-1: upgrade ca-certificates and ca-certificates-bundle so the leaked
+# eMudhra emSign roots (ECC G3, ECC C3, C1) are dropped from the trust bundle.
+RUN apk upgrade --no-cache ca-certificates ca-certificates-bundle
+
 WORKDIR /app
 
 # Copy the pre-built binary file from the previous stage

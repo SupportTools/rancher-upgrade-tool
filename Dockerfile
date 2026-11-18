@@ -1,5 +1,15 @@
+# Fetch tiers (cluster-services-1436; no direct Docker Hub / dl-cdn / proxy.golang.org fetch on this path):
+#   - base images: the Harbor `dockerhub` PROXY cache, pinned by index digest.
+#   - apk: the org fetch-cache /alpine/ (a cache we run, in-cluster name) through build/apk-add.sh (vendored
+#     from SupportTools/harbor-scanner-grype scripts/apk-add.sh @ bce5cbd2). Its fallback to dl-cdn is logged
+#     ("apk source: MIRROR FAILED"); CI passes APK_FALLBACK=none so a mirror outage fails the build instead.
+#     apk verifies every index and package signature against the base image's keys either way.
+#   - Go modules: Athens (GOPROXY build-arg, default https://goproxy.support.tools, a cache we run); go.sum
+#     and the checksum DB verify them.
+
 # Build Stage
-FROM golang:1.22.4-alpine3.20  AS builder
+FROM harbor.support.tools/dockerhub/library/golang:1.22.4-alpine3.20@sha256:ace6cc3fe58d0c7b12303c57afe6d6724851152df55e08057b43990b927ad5e8 AS builder
+ARG GOPROXY=https://goproxy.support.tools
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -7,8 +17,8 @@ WORKDIR /app
 # Copy go.mod and go.sum files to the workspace
 COPY go.mod go.sum ./
 
-# Download all dependencies
-RUN go mod download
+# Download all dependencies (-x logs every "# get <url>": the build log shows the proxy that served each module)
+RUN echo "go module source: GOPROXY=${GOPROXY}" && go mod download -x
 
 # Copy the source code and required directories to the Working Directory inside the container
 COPY . .
@@ -34,10 +44,11 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags "-X main.buildVersion=${VERSION}" 
 # combined with the nightly cron meant production ran a different base image
 # most mornings for identical source.
 #
-# NOTE: a tag pin narrows drift, it does not eliminate it -- alpine:3.20 still
-# moves across 3.20.x patch releases. Pinning by sha256 digest is the stronger
-# form and needs a registry lookup to establish.
-FROM alpine:3.20
+# Now pinned by index digest through the Harbor dockerhub proxy (cluster-services-1436), so the base
+# no longer moves across 3.20.x patch releases either.
+FROM harbor.support.tools/dockerhub/library/alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+ARG APK_MIRROR=http://fetch-cache.fetch-cache.svc.a1-ops-prd.local/alpine
+ARG APK_FALLBACK=upstream
 
 # USN-8944-1: upgrade ca-certificates and ca-certificates-bundle so the leaked
 # eMudhra emSign roots (ECC G3, ECC C3, C1) are dropped from the trust bundle.
@@ -46,8 +57,9 @@ FROM alpine:3.20
 # noemsign/noemsign-ca.sh) strips every emSign certificate by decoded subject and its guard fails the build if
 # one is left. openssl is a temporary virtual package; the trust store is checksummed across its removal.
 RUN --mount=type=bind,source=build/noemsign-ca.sh,target=/tmp/noemsign-ca.sh \
-    apk upgrade --no-cache ca-certificates ca-certificates-bundle \
- && apk add --no-cache --virtual .noemsign openssl \
+    --mount=type=bind,source=build/apk-add.sh,target=/tmp/apk-add.sh \
+    APK_MIRROR="$APK_MIRROR" APK_FALLBACK="$APK_FALLBACK" sh /tmp/apk-add.sh --upgrade ca-certificates ca-certificates-bundle \
+ && APK_MIRROR="$APK_MIRROR" APK_FALLBACK="$APK_FALLBACK" sh /tmp/apk-add.sh --virtual .noemsign openssl \
  && sh /tmp/noemsign-ca.sh strip / \
  && sh /tmp/noemsign-ca.sh guard / \
  && sum0="$(tar -c /etc/ssl /usr/share/ca-certificates 2>/dev/null | sha256sum)" \

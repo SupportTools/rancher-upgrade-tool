@@ -41,7 +41,18 @@ FROM alpine:3.20
 
 # USN-8944-1: upgrade ca-certificates and ca-certificates-bundle so the leaked
 # eMudhra emSign roots (ECC G3, ECC C3, C1) are dropped from the trust bundle.
-RUN apk upgrade --no-cache ca-certificates ca-certificates-bundle
+# CA trust (cluster-services-1392, fleet CA standard 2026-11-13): no eMudhra emSign root at all. Alpine's
+# 20261020 bundle still ships emSign Root CA - G1, so build/noemsign-ca.sh (canonical copy: cluster-services
+# noemsign/noemsign-ca.sh) strips every emSign certificate by decoded subject and its guard fails the build if
+# one is left. openssl is a temporary virtual package; the trust store is checksummed across its removal.
+RUN --mount=type=bind,source=build/noemsign-ca.sh,target=/tmp/noemsign-ca.sh \
+    apk upgrade --no-cache ca-certificates ca-certificates-bundle \
+ && apk add --no-cache --virtual .noemsign openssl \
+ && sh /tmp/noemsign-ca.sh strip / \
+ && sh /tmp/noemsign-ca.sh guard / \
+ && sum0="$(tar -c /etc/ssl /usr/share/ca-certificates 2>/dev/null | sha256sum)" \
+ && apk --no-network del .noemsign \
+ && [ "$sum0" = "$(tar -c /etc/ssl /usr/share/ca-certificates 2>/dev/null | sha256sum)" ]
 
 WORKDIR /app
 
